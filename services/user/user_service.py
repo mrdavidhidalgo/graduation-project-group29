@@ -6,6 +6,7 @@ import datetime
 import jwt
 from .contracts import user_repository
 from services.user.contracts import user_repository
+from services.user.model import user_model
 import os
 import random
 
@@ -29,6 +30,30 @@ class UserLoginValidationError(Exception):
      def __init__(self, *args: object) -> None:
         self.message = "Invalid password for user"
         super().__init__(self.message)
+        
+class UserNameAlreadyExistError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = "Username to use is already used"
+        super().__init__(self.message)
+    
+
+def create_user(username: str, password: str, name: str, user_repository: user_repository.UserRepository)-> None:
+    
+    LOGGER.info("Creating user with username [%s]", username)
+    
+    persisted_user = user_repository.get_by_username(username = username)
+    
+    if persisted_user is not None:
+        raise UserNameAlreadyExistError()
+    
+    user_repository.save(
+        user = user_model.User(
+            username = username,
+            password = password,
+            name = name, 
+            is_active = True)
+        )
+    
     
 
 def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> None:

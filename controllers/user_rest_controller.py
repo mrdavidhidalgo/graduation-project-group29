@@ -19,6 +19,11 @@ class LoginResponse(BaseModel):
 class LoginRequest(BaseModel):
     username: str
     password: str
+    
+class CreateUserRequest(BaseModel):
+    username: str
+    password: str
+    name: str
 
 # Dependency
 def get_db() -> Session:
@@ -42,3 +47,14 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db),reque
         raise e
     
     return {"username":login_response.username, "token": login_response.token}
+
+@router.post("/user")
+async def create_user(request: CreateUserRequest, db: Session = Depends(get_db)):
+    request = management_service_facade.CreateUserRequest(username = request.username, 
+                                           password=request.password, name = request.name)
+    
+    try:
+        management_service_facade.create_user(request = request, db = db)
+        return {"msg": "User han beed created"}
+    except management_service_facade.UserNameAlreadyExistError as e:
+        raise HTTPException(status_code=400, detail=e.message)
