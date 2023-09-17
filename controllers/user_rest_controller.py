@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from fastapi import Depends
 
@@ -28,13 +28,17 @@ def get_db() -> Session:
     finally:
         db.close()    
 
-@router.post("/user/login", status_code=201)
+@router.post("/user/login")
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     
-    request = management_service_facade.LoginRequest(id_request=login_request.id_request, 
-                                           username = login_request.username, 
+    request = management_service_facade.LoginRequest(username = login_request.username, 
                                            password=login_request.password)
-    
-    login_response = management_service_facade.login(login_request=request, db = db)
+    try: 
+        login_response = management_service_facade.login(login_request=request, db = db)
+    except management_service_facade.UserLoginValidationError as e:
+        raise HTTPException(status_code=400, detail=e.message)
+    except management_service_facade.UserLoginError as e:
+        management_service_facade.LOGGER.error("Unexpected error for request: %s", login_request.id_request)
+        raise e
     
     return {"username":login_response.username, "token": login_response.token}

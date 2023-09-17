@@ -12,15 +12,13 @@ import random
 from services import logs
 
 # Configura un secreto para firmar los tokens JWT
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATA")
-JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES = os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES", 1)
-ALGORITHM = "HS256"
+_JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATA")
+_JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES = os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES", 1)
+_ALGORITHM = "HS256"
+_RANDOM_ERROR = os.getenv('RANDOM_ERROR', False)
+_PROBABILITY_ERROR = os.getenv('PROBABILITY_ERROR', 100)
 
-# Configura el tiempo de expiración del token (por ejemplo, 15 minutos)
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
-
-
-_LOGGER = logs.get_logger()
+LOGGER = logs.get_logger()
 
 class UserLoginError(Exception):
     
@@ -29,12 +27,13 @@ class UserLoginError(Exception):
         
 class UserLoginValidationError(Exception):
      def __init__(self, *args: object) -> None:
-        super().__init__("Invalid password for user")
+        self.message = "Invalid password for user"
+        super().__init__(self.message)
     
 
 def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> None:
     
-    _LOGGER.info("Login user with username [%s]", username)
+    LOGGER.info("Login user with username [%s]", username)
     
     persisted_user = user_repository.get_by_username(username = username)
     
@@ -51,22 +50,18 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
     
 def validate_error_generation()->None:
     
-    random_error = os.getenv('RANDOM_ERROR', False)
-    
-    if not random_error:
+    if not _RANDOM_ERROR:
         return
     
-    probability = os.getenv('PROBABILITY_ERROR', 0)
-    
     number = random.randint(1,100)
-    if number < probability:
+    if number < _PROBABILITY_ERROR:
         raise UserLoginError()
     
 def create_access_token(data: dict[str,str])->str:
     
-    delta = timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES)
+    delta = timedelta(minutes=_JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES)
     to_encode = data.copy()
     expire = datetime.datetime.utcnow() + delta
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, _JWT_SECRET_KEY, algorithm=_ALGORITHM)
     return encoded_jwt

@@ -8,8 +8,13 @@ class LoginResponse(BaseModel):
     token: str
     username: str
     
+UserLoginValidationError = user_service.UserLoginValidationError
+
+UserLoginError = user_service.UserLoginError
+
+LOGGER = user_service.LOGGER
+    
 class LoginRequest(BaseModel):
-    id_request: str
     username: str
     password: str
 
