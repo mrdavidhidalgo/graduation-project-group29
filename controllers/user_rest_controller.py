@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 
 from fastapi import Depends
+from typing import Annotated
 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -16,7 +17,6 @@ class LoginResponse(BaseModel):
     autenticated: bool
     
 class LoginRequest(BaseModel):
-    id_request: str
     username: str
     password: str
 
@@ -29,7 +29,7 @@ def get_db() -> Session:
         db.close()    
 
 @router.post("/user/login")
-async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
+async def login(login_request: LoginRequest, db: Session = Depends(get_db),request_id: Annotated[str | None, Header(convert_underscores=False)] = None):
     
     request = management_service_facade.LoginRequest(username = login_request.username, 
                                            password=login_request.password)
@@ -38,7 +38,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     except management_service_facade.UserLoginValidationError as e:
         raise HTTPException(status_code=400, detail=e.message)
     except management_service_facade.UserLoginError as e:
-        management_service_facade.LOGGER.error("Unexpected error for request: %s", login_request.id_request)
+        management_service_facade.LOGGER.error("Unexpected error for request: %s", request_id)
         raise e
     
     return {"username":login_response.username, "token": login_response.token}
