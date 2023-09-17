@@ -1,0 +1,4 @@
+sqlalchemy
+mariadb==1.1.2
+fastapi[all]
+pyjwt
