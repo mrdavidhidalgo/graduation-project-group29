@@ -13,11 +13,11 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
-async def login(login_request: LoginRequest, db: Session)->LoginResponse:
+def login(login_request: LoginRequest, db: Session)->LoginResponse:
     
     user_repository = db_user_repository.DBUserRepository(db = db)
     
-    token = user_service.login_user(user_repository=user_repository)
+    token = user_service.login_user(user_repository=user_repository, username=login_request.username, password=login_request.password)
     
     return LoginResponse(token = token, username=login_request.username) 
     

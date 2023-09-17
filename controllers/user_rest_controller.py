@@ -35,6 +35,6 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
                                            username = login_request.username, 
                                            password=login_request.password)
     
-    login_response = management_service_facade.login(login=request, db = db)
+    login_response = management_service_facade.login(login_request=request, db = db)
     
     return {"username":login_response.username, "token": login_response.token}
