@@ -1,0 +1,23 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: backend
+  generation: 1
+  labels:
+    cloud.googleapis.com/location: us-central1
+
+spec:
+  template:
+    spec:
+      containers:
+        - image: davidmhf/backend:0.0.8
+          ports:
+            - name: http1
+              containerPort: 80
+          env:
+            - name: SQLALCHEMY_DATABASE_URL
+              value: mysql://user:password@IP:3306/db
+            - name: RANDOM_ERROR 
+              value: "False"
+            - name: PROBABILITY_ERROR
+              value: "50"
