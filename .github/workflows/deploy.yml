@@ -1,5 +1,7 @@
 name: wif-ci
 on:
+  workflow_dispatch:
+    branches: [ main ]
   push:
     branches:
       - main
