@@ -30,5 +30,10 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.3.0
       - name: set crdential_file
         run: gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
-      - name: Run gcloud
+      - name: Run gcloud list
         run: gcloud run services list
+      - name: Run gcloud  deploy
+        run: gcloud run services replace service.yml
+      - name: Run gcloud 2
+        run: gcloud run services list
+        
