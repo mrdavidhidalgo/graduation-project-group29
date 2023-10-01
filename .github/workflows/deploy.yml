@@ -2,7 +2,7 @@ name: wif-ci
 on:
   push:
     branches:
-- 'main'
+      - 'main'
 jobs:
   build:
     name: "Test WIF"
