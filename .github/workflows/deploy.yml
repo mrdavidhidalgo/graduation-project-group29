@@ -31,8 +31,8 @@ jobs:
         run: |
           docker login -u davidmhf -p ${{ secrets.DOCKER_HUB_TOKEN }}
           docker push davidmhf/backend:${{ steps.vars.outputs.short_sha }}
-  deploy: publish_image
-    needs: 
+  deploy: 
+    needs: publish_image
     name: "Deploy"
     runs-on: ubuntu-latest
     timeout-minutes: 90
@@ -65,9 +65,11 @@ jobs:
       - name: Set env
         run: echo "SHA_SHORT=${{steps.auth.outputs.credentials_file_path}}" >> $GITHUB_ENV
       - name: replace deploy version
-        run: sed 's/$IMAGE_VERSION/${{steps.auth.outputs.credentials_file_path}}/g' service.yml > service_deploy.yml
+        run: |
+              sed 's/$IMAGE_VERSION/${{steps.auth.outputs.credentials_file_path}}/g' service.yml |  sed 's/$DB_PASSWORD/${{secrets.DB_PASSWORD}}/g' > service_deploy.yml
       - name: Run gcloud deploy
         run: gcloud run services replace service_deploy.yml
 
+        
         
         
