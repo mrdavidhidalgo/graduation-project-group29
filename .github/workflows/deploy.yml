@@ -1,4 +1,4 @@
-name: wif-ci
+name: Deploy
 on:
   workflow_dispatch:
     branches: [ main ]
@@ -6,9 +6,34 @@ on:
     branches:
       - main
       - master
+      - develop
 jobs:
-  build:
-    name: "Test WIF"
+  publish_image:
+    name: "Publish Image"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "::set-output name=short_sha::$calculatedSha"
+      - name: Confirm git commit SHA output
+        run: echo ${{ steps.vars.outputs.short_sha }}
+      - name: build
+        run: |
+          docker build -t davidmhf/backend:${{ steps.vars.outputs.short_sha }} .
+        run: |
+          docker login -u davidmhf -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push davidmhf/backend:${{ steps.vars.outputs.short_sha }}
+  deploy: publish_image
+    needs: 
+    name: "Deploy"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -28,12 +53,21 @@ jobs:
           access_token_lifetime: '100s'
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.3.0
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "::set-output name=short_sha::$calculatedSha"
+      - name: Confirm git commit SHA output
+        run: echo ${{ steps.vars.outputs.short_sha }}
       - name: set crdential_file
         run: gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
-      - name: Run gcloud list
-        run: gcloud run services list
-      - name: Run gcloud  deploy
-        run: gcloud run services replace service.yml
-      - name: Run gcloud 2
-        run: gcloud run services list
+      - name: Set env
+        run: echo "SHA_SHORT=${{steps.auth.outputs.credentials_file_path}}" >> $GITHUB_ENV
+      - name: replace deploy version
+        run: sed 's/$IMAGE_VERSION/${{steps.auth.outputs.credentials_file_path}}/g' service.yml > service_deploy.yml
+      - name: Run gcloud deploy
+        run: gcloud run services replace service_deploy.yml
+
+        
         
