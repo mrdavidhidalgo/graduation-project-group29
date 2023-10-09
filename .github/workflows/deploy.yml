@@ -28,7 +28,6 @@ jobs:
       - name: build
         run: |
           docker build -t davidmhf/backend:${{ steps.vars.outputs.short_sha }} .
-        run: |
           docker login -u davidmhf -p ${{ secrets.DOCKER_HUB_TOKEN }}
           docker push davidmhf/backend:${{ steps.vars.outputs.short_sha }}
   deploy: 
