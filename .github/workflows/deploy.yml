@@ -59,13 +59,26 @@ jobs:
           echo "::set-output name=short_sha::$calculatedSha"
       - name: Confirm git commit SHA output
         run: echo ${{ steps.vars.outputs.short_sha }}
-      - name: set crdential_file
+
+      - name: Set Database
+        id: database
+        run: |
+          if [[ "${{github.base_ref}}" == "master" || "${{github.ref}}" == "refs/heads/master" ]]; then
+            echo "::set-output name=db::db"
+          fi
+
+          if [[ "${{github.base_ref}}" == "develop" || "${{github.ref}}" == "refs/heads/develop" ]]; then
+            echo "::set-output name=db::db_test"
+          fi
+      - name: set credential_file
         run: gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
       - name: Set env
         run: echo "SHA_SHORT=${{steps.auth.outputs.credentials_file_path}}" >> $GITHUB_ENV
+        
       - name: replace deploy version
         run: |
-              sed 's/$IMAGE_VERSION/${{steps.vars.outputs.short_sha}}/g' service.yml |  sed 's/$DB_PASSWORD/${{secrets.DB_PASSWORD}}/g' > service_deploy.yml
+              sed 's/$IMAGE_VERSION/${{steps.vars.outputs.short_sha}}/g' deployment/service.yml |  sed 's/$DB_PASSWORD/${{secrets.DB_PASSWORD}}/g'
+              |  sed 's/$DB/${{steps.database.outputs.db}}/g' > service_deploy.yml
       - name: Run gcloud deploy
         run: gcloud run services replace service_deploy.yml
 

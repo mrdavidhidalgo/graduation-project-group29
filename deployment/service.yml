@@ -15,13 +15,13 @@ spec:
     spec:
       containerConcurrency: 1
       containers:
-        - image: davidmhf/backend:0.0.9
+        - image: davidmhf/backend:$IMAGE_VERSION
           ports:
             - name: http1
               containerPort: 80
           env:
             - name: SQLALCHEMY_DATABASE_URL
-              value: mysql://root:password@35.193.122.90:3306/db
+              value: mysql://root:$DB_PASSWORD@35.193.122.90:3306/$DB
             - name: RANDOM_ERROR
               value: "False"
             - name: PROBABILITY_ERROR
