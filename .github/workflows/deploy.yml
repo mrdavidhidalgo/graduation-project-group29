@@ -65,7 +65,7 @@ jobs:
         run: echo "SHA_SHORT=${{steps.auth.outputs.credentials_file_path}}" >> $GITHUB_ENV
       - name: replace deploy version
         run: |
-              sed 's/$IMAGE_VERSION/${{steps.auth.outputs.credentials_file_path}}/g' service.yml |  sed 's/$DB_PASSWORD/${{secrets.DB_PASSWORD}}/g' > service_deploy.yml
+              sed 's/$IMAGE_VERSION/${{steps.vars.outputs.short_sha}}/g' service.yml |  sed 's/$DB_PASSWORD/${{secrets.DB_PASSWORD}}/g' > service_deploy.yml
       - name: Run gcloud deploy
         run: gcloud run services replace service_deploy.yml
 
