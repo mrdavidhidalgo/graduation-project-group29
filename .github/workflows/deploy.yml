@@ -83,6 +83,8 @@ jobs:
               |  sed 's/$DB_PASSWORD/${{secrets.DB_PASSWORD}}/g' \
               |  sed 's/$SERVICE/${{steps.enviroment.outputs.service}}/g' \
               |  sed 's/$DB/${{steps.enviroment.outputs.db}}/g' > service_deploy.yml
+      - name: cat
+        run: cat service_deploy.yml
       - name: Run gcloud deploy
         run: gcloud run services replace service_deploy.yml
 
