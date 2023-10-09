@@ -1,7 +1,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: backend
+  name: $SERVICE
   generation: 1
   labels:
     cloud.googleapis.com/location: us-central1
