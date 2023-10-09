@@ -86,7 +86,7 @@ jobs:
       - name: cat
         run: cat service_deploy.yml
       - name: Run gcloud deploy
-        run: gcloud run services replace service_deploy.yml
+        run: gcloud run services replace deployment/service_deploy.yml
 
         
         
