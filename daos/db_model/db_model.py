@@ -5,11 +5,11 @@ from .database import Base
 import enum
 from sqlalchemy.orm import relationship
 
-class UserRole(enum.Enum):
-    CANDIDATE = 1
-    RECRUITER = 2
-    CLIENT = 3
-    ADMINISTRATOR = 4
+class UserRole(enum.Stre):
+    CANDIDATE = 'CANDIDATE'
+    RECRUITER = 'RECRUITER'
+    CLIENT = 'CLIENT'
+    ADMINISTRATOR = 'ADMINISTRATOR'
 
 class Person(Base):
     __tablename__ = "person"
