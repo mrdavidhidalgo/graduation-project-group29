@@ -5,5 +5,6 @@ import datetime
 class User(BaseModel):
     username: str
     password: str
-    name: str
-    is_active : bool
+    is_active: str
+    role: str
+    person: int

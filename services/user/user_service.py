@@ -37,7 +37,7 @@ class UserNameAlreadyExistError(Exception):
         super().__init__(self.message)
     
 
-def create_user(username: str, password: str, name: str, user_repository: user_repository.UserRepository)-> None:
+def create_user(username: str, password: str, role: str, person: int, user_repository: user_repository.UserRepository)-> None:
     
     LOGGER.info("Creating user with username [%s]", username)
     
@@ -50,8 +50,10 @@ def create_user(username: str, password: str, name: str, user_repository: user_r
         user = user_model.User(
             username = username,
             password = password,
-            name = name, 
-            is_active = True)
+            is_active = 'Y',
+            role = role,
+            person = int(person)
+            )
         )
     
     

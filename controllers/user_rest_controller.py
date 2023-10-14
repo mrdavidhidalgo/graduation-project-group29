@@ -23,7 +23,8 @@ class LoginRequest(BaseModel):
 class CreateUserRequest(BaseModel):
     username: str
     password: str
-    name: str
+    role: str
+    person: int
 
 # Dependency
 def get_db() -> Session:
@@ -51,7 +52,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db),reque
 @router.post("/user")
 async def create_user(request: CreateUserRequest, db: Session = Depends(get_db)):
     request = management_service_facade.CreateUserRequest(username = request.username, 
-                                           password=request.password, name = request.name)
+                                           password=request.password, role=request.role, person = request.person)
     
     try:
         management_service_facade.create_user(request = request, db = db)
