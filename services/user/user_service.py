@@ -14,10 +14,9 @@ from services import logs
 
 # Configura un secreto para firmar los tokens JWT
 _JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATA")
-_JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES = os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES", 1)
+_JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES = os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES", 15)
 _ALGORITHM = "HS256"
-_RANDOM_ERROR = os.getenv('RANDOM_ERROR', False)
-_PROBABILITY_ERROR = os.getenv('PROBABILITY_ERROR', 100)
+
 
 LOGGER = logs.get_logger()
 
@@ -55,19 +54,15 @@ def create_user(username: str, password: str, role: str, person: int, user_repos
             person = int(person)
             )
         )
-    
-    
-
 def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> None:
     
     LOGGER.info("Login user with username [%s]", username)
-    
+
     persisted_user = user_repository.get_by_username(username = username)
     
     if persisted_user is None:
         raise UserLoginValidationError()
     
-    validate_error_generation()
         
     if persisted_user.password == password:
         return create_access_token(data={"user": username});
@@ -75,14 +70,6 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
     raise UserLoginValidationError()
     
     
-def validate_error_generation()->None:
-    
-    if not _RANDOM_ERROR:
-        return
-    
-    number = random.randint(1,100)
-    if number < _PROBABILITY_ERROR:
-        raise UserLoginError()
     
 def create_access_token(data: dict[str,str])->str:
     
