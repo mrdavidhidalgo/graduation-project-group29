@@ -5,7 +5,7 @@ from .database import Base
 import enum
 from sqlalchemy.orm import relationship
 
-class UserRole(enum.Stre):
+class UserRole(enum.Enum):
     CANDIDATE = 'CANDIDATE'
     RECRUITER = 'RECRUITER'
     CLIENT = 'CLIENT'
