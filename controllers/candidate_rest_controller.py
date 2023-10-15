@@ -64,7 +64,7 @@ async def create_candidate(request: CreateCandidateRequest, db: Session = Depend
     
 @router.post("/candidates/myself/academic_info")
 async def create_candidate_academic_info(request: CreateCandidateAcademicInfoRequest, db: Session = Depends(get_db)):
-    print(f"hola {request}")
+    
     academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =request.person_id,
                                                                                     title = request.title,
                                                                                     institution = request.institution, 
@@ -72,7 +72,6 @@ async def create_candidate_academic_info(request: CreateCandidateAcademicInfoReq
                                                                                     start_date = request.start_date,
                                                                                     end_date = request.end_date,
                                                                                     description = request.description)
-    print(f"salida {request}")
     try:
         management_service_facade.add_candidate_academic_info(request = academic_request, db = db)
         return {"msg": "Candidate academic info has been added"}
