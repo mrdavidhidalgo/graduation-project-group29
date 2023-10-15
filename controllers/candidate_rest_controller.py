@@ -27,17 +27,17 @@ class CreateCandidateAcademicInfoRequest(BaseModel):
     
 class CreateCandidateRequest(BaseModel):
     document: str
-    document_type: str
-    first_name: str
-    last_name: str
-    phone_number: str
+    documentType: str
+    firstName: str
+    lastName: str
+    phoneNumber: str
     username: str
     password: str
-    birth_date: str
+    birthDate: str
     age: int
-    origin_country: str
-    residence_country: str
-    residence_city: str
+    originCountry: str
+    residenceCountry: str
+    residenceCity: str
     address: str
 
     
@@ -51,10 +51,10 @@ def get_db() -> Session:
 
 @router.post("/candidates")
 async def create_candidate(request: CreateCandidateRequest, db: Session = Depends(get_db)):
-    request = management_service_facade.CreateCandidateRequest(document = request.document, document_type = request.document_type,
-                                           first_name=request.first_name, last_name = request.last_name, phone_number = request.phone_number, username = request.username,\
-                                           password = request.password, birth_date = request.birth_date, age = request.age, origin_country= request.origin_country,\
-                                           residence_country = request.residence_country, residence_city = request.residence_city, address= request.address)
+    request = management_service_facade.CreateCandidateRequest(document = request.document, document_type = request.documentType,
+                                           first_name=request.firstName, last_name = request.lastName, phone_number = request.phoneNumber, username = request.username,\
+                                           password = request.password, birth_date = request.birthDate, age = request.age, origin_country= request.originCountry,\
+                                           residence_country = request.residenceCountry, residence_city = request.residenceCity, address= request.address)
     
     try:
         management_service_facade.create_candidate(request = request, db = db)
