@@ -9,6 +9,12 @@ from pydantic import BaseModel
 class LoginResponse(BaseModel):
     token: str
     username: str
+
+class AuthenticationResponse(BaseModel):
+    new_token: str
+    username: str
+    role:str
+    exp:int
     
 UserLoginValidationError = user_service.UserLoginValidationError
 
@@ -48,6 +54,12 @@ class CreateProfessionalRequest(BaseModel):
     residenceCountry: str
     residenceCity: str
     address: str
+
+def myself(token:str)->AuthenticationResponse:
+    
+    map = user_service.myself(token)
+
+    return AuthenticationResponse(new_token = token, username=map["user"], role=map["role"],exp=map["exp"]) 
 
 def login(login_request: LoginRequest, db: Session)->LoginResponse:
     

@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException, Header
-
+from fastapi import FastAPI, Request
 from fastapi import Depends
 from typing import Annotated
+import asyncio
+import random
+from services import logs
 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -9,6 +12,8 @@ from sqlalchemy.orm import Session
 from daos.db_model.database import SessionLocal
 
 from controllers import management_service_facade
+
+_LOGGER = logs.get_logger()
 
 router = APIRouter()
     
@@ -49,8 +54,10 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db),reque
     
     return {"username":login_response.username, "token": login_response.token}
 
+
 @router.post("/user")
 async def create_user(request: CreateUserRequest, db: Session = Depends(get_db)):
+
     request = management_service_facade.CreateUserRequest(username = request.username, 
                                            password=request.password, role=request.role, person = request.person)
     
@@ -59,3 +66,20 @@ async def create_user(request: CreateUserRequest, db: Session = Depends(get_db))
         return {"msg": "User han beed created"}
     except management_service_facade.UserNameAlreadyExistError as e:
         raise HTTPException(status_code=400, detail=e.message)
+    
+    
+@router.get("/user/myself")
+async def myself(request: Request):
+    
+    header = request.headers.get('Authorization')
+
+    if header is None or len(header.split(" "))<1 or header.split(" ")[1] is None:
+        raise HTTPException(status_code=401)
+    try: 
+        auth_response = management_service_facade.myself(header.split(" ")[1])
+
+    except management_service_facade.UserLoginError as e:
+        management_service_facade.LOGGER.error("Unexpected error for request")
+        raise e
+    
+    return {"username":auth_response.username, "new_token": auth_response.new_token,"role": auth_response.role,"exp": auth_response.exp}
