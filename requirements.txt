@@ -1,5 +1,5 @@
 sqlalchemy
-mariadb==1.1.2
+mariadb==1.1.8
 fastapi[all]
 pyjwt
 mysqlclient
