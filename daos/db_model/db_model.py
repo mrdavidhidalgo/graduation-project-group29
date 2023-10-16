@@ -11,7 +11,7 @@ from services.user.model import user_model
 class Person(Base):
     __tablename__ = "person"
     
-    document = Column(String, primary_key=True, index=True)
+    document = Column(String(30), primary_key=True, index=True)
     documentType = Column(String(30))
     firstName = Column(String(50))
     lastName = Column(String(50))
@@ -29,7 +29,7 @@ class Professional(Base):
     residenceCountry = Column(String(70))
     residenceCity = Column(String(70))
     address = Column(String(100))
-    person_id = Column(String, ForeignKey('person.document'))
+    person_id = Column(String(30), ForeignKey('person.document'))
     person = relationship("Person", back_populates="professional")
     
 class User(Base):
@@ -40,7 +40,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     active = Column(String(2), primary_key=True, index=True)
     role = Column(Enum(user_model.UserRole))
-    person_id = Column(String, ForeignKey('person.document'))
+    person_id = Column(String(30), ForeignKey('person.document'))
     
 class ProfessionalAcademicInfo(Base):
     __tablename__ = "professional_academic_info"
