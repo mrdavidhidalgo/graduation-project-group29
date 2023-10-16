@@ -34,9 +34,14 @@ class UserNameAlreadyExistError(Exception):
      def __init__(self, *args: object) -> None:
         self.message = "Username to use is already used"
         super().__init__(self.message)
+        
+class UserNameDoesNotExistError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = "Username does not exist"
+        super().__init__(self.message)
     
 
-def create_user(username: str, password: str, role: str, person: int, user_repository: user_repository.UserRepository)-> None:
+def create_candidate_user(username: str, password: str, person_id: str, user_repository: user_repository.UserRepository)-> None:
     
     LOGGER.info("Creating user with username [%s]", username)
     
@@ -49,9 +54,9 @@ def create_user(username: str, password: str, role: str, person: int, user_repos
         user = user_model.User(
             username = username,
             password = password,
-            is_active = 'Y',
-            role = role,
-            person = int(person)
+            is_active = True,
+            role = user_model.UserRole.CANDIDATE,
+            person_id = person_id
             )
         )
 def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> None:
@@ -67,6 +72,23 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
     if persisted_user.password == password:
         return create_access_token(data={"user": username,
                                          "role":persisted_user.role,"person_id":persisted_user.person});
+    
+    raise UserLoginValidationError()
+
+def get_user_by_username(username: str, user_repository: user_repository.UserRepository)-> None:
+    
+    LOGGER.info("Getting user with username [%s]", username)
+
+    persisted_user = user_repository.get_by_username(username = username)
+    
+    
+    
+    if persisted_user is None:
+        raise UserLoginValidationError()
+    
+        
+    if persisted_user.password == password:
+        return create_access_token(data={"user": username});
     
     raise UserLoginValidationError()
     

@@ -4,7 +4,7 @@ import datetime
 
 class Person(BaseModel):
     document: int
-    documentType: str
-    firstName: str
-    lastName: str
-    phoneNumber: str
+    document_type: str
+    first_name: str
+    last_name: str
+    phone_number: str
