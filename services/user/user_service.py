@@ -59,7 +59,7 @@ def create_candidate_user(username: str, password: str, person_id: str, user_rep
             person_id = person_id
             )
         )
-def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> None:
+def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> str:
     
     LOGGER.info("Login user with username [%s]", username)
 
@@ -71,7 +71,7 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
         
     if persisted_user.password == password:
         return create_access_token(data={"user": username,
-                                         "role":persisted_user.role,"person_id":persisted_user.person});
+                                         "role":persisted_user.role.name,"person_id":persisted_user.person_id});
     
     raise UserLoginValidationError()
 
