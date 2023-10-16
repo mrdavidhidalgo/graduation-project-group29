@@ -21,8 +21,8 @@ class CreateCandidateAcademicInfoRequest(BaseModel):
     title : str
     institution : str
     country : str
-    start_date : datetime.datetime
-    end_date : Optional[datetime.datetime]
+    start_date : str
+    end_date : Optional[str]
     description : str
     
 class CreateCandidateRequest(BaseModel):
@@ -51,6 +51,7 @@ def get_db() -> Session:
 
 @router.post("/candidates")
 async def create_candidate(request: CreateCandidateRequest, db: Session = Depends(get_db)):
+    
     request = management_service_facade.CreateCandidateRequest(document = request.document, document_type = request.documentType,
                                            first_name=request.firstName, last_name = request.lastName, phone_number = request.phoneNumber, username = request.username,\
                                            password = request.password, birth_date = request.birthDate, age = request.age, origin_country= request.originCountry,\
@@ -65,12 +66,15 @@ async def create_candidate(request: CreateCandidateRequest, db: Session = Depend
 @router.post("/candidates/myself/academic_info")
 async def create_candidate_academic_info(request: CreateCandidateAcademicInfoRequest, db: Session = Depends(get_db)):
     
+    new_start_date = datetime.datetime.fromisoformat(request.start_date + "T00:00:00")
+    new_end_date = datetime.datetime.fromisoformat(request.end_date + "T00:00:00") if request.end_date is not None else None
+    
     academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =request.person_id,
                                                                                     title = request.title,
                                                                                     institution = request.institution, 
                                                                                     country = request.country,
-                                                                                    start_date = request.start_date,
-                                                                                    end_date = request.end_date,
+                                                                                    start_date = new_start_date,
+                                                                                    end_date = new_end_date,
                                                                                     description = request.description)
     try:
         management_service_facade.add_candidate_academic_info(request = academic_request, db = db)
