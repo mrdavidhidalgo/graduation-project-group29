@@ -17,7 +17,7 @@ class DBUserRepository(user_repository.UserRepository):
         user = self.db.query(models.User).filter(models.User.username == username).first()
         #return user_model.User(username="frank", password = "remb", name = "Franklin", is_active=True)
         return None if user is None else user_model.User(username=username, password = user.password, name = user.username, 
-                                                         is_active=user.active, role=user.role.value, person=user.person)
+                                                         is_active=user.active, role=user.role, person_id=user.person_id)
         
     def save(self, user: user_model.User)-> None:
         new_user = models.User(
@@ -25,7 +25,7 @@ class DBUserRepository(user_repository.UserRepository):
             password = user.password,
             active = user.is_active,
             role = user.role,
-            person = user.person
+            person_id = user.person_id
         )
         
         self.db.add(new_user)

@@ -1,4 +1,4 @@
-from controllers import user_rest_controller, person_rest_controller
+from controllers import candidate_rest_controller, user_rest_controller
 
 from controllers import health_rest_controller 
 from fastapi import FastAPI
@@ -24,6 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(person_rest_controller.router)
+app.include_router(candidate_rest_controller.router)
 app.include_router(user_rest_controller.router)
 app.include_router(health_rest_controller.router)

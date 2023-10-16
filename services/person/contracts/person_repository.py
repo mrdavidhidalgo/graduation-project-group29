@@ -5,7 +5,7 @@ from typing import List
 class PersonRepository(abc.ABC):
     
     @abc.abstractmethod
-    def get_by_document(self, username: str)-> person_model.Person:
+    def get_by_document(self, document: str)-> person_model.Person:
         ...
         
     @abc.abstractmethod
@@ -13,5 +13,5 @@ class PersonRepository(abc.ABC):
         ...
         
     @abc.abstractmethod
-    def get_all_professionals(self):
+    def get_all(self)->List[person_model.Person]:
         ...

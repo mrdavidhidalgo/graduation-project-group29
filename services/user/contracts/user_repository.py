@@ -1,11 +1,11 @@
 import abc
 from services.user.model import user_model
-from typing import List
+from typing import List, Optional
 
 class UserRepository(abc.ABC):
     
     @abc.abstractmethod
-    def get_by_username(self, username: str)-> user_model.User:
+    def get_by_username(self, username: str)-> Optional[user_model.User]:
         ...
         
     @abc.abstractmethod
