@@ -65,7 +65,8 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
     
         
     if persisted_user.password == password:
-        return create_access_token(data={"user": username,"role":persisted_user.role});
+        return create_access_token(data={"user": username,
+                                         "role":persisted_user.role,"person_id":persisted_user.person});
     
     raise UserLoginValidationError()
     

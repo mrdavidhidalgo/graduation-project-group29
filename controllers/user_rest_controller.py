@@ -5,7 +5,7 @@ from typing import Annotated
 import asyncio
 import random
 from services import logs
-
+import jwt
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -77,9 +77,12 @@ async def myself(request: Request):
         raise HTTPException(status_code=401)
     try: 
         auth_response = management_service_facade.myself(header.split(" ")[1])
-
+    
+    except  jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException(status_code=401) 
     except management_service_facade.UserLoginError as e:
         management_service_facade.LOGGER.error("Unexpected error for request")
         raise e
     
-    return {"username":auth_response.username, "new_token": auth_response.new_token,"role": auth_response.role,"exp": auth_response.exp}
+    return {"username":auth_response.username, "new_token": auth_response.new_token,
+            "role": auth_response.role,"exp": auth_response.exp, "person_id":auth_response.person_id}
