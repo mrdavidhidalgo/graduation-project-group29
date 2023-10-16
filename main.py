@@ -9,7 +9,7 @@ from daos.db_model.database import engine
 from fastapi.middleware.cors import CORSMiddleware
 
 origins = [
-    "http://localhost:4200",
+    "*",
 ]
 
 Base.metadata.create_all(bind=engine)
