@@ -2,14 +2,14 @@
 
 from datetime import timedelta
 import datetime
-
+import math     
 import jwt
 from .contracts import user_repository
 from services.user.contracts import user_repository
 from services.user.model import user_model
 import os
 import random
-from typing import Dict
+from typing import Dict,Tuple
 from services import logs
 
 # Configura un secreto para firmar los tokens JWT
@@ -71,7 +71,7 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
         
     if persisted_user.password == password:
         return create_access_token(data={"user": username,
-                                         "role":persisted_user.role.name,"person_id":persisted_user.person_id});
+                                         "role":persisted_user.role.name,"person_id":persisted_user.person_id})[0];
     
     raise UserLoginValidationError()
 
@@ -88,21 +88,24 @@ def get_user_by_username(username: str, user_repository: user_repository.UserRep
     
         
     if persisted_user.password == password:
-        return create_access_token(data={"user": username});
+        return create_access_token(data={"user": username})[0];
     
     raise UserLoginValidationError()
     
-def myself(token: str)-> Dict[str,str]:
+def myself(token: str)-> Tuple[str,Dict[str,str]]:
      
-    return jwt.decode(token, _JWT_SECRET_KEY, algorithms=[_ALGORITHM])
+    map = jwt.decode(token, _JWT_SECRET_KEY, algorithms=[_ALGORITHM])
+    
+    return create_access_token(map)
+
 
     
     
-def create_access_token(data: dict[str,str])->str:
+def create_access_token(data: dict[str,str])->Tuple[str,Dict[str,str]]:
     
     delta = timedelta(minutes=_JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES)
     to_encode = data.copy()
     expire = datetime.datetime.utcnow() + delta
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": math.floor(expire.timestamp())})
     encoded_jwt = jwt.encode(to_encode, _JWT_SECRET_KEY, algorithm=_ALGORITHM)
-    return encoded_jwt
+    return encoded_jwt,to_encode
