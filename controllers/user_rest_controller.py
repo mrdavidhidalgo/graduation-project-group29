@@ -47,7 +47,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db),reque
     try: 
         login_response = management_service_facade.login(login_request=request, db = db)
     except management_service_facade.UserLoginValidationError as e:
-        raise HTTPException(status_code=400, detail=e.message)
+        raise HTTPException(status_code=401, detail=e.message)
     except management_service_facade.UserLoginError as e:
         management_service_facade.LOGGER.error("Unexpected error for request: %s", request_id)
         raise e
