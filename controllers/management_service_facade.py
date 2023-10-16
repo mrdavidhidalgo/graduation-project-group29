@@ -9,9 +9,17 @@ from daos import db_user_repository, db_person_repository, db_professional_repos
 from pydantic import BaseModel
 from services.professional.model import professional_model
 
+import jwt
 class LoginResponse(BaseModel):
     token: str
     username: str
+
+class AuthenticationResponse(BaseModel):
+    new_token: str
+    username: str
+    role:str
+    exp:int
+    person_id:int
     
 UserLoginValidationError = user_service.UserLoginValidationError
 
@@ -78,6 +86,13 @@ class CreateCandidateAcademicInfoRequest(BaseModel):
     start_date : datetime.datetime
     end_date : Optional[datetime.datetime]
     description : str
+
+def myself(token:str)->AuthenticationResponse:
+
+    map = user_service.myself(token)
+        
+    return AuthenticationResponse(new_token = token, username=map["user"],
+                                  role=map["role"],exp=map["exp"],person_id=map["person_id"]) 
 
 def login(login_request: LoginRequest, db: Session)->LoginResponse:
     

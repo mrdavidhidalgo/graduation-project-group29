@@ -9,7 +9,7 @@ from services.user.contracts import user_repository
 from services.user.model import user_model
 import os
 import random
-
+from typing import Dict
 from services import logs
 
 # Configura un secreto para firmar los tokens JWT
@@ -70,7 +70,8 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
     
         
     if persisted_user.password == password:
-        return create_access_token(data={"user": username});
+        return create_access_token(data={"user": username,
+                                         "role":persisted_user.role,"person_id":persisted_user.person});
     
     raise UserLoginValidationError()
 
@@ -91,6 +92,10 @@ def get_user_by_username(username: str, user_repository: user_repository.UserRep
     
     raise UserLoginValidationError()
     
+def myself(token: str)-> Dict[str,str]:
+     
+    return jwt.decode(token, _JWT_SECRET_KEY, algorithms=[_ALGORITHM])
+
     
     
 def create_access_token(data: dict[str,str])->str:
