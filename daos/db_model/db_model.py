@@ -1,7 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum, ForeignKey
 import datetime
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from marshmallow import fields
 
 from .database import Base
 import enum
