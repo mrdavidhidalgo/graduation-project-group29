@@ -90,7 +90,7 @@ async def get_candidates(response: Response, db: Session = Depends(get_db)):
     if candidates_list is not None:
         data=[]
         for candidate in candidates_list:
-            data.append({'document': str(candidate.document), 'documentType': str(candidate.documentType)})
+            data.append({'document': str(candidate.document),'documentType': str(candidate.document_type)})
         return data
     else:
         LOGGER.info("Return 404 error")
