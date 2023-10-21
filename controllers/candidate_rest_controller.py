@@ -5,7 +5,7 @@ from typing import Annotated, Any, Optional, Tuple
 import jwt
 import datetime
 import pydantic
-
+from controllers import commons
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -50,7 +50,9 @@ class CreateCandidateRequest(BaseModel):
     residenceCity: str
     address: str
 
-    
+class TokenData(BaseModel):
+    person_id: str
+
 # Dependency
 def get_db() -> Session:
     db = SessionLocal()
@@ -72,19 +74,16 @@ async def create_candidate(request: CreateCandidateRequest, db: Session = Depend
         return {"msg": "Candidate has been created"}
     except (management_service_facade.PersonDocumentAlreadyExistError, management_service_facade.UserNameAlreadyExistError) as e:
         raise HTTPException(status_code=400, detail=e.message)
-    
+
+ 
 @router.post("/candidates/myself/academic_info")
 async def create_candidate_academic_info(request: CreateCandidateAcademicInfoRequest, 
-                                         Authorization: Annotated[str | None, Header()] = None,
+                                         token_data: TokenData = Depends(commons.get_token_data),
                                          db: Session = Depends(get_db)):
-
-    if Authorization is None or len(Authorization.split(" "))<1 or Authorization.split(" ")[1] is None:
-        raise HTTPException(status_code=401)
     
     try: 
-        auth_response = management_service_facade.myself(Authorization.split(" ")[1])
         start_date, end_date = get_dates(request = request)
-        academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =str(auth_response.person_id),
+        academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =str(token_data.person_id),
                                                                                     title = request.title,
                                                                                     institution = request.institution, 
                                                                                     country = request.country,
@@ -143,12 +142,5 @@ def get_dates(request: CreateCandidateAcademicInfoRequest)->Tuple[datetime.datet
         end_date = datetime.datetime(year_end_date, month_end_date, 1) - datetime.timedelta(days=1)
 
     return start_date, end_date
-    
-    
-
-@pydantic.validator("end_date", pre=True)
-def set_end_date(cls, v, values)->Optional[datetime.datetime]:
-    year = values.get("year_end_date")
-    month = values.get("month_end_date")
     
     
