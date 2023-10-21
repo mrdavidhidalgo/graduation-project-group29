@@ -1,9 +1,9 @@
-import datetime
 from fastapi import APIRouter, HTTPException, Header, Response
 
 from fastapi import Depends
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any, Optional, Tuple
 import jwt
+import datetime
 import pydantic
 
 from pydantic import BaseModel
@@ -27,34 +27,13 @@ class CreateCandidateAcademicInfoRequest(BaseModel):
     country : base.Country
     year_start_date : int
     month_start_date : int
-    year_end_date : Optional[int]
-    month_end_date: Optional[int]
-    start_date : datetime.datetime
-    end_date: Optional[datetime.datetime]
+    year_end_date : Optional[int] = None
+    month_end_date: Optional[int] = None
     description : str
     
-    @pydantic.validator("start_date", pre=True)
-    def set_start_date(cls, v, values)->datetime.datetime:
-        year = values.get("year_start_date")
-        month = values.get("month_start_date")
-        return datetime.datetime(year, month, 1)
+   
     
-    @pydantic.validator("end_date", pre=True)
-    def set_end_date(cls, v, values)->Optional[datetime.datetime]:
-        year = values.get("year_end_date")
-        month = values.get("month_end_date")
-        
-        if year is None or month is None:
-            return None  
-        
-        if month == 12:
-            month = 1
-            year += 1
-        else:
-            month += 1
-        end_date = datetime.datetime(year, month, 1) - datetime.timedelta(days=1)
-        return end_date
-        
+    
     
 class CreateCandidateRequest(BaseModel):
     document: str
@@ -104,13 +83,13 @@ async def create_candidate_academic_info(request: CreateCandidateAcademicInfoReq
     
     try: 
         auth_response = management_service_facade.myself(Authorization.split(" ")[1])
-        
+        start_date, end_date = get_dates(request = request)
         academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =str(auth_response.person_id),
                                                                                     title = request.title,
                                                                                     institution = request.institution, 
                                                                                     country = request.country,
-                                                                                    start_date = request.start_date,
-                                                                                    end_date = request.end_date,
+                                                                                    start_date = start_date,
+                                                                                    end_date = end_date,
                                                                                     description = request.description)
                                                                                     
         management_service_facade.add_candidate_academic_info(request = academic_request, db = db)
@@ -123,6 +102,8 @@ async def create_candidate_academic_info(request: CreateCandidateAcademicInfoReq
     except (management_service_facade.ProfessionalDoesNotExistError) as e:
         _LOGGER.error("Error adding academic info [%r]", e)
         mapper_exceptions.process_error_response(exception=e)
+    
+    
     
         
 @router.get("/candidates")
@@ -137,3 +118,37 @@ async def get_candidates(response: Response, db: Session = Depends(get_db)):
     else:
         _LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No candidates found")
+    
+    
+def get_dates(request: CreateCandidateAcademicInfoRequest)->Tuple[datetime.datetime, Optional[datetime.datetime]]:
+    
+    month_start_date = request.month_start_date
+    year_start_date = request.year_start_date
+    
+    start_date = datetime.datetime(year_start_date, month_start_date, 1)
+    
+    month_end_date = request.month_end_date
+    year_end_date = request.year_end_date
+
+    end_date = None
+    if year_end_date is not None and month_end_date is not None:
+        
+    
+        if month_end_date == 12:
+            month_end_date = 1
+            year_end_date += 1
+        else:
+            month_end_date += 1
+    
+        end_date = datetime.datetime(year_end_date, month_end_date, 1) - datetime.timedelta(days=1)
+
+    return start_date, end_date
+    
+    
+
+@pydantic.validator("end_date", pre=True)
+def set_end_date(cls, v, values)->Optional[datetime.datetime]:
+    year = values.get("year_end_date")
+    month = values.get("month_end_date")
+    
+    
