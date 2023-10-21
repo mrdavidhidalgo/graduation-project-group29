@@ -8,6 +8,7 @@ from services.professional import professional_service
 from daos import db_user_repository, db_person_repository, db_professional_repository
 from pydantic import BaseModel
 from services.professional.model import professional_model
+from services.commons import base
 
 import jwt
 class LoginResponse(BaseModel):
@@ -50,7 +51,7 @@ class CreateUserRequest(BaseModel):
 
 class CreateCandidateRequest(BaseModel):
     document: str
-    document_type: str
+    document_type: base.DocumentType
     first_name: str
     last_name: str
     phone_number: str
@@ -58,23 +59,8 @@ class CreateCandidateRequest(BaseModel):
     password: str
     birth_date: str
     age: int
-    origin_country: str
-    residence_country: str
-    residence_city: str
-    address: str
-    
-class CreateCandidateRequest(BaseModel):
-    document: str
-    document_type: str
-    first_name: str
-    last_name: str
-    phone_number: str
-    username: str
-    password: str
-    birth_date: str
-    age: int
-    origin_country: str
-    residence_country: str
+    origin_country: base.Country
+    residence_country: base.Country
     residence_city: str
     address: str
     
@@ -82,14 +68,14 @@ class CreateCandidateAcademicInfoRequest(BaseModel):
     person_id : str
     title : str
     institution : str
-    country : str
+    country : base.Country
     start_date : datetime.datetime
     end_date : Optional[datetime.datetime]
     description : str
 
 def myself(token:str)->AuthenticationResponse:
 
-    map = user_service.myself(token)
+    _, map = user_service.myself(token)
         
     return AuthenticationResponse(new_token = token, username=map["user"],
                                   role=map["role"],exp=map["exp"],person_id=map["person_id"]) 

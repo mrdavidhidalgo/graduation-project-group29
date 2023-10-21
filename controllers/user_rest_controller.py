@@ -70,7 +70,6 @@ async def create_user(request: CreateUserRequest, db: Session = Depends(get_db))
     
 @router.get("/user/myself")
 async def myself(request: Request):
-    
     header = request.headers.get('Authorization')
 
     if header is None or len(header.split(" "))<1 or header.split(" ")[1] is None:
@@ -78,11 +77,11 @@ async def myself(request: Request):
     try: 
         auth_response = management_service_facade.myself(header.split(" ")[1])
     
-    except  jwt.exceptions.ExpiredSignatureError:
+    except  (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError) as e:
         raise HTTPException(status_code=401) 
     except management_service_facade.UserLoginError as e:
         management_service_facade.LOGGER.error("Unexpected error for request")
-        raise e
+        raise HTTPException(status_code=400) 
     
     return {"username":auth_response.username, "new_token": auth_response.new_token,
             "role": auth_response.role,"exp": auth_response.exp, "person_id":auth_response.person_id}

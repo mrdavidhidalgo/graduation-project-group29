@@ -13,6 +13,7 @@ from services.user.model import user_model
 from services.user import user_service
 from services.professional import professional_service
 from pydantic import BaseModel
+from services.commons import base
 
 
 import os
@@ -31,7 +32,7 @@ class PersonDocumentAlreadyExistError(Exception):
         
 class CreateCandidateRequest(BaseModel):
     document: str
-    document_type: str
+    document_type: base.DocumentType
     first_name: str
     last_name: str
     phone_number: str
@@ -39,8 +40,8 @@ class CreateCandidateRequest(BaseModel):
     password: str
     birth_date: str
     age: int
-    origin_country: str
-    residence_country: str
+    origin_country: base.Country
+    residence_country: base.Country
     residence_city: str
     address: str    
 

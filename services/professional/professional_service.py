@@ -7,6 +7,7 @@ import datetime
 from services.professional.contracts import professional_repository
 from services.user.contracts import user_repository
 from services.professional.model import professional_model
+from services.commons import base
 
 
 
@@ -29,8 +30,8 @@ class ProfessionalDoesNotExistError(Exception):
 
 def create_professional(birthDate: str, 
                         age: int,
-                        originCountry: str, 
-                        residenceCountry: str, 
+                        originCountry: base.Country, 
+                        residenceCountry: base.Country, 
                         residenceCity: str, 
                         address: str, 
                         person_id: str, 
@@ -54,7 +55,6 @@ def create_professional(birthDate: str,
             person_id = person_id )
         )
         
-# Debe llegar el personID
 def add_academic_info(academic_info :professional_model.ProfessionalAcademicInfo,  
                       professional_repository: professional_repository.ProfessionalRepository)->None:
     

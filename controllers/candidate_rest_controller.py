@@ -1,33 +1,43 @@
-import datetime
-from fastapi import APIRouter, HTTPException, Header, Response, status
+from fastapi import APIRouter, HTTPException, Header, Response
 
 from fastapi import Depends
-from fastapi.responses import JSONResponse
-from typing import Annotated, Optional
-
+from typing import Annotated, Any, Optional, Tuple
+import jwt
+import datetime
+import pydantic
+from controllers import commons
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from daos.db_model.database import SessionLocal
+from services.commons import base
+from controllers import mapper_exceptions
 
 from controllers import management_service_facade
 from services import logs
-LOGGER = logs.get_logger()
+import re
+_LOGGER = logs.get_logger()
+
 
 router = APIRouter()
 
 class CreateCandidateAcademicInfoRequest(BaseModel):
-    person_id : str
     title : str
     institution : str
-    country : str
-    start_date : str
-    end_date : Optional[str]
+    country : base.Country
+    year_start_date : int
+    month_start_date : int
+    year_end_date : Optional[int] = None
+    month_end_date: Optional[int] = None
     description : str
+    
+   
+    
+    
     
 class CreateCandidateRequest(BaseModel):
     document: str
-    documentType: str
+    documentType: base.DocumentType
     firstName: str
     lastName: str
     phoneNumber: str
@@ -35,12 +45,14 @@ class CreateCandidateRequest(BaseModel):
     password: str
     birthDate: str
     age: int
-    originCountry: str
-    residenceCountry: str
+    originCountry: base.Country
+    residenceCountry: base.Country
     residenceCity: str
     address: str
 
-    
+class TokenData(BaseModel):
+    person_id: str
+
 # Dependency
 def get_db() -> Session:
     db = SessionLocal()
@@ -62,25 +74,35 @@ async def create_candidate(request: CreateCandidateRequest, db: Session = Depend
         return {"msg": "Candidate has been created"}
     except (management_service_facade.PersonDocumentAlreadyExistError, management_service_facade.UserNameAlreadyExistError) as e:
         raise HTTPException(status_code=400, detail=e.message)
-    
+
+ 
 @router.post("/candidates/myself/academic_info")
-async def create_candidate_academic_info(request: CreateCandidateAcademicInfoRequest, db: Session = Depends(get_db)):
+async def create_candidate_academic_info(request: CreateCandidateAcademicInfoRequest, 
+                                         token_data: TokenData = Depends(commons.get_token_data),
+                                         db: Session = Depends(get_db)):
     
-    new_start_date = datetime.datetime.fromisoformat(request.start_date + "T00:00:00")
-    new_end_date = datetime.datetime.fromisoformat(request.end_date + "T00:00:00") if request.end_date is not None else None
-    
-    academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =request.person_id,
+    try: 
+        start_date, end_date = get_dates(request = request)
+        academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =str(token_data.person_id),
                                                                                     title = request.title,
                                                                                     institution = request.institution, 
                                                                                     country = request.country,
-                                                                                    start_date = new_start_date,
-                                                                                    end_date = new_end_date,
+                                                                                    start_date = start_date,
+                                                                                    end_date = end_date,
                                                                                     description = request.description)
-    try:
+                                                                                    
         management_service_facade.add_candidate_academic_info(request = academic_request, db = db)
         return {"msg": "Candidate academic info has been added"}
+          
+    
+    except  (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError) as e:
+        raise HTTPException(status_code=401) 
+    
     except (management_service_facade.ProfessionalDoesNotExistError) as e:
-        raise HTTPException(status_code=400, detail=e.message)
+        _LOGGER.error("Error adding academic info [%r]", e)
+        mapper_exceptions.process_error_response(exception=e)
+    
+    
     
         
 @router.get("/candidates")
@@ -93,5 +115,32 @@ async def get_candidates(response: Response, db: Session = Depends(get_db)):
             data.append({'document': str(candidate.document),'documentType': str(candidate.document_type)})
         return data
     else:
-        LOGGER.info("Return 404 error")
+        _LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No candidates found")
+    
+    
+def get_dates(request: CreateCandidateAcademicInfoRequest)->Tuple[datetime.datetime, Optional[datetime.datetime]]:
+    
+    month_start_date = request.month_start_date
+    year_start_date = request.year_start_date
+    
+    start_date = datetime.datetime(year_start_date, month_start_date, 1)
+    
+    month_end_date = request.month_end_date
+    year_end_date = request.year_end_date
+
+    end_date = None
+    if year_end_date is not None and month_end_date is not None:
+        
+    
+        if month_end_date == 12:
+            month_end_date = 1
+            year_end_date += 1
+        else:
+            month_end_date += 1
+    
+        end_date = datetime.datetime(year_end_date, month_end_date, 1) - datetime.timedelta(days=1)
+
+    return start_date, end_date
+    
+    

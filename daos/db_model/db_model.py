@@ -1,16 +1,17 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum, ForeignKey
 import datetime
+from services.commons import base
 
 from .database import Base
-import enum
 from sqlalchemy.orm import relationship
 from services.user.model import user_model
+
 
 class Person(Base):
     __tablename__ = "person"
     
     document = Column(String(30), primary_key=True, index=True)
-    documentType = Column(String(30))
+    documentType = Column(Enum(base.DocumentType))
     firstName = Column(String(50))
     lastName = Column(String(50))
     phoneNumber = Column(String(20))
@@ -23,8 +24,8 @@ class Professional(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     birthDate = Column(String(10))
     age = Column(Integer)
-    originCountry = Column(String(70))
-    residenceCountry = Column(String(70))
+    originCountry = Column(Enum(base.Country))
+    residenceCountry = Column(Enum(base.Country))
     residenceCity = Column(String(70))
     address = Column(String(100))
     person_id = Column(String(30), ForeignKey('person.document'))
@@ -47,7 +48,7 @@ class ProfessionalAcademicInfo(Base):
     professional_id = Column(Integer, ForeignKey('professional.id'))
     title = Column(String(20))
     institution = Column(String(20))
-    country = Column(String(20))
+    country = Column(Enum(base.Country))
     start_date = Column(DateTime)
     end_date = Column(DateTime, nullable=True)
     description = Column(String(20))
