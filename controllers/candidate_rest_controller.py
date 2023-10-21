@@ -50,8 +50,7 @@ class CreateCandidateRequest(BaseModel):
     residenceCity: str
     address: str
 
-class TokenData(BaseModel):
-    person_id: str
+
 
 # Dependency
 def get_db() -> Session:
@@ -78,7 +77,7 @@ async def create_candidate(request: CreateCandidateRequest, db: Session = Depend
  
 @router.post("/candidates/myself/academic_info")
 async def create_candidate_academic_info(request: CreateCandidateAcademicInfoRequest, 
-                                         token_data: TokenData = Depends(commons.get_token_data),
+                                         token_data: commons.TokenData = Depends(commons.get_token_data),
                                          db: Session = Depends(get_db)):
     
     try: 
