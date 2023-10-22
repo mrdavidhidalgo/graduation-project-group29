@@ -41,24 +41,33 @@ class UserNameDoesNotExistError(Exception):
         super().__init__(self.message)
     
 
-def create_candidate_user(username: str, password: str, person_id: str, user_repository: user_repository.UserRepository)-> None:
+def create_user(username: str, password: str, role: str, person_id: str, user_repository: user_repository.UserRepository)-> None:
     
-    LOGGER.info("Creating user with username [%s]", username)
+    LOGGER.info("Creating user with username [%s] and role [%s]", username, role)
     
     persisted_user = user_repository.get_by_username(username = username)
     
     if persisted_user is not None:
         raise UserNameAlreadyExistError()
     
+    if role == "COMPANY":
+       role_aux = user_model.UserRole.CLIENT 
+    elif role == "RECRUITER":
+       role_aux = user_model.UserRole.RECRUITER 
+    else:
+       role_aux = user_model.UserRole.CANDIDATE
+    
+    
     user_repository.save(
         user = user_model.User(
             username = username,
             password = password,
             is_active = True,
-            role = user_model.UserRole.CANDIDATE,
+            role = role_aux,
             person_id = person_id
             )
         )
+        
 def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> str:
     
     LOGGER.info("Login user with username [%s]", username)

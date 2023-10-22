@@ -15,8 +15,8 @@ class Person(Base):
     firstName = Column(String(50))
     lastName = Column(String(50))
     phoneNumber = Column(String(20))
-    users = relationship('User', cascade='all, delete, delete-orphan')
-    professional = relationship('Professional', uselist=False, back_populates="person")
+    #users = relationship('User', cascade='all, delete, delete-orphan')
+    #professional = relationship('Professional', uselist=False, back_populates="person")
 
 class Professional(Base):
     __tablename__ = "professional"
@@ -29,7 +29,7 @@ class Professional(Base):
     residenceCity = Column(String(70))
     address = Column(String(100))
     person_id = Column(String(30), ForeignKey('person.document'))
-    person = relationship("Person", back_populates="professional")
+    #person = relationship("Person", back_populates="professional")
     
 class User(Base):
     __tablename__ = "user"
@@ -52,3 +52,25 @@ class ProfessionalAcademicInfo(Base):
     start_date = Column(DateTime)
     end_date = Column(DateTime, nullable=True)
     description = Column(String(20))
+
+class Company(Base):
+    __tablename__ = "company"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    taxpayerId = Column(String(20))
+    name = Column(String(100))
+    country = Column(String(70))
+    city = Column(String(70))
+    years = Column(Integer)
+    address = Column(String(100))
+    phoneNumber = Column(String(20))
+    employees = relationship('Employee', cascade='all, delete, delete-orphan')
+    
+class Employee(Base):
+    __tablename__ = "employee"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    profile = Column(String(50))
+    position = Column(String(100))
+    person_id = Column(String(30), ForeignKey('person.document'))
+    company_id = Column(String(30), ForeignKey('company.id'))
