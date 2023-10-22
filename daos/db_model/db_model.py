@@ -57,9 +57,9 @@ class Company(Base):
     __tablename__ = "company"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    taxpayerId = Column(String(20))
+    taxpayer_Id = Column(String(20))
     name = Column(String(100))
-    country = Column(String(70))
+    country = Column(Enum(base.Country))
     city = Column(String(70))
     years = Column(Integer)
     address = Column(String(100))
