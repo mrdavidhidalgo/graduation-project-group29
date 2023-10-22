@@ -110,9 +110,9 @@ class CreateCompanyRequest(BaseModel):
 
 def myself(token:str)->AuthenticationResponse:
 
-    _, map = user_service.myself(token)
+    new_token, map = user_service.myself(token)
         
-    return AuthenticationResponse(new_token = token, username=map["user"],
+    return AuthenticationResponse(new_token = new_token, username=map["user"],
                                   role=map["role"],exp=map["exp"],person_id=map["person_id"]) 
 
 def login(login_request: LoginRequest, db: Session)->LoginResponse:
