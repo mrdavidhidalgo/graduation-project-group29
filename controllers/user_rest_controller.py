@@ -52,7 +52,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db),reque
         management_service_facade.LOGGER.error("Unexpected error for request: %s", request_id)
         raise e
     
-    return {"username":login_response.username, "token": login_response.token}
+    return {"username":login_response.username, "token": login_response.token, "role": login_response.role,  "person_id": login_response.person_id}
 
 
 @router.post("/user")

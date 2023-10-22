@@ -11,7 +11,7 @@ import os
 import random
 from typing import Dict,Tuple
 from services import logs
-
+from services.user.model import user_model
 # Configura un secreto para firmar los tokens JWT
 _JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATA")
 _JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES = os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES", 15)
@@ -68,7 +68,7 @@ def create_user(username: str, password: str, role: str, person_id: str, user_re
             )
         )
         
-def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> str:
+def login_user(username: str, password: str, user_repository: user_repository.UserRepository)-> Tuple[str,Dict[str,str]]:
     
     LOGGER.info("Login user with username [%s]", username)
 
@@ -80,7 +80,7 @@ def login_user(username: str, password: str, user_repository: user_repository.Us
         
     if persisted_user.password == password:
         return create_access_token(data={"user": username,
-                                         "role":persisted_user.role.name,"person_id":persisted_user.person_id})[0];
+                                         "role":persisted_user.role.name,"person_id":persisted_user.person_id})
     
     raise UserLoginValidationError()
 
