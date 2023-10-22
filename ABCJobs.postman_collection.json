@@ -103,6 +103,86 @@
 						"header": []
 					},
 					"response": []
+				},
+				{
+					"name": "Add technical rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoicGVwZSIsInJvbGUiOiJDQU5ESURBVEUiLCJwZXJzb25faWQiOiIxIiwiZXhwIjoxNjk4MDIzNTk0fQ.NCObdIAUWEiNQL584P-tidqV8L2yisHpKfVUqALACCM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"role\": \"Analista de datos\",\n  \"experience_years\": 5,\n  \"description\": \"analisis de datos con herramientas de IA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/candidates/myself/technical_roles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates",
+								"myself",
+								"technical_roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add technology",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoicGVwZSIsInJvbGUiOiJDQU5ESURBVEUiLCJwZXJzb25faWQiOiIxIiwiZXhwIjoxNjk4MDIzNTk0fQ.NCObdIAUWEiNQL584P-tidqV8L2yisHpKfVUqALACCM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Java\",\n  \"experience_years\": 14,\n  \"level\": 4,\n  \"description\": \"Desarrollador Java de aplicaciones JEE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/candidates/myself/technologies",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates",
+								"myself",
+								"technologies"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
