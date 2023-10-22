@@ -67,8 +67,25 @@ class ProfessionalLaboralInfo(Base):
     end_date = Column(DateTime, nullable=True, comment="End date of the position")
     description = Column(String(500), comment= "description of the employee's functions in the company")
     
-
-
+class ProfessionalTechnicalRoleInfo(Base):
+    __tablename__ = "professional_technical_role_info"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    professional_id = Column(Integer, ForeignKey('professional.id'))
+    role = Column(String(50), comment="Technical role performed")
+    experience_years = Column(Integer)
+    description = Column(String(500), comment= "Description of the functions of the role")
+    
+class ProfessionalTechnologyInfo(Base):
+    __tablename__ = "professional_technology_info"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    professional_id = Column(Integer, ForeignKey('professional.id'))
+    name = Column(String(50))
+    level = Column(Integer)
+    experience_years = Column(Integer)
+    description = Column(String(500))
+    
 class Company(Base):
     __tablename__ = "company"
     

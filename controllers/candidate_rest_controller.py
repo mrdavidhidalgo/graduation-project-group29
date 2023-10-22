@@ -44,6 +44,17 @@ class CreateCandidateLaboralInfoRequest(BaseModel):
     month_end_date: Optional[int] = None
     description : str
     
+class CreateCandidateTechnicalRoleInfoRequest(BaseModel):
+    role: str
+    experience_years: int
+    description : str
+    
+class CreateCandidateTechnologyInfoRequest(BaseModel):
+    name: str
+    experience_years: int
+    level: int
+    description : str
+    
     
 class CreateCandidateRequest(BaseModel):
     document: str
@@ -137,6 +148,51 @@ async def create_candidate_laboral_info(request: CreateCandidateLaboralInfoReque
     
     except (management_service_facade.ProfessionalDoesNotExistError, management_service_facade.DateRangeInvalidError) as e:
         _LOGGER.error("Error adding laboral info [%r]", e)
+        mapper_exceptions.process_error_response(exception=e)
+        
+@router.post("/candidates/myself/technical_roles")
+async def create_candidate_technical_role(request: CreateCandidateTechnicalRoleInfoRequest, 
+                                         token_data: commons.TokenData = Depends(commons.get_token_data),
+                                         db: Session = Depends(get_db)):
+    
+    try: 
+        technical_role_info = management_service_facade.CreateCandidateTechnicalRoleInfoRequest(person_id =str(token_data.person_id),
+                                                                                    role = request.role,
+                                                                                    experience_years = request.experience_years,
+                                                                                    description = request.description)
+                                                                                    
+        management_service_facade.add_candidate_technical_role_info(request = technical_role_info, db = db)
+        return {"msg": "Candidate technical role info has been added"}
+          
+    
+    except  (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError) as e:
+        raise HTTPException(status_code=401) 
+    
+    except (management_service_facade.ProfessionalDoesNotExistError) as e:
+        _LOGGER.error("Error adding technical role info [%r]", e)
+        mapper_exceptions.process_error_response(exception=e)
+        
+@router.post("/candidates/myself/technologies")
+async def create_technology_info(request: CreateCandidateTechnologyInfoRequest, 
+                                         token_data: commons.TokenData = Depends(commons.get_token_data),
+                                         db: Session = Depends(get_db)):
+    
+    try: 
+        technology_info_request = management_service_facade.CreateCandidateTechnologyInfoRequest(person_id =str(token_data.person_id),
+                                                                                    name = request.name,
+                                                                                    experience_years = request.experience_years,
+                                                                                    level = request.level,
+                                                                                    description = request.description)
+                                                                                    
+        management_service_facade.add_candidate_technology_info(request = technology_info_request, db = db)
+        return {"msg": "Candidate technology info has been added"}
+          
+    
+    except  (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError) as e:
+        raise HTTPException(status_code=401) 
+    
+    except (management_service_facade.ProfessionalDoesNotExistError) as e:
+        _LOGGER.error("Error adding technology info [%r]", e)
         mapper_exceptions.process_error_response(exception=e)
     
     

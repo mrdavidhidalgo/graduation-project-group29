@@ -83,3 +83,31 @@ def add_laboral_info(laboral_info :professional_model.ProfessionalLaboralInfo,
     professional_repository.add_laboral_info(professional_id=professional.id, laboral_info=laboral_info)
     
     LOGGER.info("Laboral info for professional [%s] was created", professional.id)
+    
+def add_technical_role(technical_role :professional_model.ProfessionalTechnicalRole,  
+                      professional_repository: professional_repository.ProfessionalRepository)->None:
+    
+    professional = professional_repository.get_by_person_id(person_id=technical_role.person_id)
+    
+    if professional is None:
+        raise ProfessionalDoesNotExistError(person_id=technical_role.person_id)
+    
+    LOGGER.info("Creating technical role info for professional [%s]", professional.id)
+    
+    professional_repository.add_technical_role_info(professional_id=professional.id, technical_role_info=technical_role)
+    
+    LOGGER.info("Technical role info for professional [%s] was created", professional.id)
+    
+def add_technology_info(technology_info :professional_model.ProfessionalTechnologyInfo,  
+                      professional_repository: professional_repository.ProfessionalRepository)->None:
+    
+    professional = professional_repository.get_by_person_id(person_id=technology_info.person_id)
+    
+    if professional is None:
+        raise ProfessionalDoesNotExistError(person_id=technology_info.person_id)
+    
+    LOGGER.info("Creating technology info for professional [%s]", professional.id)
+    
+    professional_repository.add_technology_info(professional_id=professional.id, technology_info=technology_info)
+    
+    LOGGER.info("Technology info for professional [%s] was created", professional.id)
