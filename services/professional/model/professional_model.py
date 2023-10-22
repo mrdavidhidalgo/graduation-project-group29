@@ -42,3 +42,17 @@ class ProfessionalLaboralInfo(BaseModel):
     start_date : datetime.datetime
     end_date : Optional[datetime.datetime]
     description : str
+    
+class ProfessionalTechnologyInfo(BaseModel):
+    person_id : str
+    name: str
+    experience_years: int
+    level: int
+    description : str
+    
+class ProfessionalTechnicalRole(BaseModel):
+    person_id : str
+    role: str
+    experience_years: int
+    description : str
+    

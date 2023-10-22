@@ -73,15 +73,6 @@ class CreateCandidateRequest(BaseModel):
     residenceCity: str
     address: str
     
-class CreateCandidateAcademicInfoRequest(BaseModel):
-    person_id : str
-    title : str
-    institution : str
-    country : base.Country
-    start_date : datetime.datetime
-    end_date : Optional[datetime.datetime]
-    description : str
-    
 class CreateCandidateLaboralInfoRequest(BaseModel):
     person_id : str
     position: str
@@ -141,6 +132,29 @@ def create_user(request: CreateUserRequest, db: Session)->None:
 #                                                       CANDIDATE                                                                    #
 ######################################################################################################################################
 
+
+class CreateCandidateAcademicInfoRequest(BaseModel):
+    person_id : str
+    title : str
+    institution : str
+    country : base.Country
+    start_date : datetime.datetime
+    end_date : Optional[datetime.datetime]
+    description : str
+    
+class CreateCandidateTechnicalRoleInfoRequest(BaseModel):
+    person_id : str
+    role: str
+    experience_years: int
+    description : str
+    
+class CreateCandidateTechnologyInfoRequest(BaseModel):
+    person_id : str
+    name: str
+    experience_years: int
+    level: int
+    description : str
+
 def create_candidate(request: CreateCandidateRequest, db: Session)->None:
 
     LOGGER.info("Starting Create candidate with username [%s]", request.username)
@@ -179,6 +193,20 @@ def add_candidate_laboral_info(request: CreateCandidateLaboralInfoRequest, db: S
     professional_repository = db_professional_repository.DBProfessionalRepository(db = db)
     
     professional_service.add_laboral_info(laboral_info=professional_model.ProfessionalLaboralInfo.model_validate(request.model_dump()), 
+                                           professional_repository = professional_repository)
+    
+def add_candidate_technical_role_info(request: CreateCandidateTechnicalRoleInfoRequest, db: Session)->None:
+    
+    professional_repository = db_professional_repository.DBProfessionalRepository(db = db)
+    
+    professional_service.add_technical_role(technical_role=professional_model.ProfessionalTechnicalRole.model_validate(request.model_dump()), 
+                                           professional_repository = professional_repository)
+    
+def add_candidate_technology_info(request: CreateCandidateTechnologyInfoRequest, db: Session)->None:
+    
+    professional_repository = db_professional_repository.DBProfessionalRepository(db = db)
+    
+    professional_service.add_technology_info(technology_info=professional_model.ProfessionalTechnologyInfo.model_validate(request.model_dump()), 
                                            professional_repository = professional_repository)
                                            
 

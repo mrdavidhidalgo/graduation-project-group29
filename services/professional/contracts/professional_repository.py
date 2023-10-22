@@ -20,4 +20,12 @@ class ProfessionalRepository(abc.ABC):
     def add_laboral_info(self, professional_id : int, laboral_info: professional_model.ProfessionalLaboralInfo)-> None:
         ...
         
+    @abc.abstractmethod
+    def add_technology_info(self, professional_id : int, technology_info: professional_model.ProfessionalTechnologyInfo)-> None:
+        ...
+        
+    @abc.abstractmethod
+    def add_technical_role_info(self, professional_id : int, technical_role_info: professional_model.ProfessionalTechnicalRole)-> None:
+        ...
+        
     

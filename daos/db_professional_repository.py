@@ -64,4 +64,29 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(laboral_info)
         self.db.commit()
         
+    def add_technical_role_info(self, professional_id: int, technical_role_info: professional_model.ProfessionalTechnicalRole)-> None:
+        technical_role = models.ProfessionalTechnicalRoleInfo(
+            professional_id = professional_id,
+            role = technical_role_info.role,
+            experience_years = technical_role_info.experience_years,
+            description = technical_role_info.description
+
+        )
+        
+        self.db.add(technical_role)
+        self.db.commit()
+        
+    def add_technology_info(self, professional_id: int, technology_info: professional_model.ProfessionalTechnologyInfo)-> None:
+        technology_info = models.ProfessionalTechnologyInfo(
+            professional_id = professional_id,
+            name = technology_info.name,
+            level = technology_info.level,
+            experience_years = technology_info.experience_years,
+            description = technology_info.description
+
+        )
+        
+        self.db.add(technology_info)
+        self.db.commit()
+        
         
