@@ -63,8 +63,23 @@ def add_academic_info(academic_info :professional_model.ProfessionalAcademicInfo
     if professional is None:
         raise ProfessionalDoesNotExistError(person_id=academic_info.person_id)
     
-    LOGGER.info("Creating academic professional info for professional [%s]", professional.id)
+    LOGGER.info("Creating academic info for professional [%s]", professional.id)
     
     professional_repository.add_academic_info(professional_id=professional.id, academic_info=academic_info)
     
-    LOGGER.info("Academic professional info for professional [%s] was created", professional.id)
+    LOGGER.info("Academic info for professional [%s] was created", professional.id)
+    
+
+def add_laboral_info(laboral_info :professional_model.ProfessionalLaboralInfo,  
+                      professional_repository: professional_repository.ProfessionalRepository)->None:
+    
+    professional = professional_repository.get_by_person_id(person_id=laboral_info.person_id)
+    
+    if professional is None:
+        raise ProfessionalDoesNotExistError(person_id=laboral_info.person_id)
+    
+    LOGGER.info("Creating laboral info for professional [%s]", professional.id)
+    
+    professional_repository.add_laboral_info(professional_id=professional.id, laboral_info=laboral_info)
+    
+    LOGGER.info("Laboral info for professional [%s] was created", professional.id)

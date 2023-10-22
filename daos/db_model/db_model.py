@@ -52,6 +52,22 @@ class ProfessionalAcademicInfo(Base):
     start_date = Column(DateTime)
     end_date = Column(DateTime, nullable=True)
     description = Column(String(20))
+    
+class ProfessionalLaboralInfo(Base):
+    __tablename__ = "professional_laboral_info"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    professional_id = Column(Integer, ForeignKey('professional.id'))
+    position = Column(String(50), comment="position or work performed by the professional in the company")
+    company_name = Column(String(50))
+    company_country = Column(Enum(base.Country))
+    company_address = Column(String(100))
+    company_phone = Column(String(20), comment="Company contact phone number")
+    start_date = Column(DateTime, comment="Start date of the position")
+    end_date = Column(DateTime, nullable=True, comment="End date of the position")
+    description = Column(String(500), comment= "description of the employee's functions in the company")
+    
+
 
 class Company(Base):
     __tablename__ = "company"
