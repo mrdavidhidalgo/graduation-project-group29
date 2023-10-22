@@ -12,6 +12,11 @@ from pydantic import BaseModel
 from services.professional.model import professional_model
 from services.commons import base
 
+class DateRangeInvalidError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = f"The Range of dates is invalid"
+        super().__init__(self.message)
+
 import jwt
 class LoginResponse(BaseModel):
     token: str
@@ -76,6 +81,17 @@ class CreateCandidateAcademicInfoRequest(BaseModel):
     start_date : datetime.datetime
     end_date : Optional[datetime.datetime]
     description : str
+    
+class CreateCandidateLaboralInfoRequest(BaseModel):
+    person_id : str
+    position: str
+    company_name: str
+    company_country: base.Country
+    company_address: str
+    company_phone: str
+    start_date : datetime.datetime
+    end_date : Optional[datetime.datetime]
+    description : str
 
 class CreateCompanyRequest(BaseModel):
     document: str
@@ -93,6 +109,11 @@ class CreateCompanyRequest(BaseModel):
     phoneNumber: str
     profile: str
     position: str
+    
+
+######################################################################################################################################
+#                                                           USER                                                                     #
+######################################################################################################################################
 
 def myself(token:str)->AuthenticationResponse:
 
@@ -146,18 +167,24 @@ def get_candidates(db: Session)->List[person_service.person_model.Person]:
         LOGGER.info("List with data in facade")
         return professional_list
     
-# En el token debe venir el person_id
 def add_candidate_academic_info(request: CreateCandidateAcademicInfoRequest, db: Session)->None:
     
     professional_repository = db_professional_repository.DBProfessionalRepository(db = db)
     
     professional_service.add_academic_info(academic_info=professional_model.ProfessionalAcademicInfo.model_validate(request.model_dump()), 
                                            professional_repository = professional_repository)
+    
+def add_candidate_laboral_info(request: CreateCandidateLaboralInfoRequest, db: Session)->None:
+    
+    professional_repository = db_professional_repository.DBProfessionalRepository(db = db)
+    
+    professional_service.add_laboral_info(laboral_info=professional_model.ProfessionalLaboralInfo.model_validate(request.model_dump()), 
+                                           professional_repository = professional_repository)
                                            
 
-################################
-#      COMPANIES     ###########
-################################
+######################################################################################################################################
+#                                                       COMPANIES                                                                    #
+######################################################################################################################################
 
 def create_company(request: CreateCompanyRequest, db: Session)->None:
 

@@ -1,144 +1,175 @@
 {
 	"info": {
-		"_postman_id": "737d2b80-36ea-4709-a513-6046f5e4dced",
+		"_postman_id": "32968fe2-6e21-40db-bfa2-c1af8fc320e3",
 		"name": "ABCJobs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "786244"
 	},
 	"item": [
 		{
-			"name": "Create candidate",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"document\": \"1\",\n  \"documentType\": \"CC\",\n  \"firstName\": \"Franklin\",\n  \"lastName\": \"Candanoza\",\n  \"phoneNumber\": \"3215698574\",\n  \"username\": \"pepe\",\n  \"password\": \"123456\",\n  \"birthDate\": \"2019-05-05\",\n  \"age\": 18,\n  \"originCountry\": \"CO\",\n  \"residenceCountry\": \"CO\",\n  \"residenceCity\": \"Santa Marta\",\n  \"address\": \"Calle 11\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Candidates",
+			"item": [
+				{
+					"name": "Create candidate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"document\": \"1\",\n  \"documentType\": \"CC\",\n  \"firstName\": \"Franklin\",\n  \"lastName\": \"Candanoza\",\n  \"phoneNumber\": \"3215698574\",\n  \"username\": \"pepe\",\n  \"password\": \"123456\",\n  \"birthDate\": \"2019-05-05\",\n  \"age\": 18,\n  \"originCountry\": \"CO\",\n  \"residenceCountry\": \"CO\",\n  \"residenceCity\": \"Santa Marta\",\n  \"address\": \"Calle 11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/candidates",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8000/candidates",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"candidates"
-					]
+				{
+					"name": "Get candidates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/candidates",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add academic info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZkBnbWFpbC5jb20iLCJyb2xlIjoiQ0FORElEQVRFIiwicGVyc29uX2lkIjoiMTA4MzQ2NTI0MCIsImV4cCI6MTY5NzkyODc2MH0.WZHKrKtOK0dFadW9IpBnPriADT7cASlccWqUAF3N688",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Pepito Title\",\n    \"institution\": \"Unimagdalena\",\n    \"country\": \"CO\",\n    \"year_start_date\" : 2013,\n    \"month_start_date\" : 11,\n    \"year_end_date\" : 2014,\n    \"month_end_date\" : 2,\n    \"description\": \"detallews\"\n}\n\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/candidates/myself/academic_info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates",
+								"myself",
+								"academic_info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add laboral info",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get candidates",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8000/candidates",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"candidates"
-					]
+			"name": "Companies",
+			"item": [
+				{
+					"name": "Create company",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"document\": \"9876532\",\n  \"documentType\": \"NI\",\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Saenz\",\n  \"username\": \"csaenz@aol.com\",\n     \"password\": \"Cnts&23..\",\n  \"taxpayerId\": \"900172234\",\n  \"name\": \"TECNOSOFT\",\n  \"country\": \"PE\",\n  \"city\": \"LIMA\",\n  \"years\": \"12\",\n     \"address\": \"Av Miraflores 45\",\n   \"phoneNumber\": \"5593487347\",\n  \"profile\": \"OPERATIVO\",\n  \"position\": \"JEFE DE SOPORTE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/companies",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"companies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get companies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/companies",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"companies"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Add academic info",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZkBnbWFpbC5jb20iLCJyb2xlIjoiQ0FORElEQVRFIiwicGVyc29uX2lkIjoiMTA4MzQ2NTI0MCIsImV4cCI6MTY5NzkyODc2MH0.WZHKrKtOK0dFadW9IpBnPriADT7cASlccWqUAF3N688",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"title\": \"Pepito Title\",\n    \"institution\": \"Unimagdalena\",\n    \"country\": \"CO\",\n    \"year_start_date\" : 2013,\n    \"month_start_date\" : 11,\n    \"year_end_date\" : 2014,\n    \"month_end_date\" : 2,\n    \"description\": \"detallews\"\n}\n\n\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/candidates/myself/academic_info",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"candidates",
-						"myself",
-						"academic_info"
-					]
+			"name": "User",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-                {
-			"name": "Create company",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"document\": \"9876532\",\n  \"documentType\": \"NI\",\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Saenz\",\n  \"username\": \"csaenz@aol.com\",\n     \"password\": \"Cnts&23..\",\n  \"taxpayerId\": \"900172234\",\n  \"name\": \"TECNOSOFT\",\n  \"country\": \"PE\",\n  \"city\": \"LIMA\",\n  \"years\": \"12\",\n     \"address\": \"Av Miraflores 45\",\n   \"phoneNumber\": \"5593487347\",\n  \"profile\": \"OPERATIVO\",\n  \"position\": \"JEFE DE SOPORTE\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/companies",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"companies"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get companies",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8000/companies",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"companies"
-					]
-				}
-			},
-			"response": []
+			]
 		}
 	]
 }

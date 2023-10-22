@@ -1,4 +1,5 @@
 from controllers import management_service_facade
+from controllers import candidate_rest_controller
 
 from fastapi import HTTPException
 import enum
@@ -7,6 +8,7 @@ import pydantic
 class ErrorCode(enum.Enum):
     ABC00 = "ABC00"
     ABC01 = "ABC01"
+    ABC02 = "ABC02"
 
 class MapperException(pydantic.BaseModel):
     status_code : int
@@ -21,7 +23,8 @@ class MapperException(pydantic.BaseModel):
 
     
 _EXCEPTION_MAPPING = {
-    management_service_facade.ProfessionalDoesNotExistError: MapperException(status_code = 404, error_code = ErrorCode.ABC01)
+    management_service_facade.ProfessionalDoesNotExistError: MapperException(status_code = 404, error_code = ErrorCode.ABC01),
+    management_service_facade.DateRangeInvalidError: MapperException(status_code = 400, error_code = ErrorCode.ABC02)
 }
 
 def _get_exception_code(

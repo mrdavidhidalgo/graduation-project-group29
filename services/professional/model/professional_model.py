@@ -30,3 +30,15 @@ class ProfessionalAcademicInfo(BaseModel):
     start_date : datetime.datetime
     end_date : Optional[datetime.datetime]
     description : str
+    
+
+class ProfessionalLaboralInfo(BaseModel):
+    person_id : str
+    position: str
+    company_name: str
+    company_country: base.Country
+    company_address: str
+    company_phone: str
+    start_date : datetime.datetime
+    end_date : Optional[datetime.datetime]
+    description : str

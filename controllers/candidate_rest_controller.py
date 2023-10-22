@@ -19,6 +19,7 @@ import re
 _LOGGER = logs.get_logger()
 
 
+        
 router = APIRouter()
 
 class CreateCandidateAcademicInfoRequest(BaseModel):
@@ -31,8 +32,17 @@ class CreateCandidateAcademicInfoRequest(BaseModel):
     month_end_date: Optional[int] = None
     description : str
     
-   
-    
+class CreateCandidateLaboralInfoRequest(BaseModel):
+    position: str
+    company_name: str
+    company_country: base.Country
+    company_address: str
+    company_phone: str
+    year_start_date : int
+    month_start_date : int
+    year_end_date : Optional[int] = None
+    month_end_date: Optional[int] = None
+    description : str
     
     
 class CreateCandidateRequest(BaseModel):
@@ -81,7 +91,7 @@ async def create_candidate_academic_info(request: CreateCandidateAcademicInfoReq
                                          db: Session = Depends(get_db)):
     
     try: 
-        start_date, end_date = get_dates(request = request)
+        start_date, end_date = get_and_validates_dates(request = request)
         academic_request = management_service_facade.CreateCandidateAcademicInfoRequest(person_id =str(token_data.person_id),
                                                                                     title = request.title,
                                                                                     institution = request.institution, 
@@ -100,7 +110,34 @@ async def create_candidate_academic_info(request: CreateCandidateAcademicInfoReq
     except (management_service_facade.ProfessionalDoesNotExistError) as e:
         _LOGGER.error("Error adding academic info [%r]", e)
         mapper_exceptions.process_error_response(exception=e)
+        
+@router.post("/candidates/myself/laboral_info")
+async def create_candidate_laboral_info(request: CreateCandidateLaboralInfoRequest, 
+                                         token_data: commons.TokenData = Depends(commons.get_token_data),
+                                         db: Session = Depends(get_db)):
     
+    try: 
+        start_date, end_date = get_and_validates_dates(request = request)
+        laboral_request = management_service_facade.CreateCandidateLaboralInfoRequest(person_id =str(token_data.person_id),
+                                                                                    position = request.position,
+                                                                                    company_name = request.company_name,
+                                                                                    company_country = request.company_country,
+                                                                                    company_address = request.company_address,
+                                                                                    company_phone = request.company_phone,
+                                                                                    start_date = start_date,
+                                                                                    end_date = end_date,
+                                                                                    description =request.description)
+                                                                                    
+        management_service_facade.add_candidate_laboral_info(request = laboral_request, db = db)
+        return {"msg": "Candidate laboral info has been added"}
+          
+    
+    except  (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError) as e:
+        raise HTTPException(status_code=401) 
+    
+    except (management_service_facade.ProfessionalDoesNotExistError, management_service_facade.DateRangeInvalidError) as e:
+        _LOGGER.error("Error adding laboral info [%r]", e)
+        mapper_exceptions.process_error_response(exception=e)
     
     
         
@@ -118,7 +155,7 @@ async def get_candidates(response: Response, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No candidates found")
     
     
-def get_dates(request: CreateCandidateAcademicInfoRequest)->Tuple[datetime.datetime, Optional[datetime.datetime]]:
+def get_and_validates_dates(request: CreateCandidateAcademicInfoRequest)->Tuple[datetime.datetime, Optional[datetime.datetime]]:
     
     month_start_date = request.month_start_date
     year_start_date = request.year_start_date
@@ -139,6 +176,9 @@ def get_dates(request: CreateCandidateAcademicInfoRequest)->Tuple[datetime.datet
             month_end_date += 1
     
         end_date = datetime.datetime(year_end_date, month_end_date, 1) - datetime.timedelta(days=1)
+        
+    if end_date is not None and end_date < start_date:
+        raise management_service_facade.DateRangeInvalidError()
 
     return start_date, end_date
     

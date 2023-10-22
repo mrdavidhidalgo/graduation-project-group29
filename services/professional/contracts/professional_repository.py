@@ -16,6 +16,8 @@ class ProfessionalRepository(abc.ABC):
     def add_academic_info(self, professional_id : int, academic_info: professional_model.ProfessionalAcademicInfo)-> None:
         ...
         
-    #@abc.abstractmethod
-    #def get_all_professionals(self):
-    #    ...
+    @abc.abstractmethod
+    def add_laboral_info(self, professional_id : int, laboral_info: professional_model.ProfessionalLaboralInfo)-> None:
+        ...
+        
+    

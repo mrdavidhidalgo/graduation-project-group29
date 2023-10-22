@@ -48,4 +48,20 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(academic_info)
         self.db.commit()
         
+    def add_laboral_info(self, professional_id: int, laboral_info: professional_model.ProfessionalLaboralInfo)-> None:
+        laboral_info = models.ProfessionalLaboralInfo(
+            professional_id = professional_id,
+            position = laboral_info.position,
+            company_name = laboral_info.company_name,
+            company_country = laboral_info.company_country,
+            company_address = laboral_info.company_address,
+            company_phone = laboral_info.company_phone,
+            start_date = laboral_info.start_date,
+            end_date = laboral_info.end_date,
+            description = laboral_info.description
+        )
+        
+        self.db.add(laboral_info)
+        self.db.commit()
+        
         
