@@ -21,7 +21,9 @@ import jwt
 class LoginResponse(BaseModel):
     token: str
     username: str
-
+    role: str
+    person_id:int
+    
 class AuthenticationResponse(BaseModel):
     new_token: str
     username: str
@@ -117,9 +119,9 @@ def login(login_request: LoginRequest, db: Session)->LoginResponse:
     
     user_repository = db_user_repository.DBUserRepository(db = db)
     
-    token = user_service.login_user(user_repository=user_repository, username=login_request.username, password=login_request.password)
+    token,data = user_service.login_user(user_repository=user_repository, username=login_request.username, password=login_request.password)
     
-    return LoginResponse(token = token, username=login_request.username) 
+    return LoginResponse(token = token, username=login_request.username,role=data["role"],person_id=data["person_id"]) 
 
 def create_user(request: CreateUserRequest, db: Session)->None:
     
