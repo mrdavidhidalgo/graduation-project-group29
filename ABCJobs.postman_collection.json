@@ -92,6 +92,53 @@
 				}
 			},
 			"response": []
+		},
+                {
+			"name": "Create company",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"document\": \"9876532\",\n  \"documentType\": \"NI\",\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Saenz\",\n  \"username\": \"csaenz@aol.com\",\n     \"password\": \"Cnts&23..\",\n  \"taxpayerId\": \"900172234\",\n  \"name\": \"TECNOSOFT\",\n  \"country\": \"PE\",\n  \"city\": \"LIMA\",\n  \"years\": \"12\",\n     \"address\": \"Av Miraflores 45\",\n   \"phoneNumber\": \"5593487347\",\n  \"profile\": \"OPERATIVO\",\n  \"position\": \"JEFE DE SOPORTE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/companies",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"companies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get companies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/companies",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"companies"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

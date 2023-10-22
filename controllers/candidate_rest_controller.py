@@ -63,10 +63,10 @@ def get_db() -> Session:
 @router.post("/candidates")
 async def create_candidate(request: CreateCandidateRequest, db: Session = Depends(get_db)):
     
-    request = management_service_facade.CreateCandidateRequest(document = request.document, document_type = request.documentType,
-                                           first_name=request.firstName, last_name = request.lastName, phone_number = request.phoneNumber, username = request.username,\
-                                           password = request.password, birth_date = request.birthDate, age = request.age, origin_country= request.originCountry,\
-                                           residence_country = request.residenceCountry, residence_city = request.residenceCity, address= request.address)
+    request = management_service_facade.CreateCandidateRequest(document = request.document, documentType = request.documentType,
+                                           firstName=request.firstName, lastName = request.lastName, phoneNumber = request.phoneNumber, username = request.username,\
+                                           password = request.password, birthDate = request.birthDate, age = request.age, originCountry= request.originCountry,\
+                                           residenceCountry = request.residenceCountry, residenceCity = request.residenceCity, address= request.address)
     
     try:
         management_service_facade.create_candidate(request = request, db = db)

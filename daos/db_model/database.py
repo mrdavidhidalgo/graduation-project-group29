@@ -16,9 +16,13 @@ _LOGGER = logs.get_logger()
 #    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 #)
 SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL", default="sqlite:///./sql_app.db")
-_LOGGER.info(f"Using {{SQLALCHEMY_DATABASE_URL}} for database")
+SQLALCHEMY_PARAMS = os.getenv("SQLALCHEMY_PARAMS", default="")
+_LOGGER.info(f"Using {{SQLALCHEMY_DATABASE_URL}} [%s] for database", str(SQLALCHEMY_PARAMS) )
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+if len(SQLALCHEMY_PARAMS) > 1:
+    engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+else:
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
