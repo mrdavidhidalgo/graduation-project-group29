@@ -9,7 +9,7 @@ class ProfessionalRepository(abc.ABC):
         ...
         
     @abc.abstractmethod
-    def save(self, person: professional_model.ProfessionalCreateModel)-> None:
+    def save(self, professional: professional_model.ProfessionalCreateModel)-> None:
         ...
         
     @abc.abstractmethod
