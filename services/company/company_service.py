@@ -2,7 +2,7 @@
 
 from datetime import timedelta
 import datetime
-from typing import List
+from typing import List, Optional
 
 #from .contracts import user_repository
 from services.person.contracts import person_repository
@@ -86,9 +86,16 @@ user_repository: user_repository.UserRepository, company_repository: company_rep
     user_service.create_user(request.username, request.password, "COMPANY", request.document, user_repository)
     
     
-   
-    
-    
+def get_by_taxpayerId(company_repository: company_repository.CompanyRepository, taxpayerId: str)-> Optional[company_model.Company]:   
+    LOGGER.info("Search for company by id")
+    company =  company_repository.get_by_taxpayerId(taxpayerId)
+    if list is None:
+        LOGGER.info("Company not exists")
+        return None
+    else:
+        LOGGER.info("Company exists in service")
+        return company
+        
 def get_all(company_repository: company_repository.CompanyRepository)->List[company_model.Company]:
     LOGGER.info("Search for companies in service")
     list =  company_repository.get_all()
