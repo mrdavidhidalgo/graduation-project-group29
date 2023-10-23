@@ -44,4 +44,4 @@ jobs:
         ls -l
     - name: Correr pruebas
       id: correr-pruebas
-      run: pytest
+      run: coverage run -m pytest && coverage report --include=controllers/*,services/*,daos/* --fail-under=80 --skip-empty
