@@ -97,7 +97,7 @@ class Company(Base):
     years = Column(Integer)
     address = Column(String(100))
     phoneNumber = Column(String(20))
-    employees = relationship('Employee', cascade='all, delete, delete-orphan')
+    #employees = relationship('Employee', cascade='all, delete, delete-orphan')
     
 class Employee(Base):
     __tablename__ = "employee"
