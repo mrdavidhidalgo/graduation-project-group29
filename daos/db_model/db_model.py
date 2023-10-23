@@ -106,4 +106,4 @@ class Employee(Base):
     profile = Column(String(50))
     position = Column(String(100))
     person_id = Column(String(30), ForeignKey('person.document'))
-    company_id = Column(String(30), ForeignKey('company.taxpayerId'))
+    company_id = Column(String(30))
