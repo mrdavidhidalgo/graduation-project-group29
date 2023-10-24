@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, Date, Enum, ForeignKey, Text, func
 import datetime
 from services.commons import base
 
@@ -106,4 +106,16 @@ class Employee(Base):
     profile = Column(String(50))
     position = Column(String(100))
     person_id = Column(String(30))
+    company_id = Column(String(30))
+
+
+class Project(Base):
+    __tablename__ = "project"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    project_name = Column(String(100))
+    start_date = Column(Date)
+    active = Column(String(1))
+    creation_time = Column(DateTime(timezone=False), server_default=func.now())
+    details = Column(Text)
     company_id = Column(String(30))

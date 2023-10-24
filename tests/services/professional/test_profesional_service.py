@@ -14,11 +14,11 @@ def test_should_raise_exception_trying_to_create_professionl_but_it_already_exis
     
     with pytest.raises(subject.ProfessionalAlreadyExistError):
         subject.create_professional(
-            birthDate ="2023-02-01", 
+            birth_date ="2023-02-01",
             age = 18,
-            originCountry= base.Country.Colombia, 
-            residenceCountry= base.Country.Colombia, 
-            residenceCity = "Medellin", 
+            origin_country= base.Country.Colombia, 
+            residence_country= base.Country.Colombia, 
+            residence_city = "Medellin", 
             address = "Calle 15", 
             person_id = "123", 
             professional_repository= mocks.FakeProfesionalRepository(person_id="23")
@@ -28,11 +28,11 @@ def test_should_raise_exception_trying_to_create_professionl_but_it_already_exis
 def test_should_create_professional_succesfully()->None:
     
     subject.create_professional(
-        birthDate ="2023-02-01", 
+        birth_date ="2023-02-01",
                         age = 18,
-                        originCountry= base.Country.Colombia, 
-                        residenceCountry= base.Country.Colombia, 
-                        residenceCity = "Medellin", 
+                        origin_country= base.Country.Colombia, 
+                        residence_country= base.Country.Colombia, 
+                        residence_city = "Medellin", 
                         address = "Calle 15", 
                         person_id = "123", 
                         professional_repository= mocks.FakeProfesionalRepository()
