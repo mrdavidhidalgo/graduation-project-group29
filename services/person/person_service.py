@@ -34,17 +34,17 @@ class PersonDocumentAlreadyExistError(Exception):
         
 class CreateCandidateRequest(BaseModel):
     document: str
-    documentType: base.DocumentType
-    firstName: str
-    lastName: str
-    phoneNumber: str
+    document_type: base.DocumentType
+    first_name: str
+    last_name: str
+    phone_number: str
     username: str
     password: str
-    birthDate: str
+    birth_date: str
     age: int
-    originCountry: base.Country
-    residenceCountry: base.Country
-    residenceCity: str
+    origin_country: base.Country
+    residence_country: base.Country
+    residence_city: str
     address: str    
 
 class CreatePersonRequest(BaseModel):
@@ -56,12 +56,12 @@ class CreatePersonRequest(BaseModel):
 
 class CreateEmployeeRequest(BaseModel):
     document: str
-    documentType: str
-    firstName: str
-    lastName: str
+    document_type: str
+    first_name: str
+    last_name: str
     profile: str
     position: str
-    taxpayerId: str
+    taxpayer_id: str
 
 def create_person(request : CreatePersonRequest, person_repository: person_repository.PersonRepository)-> None:
     
@@ -84,7 +84,7 @@ def create_person(request : CreatePersonRequest, person_repository: person_repos
 def create_candidate(request : CreateCandidateRequest, person_repository: person_repository.PersonRepository,\
 user_repository: user_repository.UserRepository, professional_repository: professional_repository.ProfessionalRepository)-> None:
     
-    LOGGER.info("Creating candidate with document [%s] and documentType [%s]", request.document, request.documentType)
+    LOGGER.info("Creating candidate with document [%s] and documentType [%s]", request.document, request.document_type)
     
     persisted_person = person_repository.get_by_document(document = request.document)
     
@@ -94,26 +94,37 @@ user_repository: user_repository.UserRepository, professional_repository: profes
     person_repository.save(
         person = person_model.Person(
             document = request.document,
-            document_type = request.documentType,
-            first_name = request.firstName,
-            last_name = request.lastName,
-            phone_number = request.phoneNumber)
+            document_type = request.document_type,
+            first_name = request.first_name,
+            last_name = request.last_name,
+            phone_number = request.phone_number)
         )
         
-    user_service.create_user(request.username, request.password, "CANDIDATE", request.document, user_repository)
+    try:
+        user_service.create_user(request.username, request.password, "CANDIDATE", request.document, user_repository)
+    except:
+        person_repository.delete_person(request.document)
+        LOGGER.info("Haciendo Rollback de usuario")
+        raise user_service.UserNameAlreadyExistError()
     
-    professional_service.create_professional(request.birthDate, 
+    try:    
+        professional_service.create_professional(request.birth_date, 
                                              request.age, 
-                                             request.originCountry, 
-                                             request.residenceCountry, 
-                                             request.residenceCity, 
+                                             request.origin_country, 
+                                             request.residence_country, 
+                                             request.residence_city, 
                                              request.address, 
                                              request.document, 
                                              professional_repository)
+    except:
+        person_repository.delete_person(request.document)
+        user_repository.delete_user(request.username)
+        LOGGER.info("Haciendo Rollback de professional")
+        raise professional_service.ProfessionalAlreadyExistError()
     
 def create_employee(request : CreateEmployeeRequest, person_repository: person_repository.PersonRepository, employee_repository: employee_repository.EmployeeRepository)-> None:
     
-    LOGGER.info("Creating Employee with document [%s] and documentType [%s]", request.document, request.documentType)
+    LOGGER.info("Creating Employee with document [%s] and document_type [%s]", request.document, request.document_type)
    
     persisted_person = person_repository.get_by_document(document = request.document)
     
@@ -123,13 +134,19 @@ def create_employee(request : CreateEmployeeRequest, person_repository: person_r
     person_repository.save(
         person = person_model.Person(
             document = request.document,
-            document_type = request.documentType,
-            first_name = request.firstName,
-            last_name = request.lastName,
+            document_type = request.document_type,
+            first_name = request.first_name,
+            last_name = request.last_name,
             phone_number="")
         )
-    
-    employee_service.create_employee(request.profile, request.position, request.taxpayerId, request.document, employee_repository)
+   
+    try: 
+        employee_service.create_employee(request.profile, request.position, request.taxpayer_id, request.document, employee_repository)
+    except:
+        person_repository.delete_person(request.document)
+        LOGGER.info("Haciendo Rollback de Persona")
+        raise employee_service.EmployeeAlreadyExistError()
+   
    
 def get_all(person_repository: person_repository.PersonRepository)->List[person_model.Person]:
     LOGGER.info("Search professionals in service")

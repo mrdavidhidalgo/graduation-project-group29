@@ -14,9 +14,9 @@ import os
 def test_create_candidate_successfully():
     from services.person import person_service as subject
     
-    candidate_request = subject.CreateCandidateRequest(document= "2343523",documentType= "CC",firstName= "Jorge",lastName= "Lopez",
-	phoneNumber= "64345678",username= "jlopes453@gmail.com",password= "DHSc532XSC..",birthDate= "1989-12-11", age= "34",
-        originCountry= "CO",residenceCountry= "AR", residenceCity= "Belgrano",address="Arroyito 14-11")
+    candidate_request = subject.CreateCandidateRequest(document= "2343523",document_type= "CC",first_name= "Jorge",last_name= "Lopez",
+	phone_number= "64345678",username= "jlopes453@gmail.com",password= "DHSc532XSC..",birth_date= "1989-12-11", age= "34",
+        origin_country= "CO",residence_country= "AR", residence_city= "Belgrano",address="Arroyito 14-11")
     
     candidate=subject.create_candidate(request=candidate_request, person_repository=MockPerson(), user_repository=MockUser(),
     professional_repository=MockProfessional())
@@ -43,7 +43,9 @@ class MockPerson(person_repository.PersonRepository):
     
     def get_all(self)-> Optional[List[person_model.Person]]:
         return self.person_with_params
-        
+      
+    def delete_person(self, document: int)->int:
+        return 1  
 
 class MockUser(user_repository.UserRepository):
    
@@ -59,7 +61,10 @@ class MockUser(user_repository.UserRepository):
     
     def save(self, user: user_model.User)-> None:
         return None
-        
+    
+    def delete_user(self, username: str)-> Optional[int]:
+        return 1
+         
 class MockProfessional(professional_repository.ProfessionalRepository):
    
     def __init__(self,professional_by_id: professional_model.ProfessionalCreateModel=None,professional_with_params:professional_model.ProfessionalCreateModel=None)->None:
@@ -83,3 +88,6 @@ class MockProfessional(professional_repository.ProfessionalRepository):
         
     def add_technology_info(self, professional_id: int, technology_info: professional_model.ProfessionalTechnologyInfo)-> None:
         return None
+    
+    def delete_professional(self, person_id: int)-> Optional[int]:
+        return 1

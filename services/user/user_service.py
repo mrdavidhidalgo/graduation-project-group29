@@ -118,3 +118,4 @@ def create_access_token(data: dict[str,str])->Tuple[str,Dict[str,str]]:
     to_encode.update({"exp": math.floor(expire.timestamp())})
     encoded_jwt = jwt.encode(to_encode, _JWT_SECRET_KEY, algorithm=_ALGORITHM)
     return encoded_jwt,to_encode
+    

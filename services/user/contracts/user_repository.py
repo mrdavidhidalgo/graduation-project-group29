@@ -11,3 +11,6 @@ class UserRepository(abc.ABC):
     @abc.abstractmethod
     def save(self, user: user_model.User)-> None:
         ...
+    
+    def delete_user(self, username: str)-> Optional[int]:
+        ...

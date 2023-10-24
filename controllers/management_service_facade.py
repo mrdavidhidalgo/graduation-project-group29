@@ -43,6 +43,8 @@ UserNameDoesNotExistError = user_service.UserNameDoesNotExistError
 
 ProfessionalDoesNotExistError = professional_service.ProfessionalDoesNotExistError
 
+ProfessionalAlreadyExistError = professional_service.ProfessionalAlreadyExistError
+
 CompanyTaxprayerAlreadyExistError = company_service.CompanyTaxprayerAlreadyExistError
 
 #LOGGER = user_service.LOGGER
@@ -62,17 +64,17 @@ class CreateUserRequest(BaseModel):
 
 class CreateCandidateRequest(BaseModel):
     document: str
-    documentType: base.DocumentType
-    firstName: str
-    lastName: str
-    phoneNumber: str
+    document_type: base.DocumentType
+    first_name: str
+    last_name: str
+    phone_number: str
     username: str
     password: str
-    birthDate: str
+    birth_date: str
     age: int
-    originCountry: base.Country
-    residenceCountry: base.Country
-    residenceCity: str
+    origin_country: base.Country
+    residence_country: base.Country
+    residence_city: str
     address: str
     
 class CreateCandidateLaboralInfoRequest(BaseModel):
@@ -88,18 +90,18 @@ class CreateCandidateLaboralInfoRequest(BaseModel):
 
 class CreateCompanyRequest(BaseModel):
     document: str
-    documentType: str
-    firstName: str
-    lastName: str
+    document_type: str
+    first_name: str
+    last_name: str
     username: str
     password: str
-    taxpayerId: str
+    taxpayer_id: str
     name: str
     country: str
     city: str
     years: str
     address: str
-    phoneNumber: str
+    phone_number: str
     profile: str
     position: str
     
@@ -178,7 +180,7 @@ def get_candidates(db: Session)->List[person_service.person_model.Person]:
     
     if professional_list is None:
         LOGGER.info("Empty List in facade")
-        return []
+        return None
     else:
         LOGGER.info("List with data in facade")
         return professional_list

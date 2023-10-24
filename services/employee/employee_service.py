@@ -27,7 +27,7 @@ class EmployeeDoesNotExistError(Exception):
         super().__init__(self.message)
     
 
-def create_employee(profile: str, position: str, person_id: str, company_id: str,  
+def create_employee(profile: str, position: str, company_id: str, person_id: str,  
                         employee_repository: employee_repository.EmployeeRepository)-> None:
     
     LOGGER.info("Creating employee for person_id [%s]", person_id)
