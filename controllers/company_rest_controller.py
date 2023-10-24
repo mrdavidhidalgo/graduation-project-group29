@@ -66,7 +66,7 @@ async def get_companies(response: Response, db: Session = Depends(get_db)):
     if companies_list is not None:
         data=[]
         for company in companies_list:
-            data.append({'id': str(company.id),'taxpayerId': str(company.taxpayer_id),'name': str(company.name)})
+            data.append({'taxpayerId': str(company.taxpayer_id),'name': str(company.name)})
         return data
     else:
         LOGGER.info("Return 404 error")

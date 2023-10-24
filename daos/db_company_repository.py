@@ -31,7 +31,7 @@ class DBCompanyRepository(company_repository.CompanyRepository):
         else:
             LOGGER.info("Sending company list")
             return [company_model.Company(id = company.id , taxpayer_id=company.taxpayer_id, name=company.name,
-             country = company.country, city = company.city, years= company.years, address = company.phone_number ) 
+             country = company.country, city = company.city, years= str(company.years), address = company.address, phone_number = company.phone_number ) 
             for company in companies]
                 
     def save(self, company: company_model.Company)-> None:
