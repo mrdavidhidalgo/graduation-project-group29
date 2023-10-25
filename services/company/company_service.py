@@ -100,7 +100,7 @@ user_repository: user_repository.UserRepository, company_repository: company_rep
 def get_by_taxpayerId(company_repository: company_repository.CompanyRepository, taxpayer_id: str)-> Optional[company_model.Company]:   
     LOGGER.info("Search for company by id")
     company =  company_repository.get_by_taxpayerId(taxpayer_id)
-    if list is None:
+    if company is None:
         LOGGER.info("Company not exists")
         return None
     else:

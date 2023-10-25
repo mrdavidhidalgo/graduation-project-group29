@@ -1,4 +1,5 @@
-from controllers import candidate_rest_controller, user_rest_controller, company_rest_controller
+from controllers import candidate_rest_controller, user_rest_controller, company_rest_controller,\
+project_rest_controller
 
 from controllers import health_rest_controller 
 from fastapi import FastAPI
@@ -28,3 +29,4 @@ app.include_router(candidate_rest_controller.router)
 app.include_router(user_rest_controller.router)
 app.include_router(health_rest_controller.router)
 app.include_router(company_rest_controller.router)
+app.include_router(project_rest_controller.router)

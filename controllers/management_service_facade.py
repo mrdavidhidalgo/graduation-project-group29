@@ -7,9 +7,11 @@ from services.employee import employee_service
 from services.user import user_service
 from services.person import person_service
 from services.professional import professional_service
-from daos import db_user_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository
+from services.project import project_service
+from daos import db_user_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository, db_project_repository
 from pydantic import BaseModel
 from services.professional.model import professional_model
+from services.project.model import project_model
 from services.commons import base
 
 class DateRangeInvalidError(Exception):
@@ -46,6 +48,8 @@ ProfessionalDoesNotExistError = professional_service.ProfessionalDoesNotExistErr
 ProfessionalAlreadyExistError = professional_service.ProfessionalAlreadyExistError
 
 CompanyTaxprayerAlreadyExistError = company_service.CompanyTaxprayerAlreadyExistError
+
+ProjectNameAlreadyExistError = project_service.ProjectNameAlreadyExistError
 
 #LOGGER = user_service.LOGGER
 from services import logs
@@ -105,6 +109,12 @@ class CreateCompanyRequest(BaseModel):
     profile: str
     position: str
     
+class CreateProjectRequest(BaseModel):
+    project_name : str
+    start_date : str
+    active : str
+    details : str
+    company_id : str
 
 ######################################################################################################################################
 #                                                           USER                                                                     #
@@ -220,7 +230,7 @@ def add_candidate_technology_info(request: CreateCandidateTechnologyInfoRequest,
 
 def create_company(request: CreateCompanyRequest, db: Session)->None:
 
-    LOGGER.info("Starting Create company with username [%s]", request.username)
+    LOGGER.info("Starting Create company with username [%s]", request.name)
     company_repository = db_company_repository.DBCompanyRepository(db = db)
     person_repository = db_person_repository.DBPersonRepository(db = db)
     user_repository = db_user_repository.DBUserRepository(db = db)
@@ -245,3 +255,30 @@ def get_companies(db: Session)->Optional[List[company_service.company_model.Comp
     else:
         LOGGER.info("List with data in facade")
         return company_list
+        
+        
+######################################################################################################################################
+#                                                           PROJECT                                                                  #
+######################################################################################################################################
+
+def create_project(request: CreateProjectRequest, db: Session)->None:
+
+    LOGGER.info("Starting Create project with name [%s]", request.project_name)
+    project_repository = db_project_repository.DBProjectRepository(db = db)
+    
+    new_project = project_service.CreateProjectRequest.model_validate(request.model_dump())
+    
+    project_service.create_project(request=new_project, 
+                                       project_repository=project_repository)
+
+def get_projects(db: Session)->Optional[List[project_service.project_model.ProjectRead]]:
+    LOGGER.info("Listing all projects")
+    project_repository = db_project_repository.DBProjectRepository(db = db)
+    project_list = project_service.get_all(project_repository=project_repository)
+    
+    if project_list is None:
+        LOGGER.info("Empty Project List in facade")
+        return None
+    else:
+        LOGGER.info("Project List with data in facade")
+        return project_list
