@@ -18,7 +18,7 @@ router = APIRouter()
 
 class CreateProjectRequest(BaseModel):
     projectName : str
-    startDate : datetime.date
+    startDate : str
     active : bool
     details : str
     
@@ -26,7 +26,7 @@ class ReadProjectRequest(BaseModel):
     id : int
     projectName : str
     startDate : datetime.date
-    active : bool
+    active : int
     creationTime : datetime.datetime
     details : str
     companyId : str
@@ -44,8 +44,11 @@ def get_db() -> Session:
 @router.post("/projects")
 async def create_project(request: CreateProjectRequest, token_data: commons.TokenData = Depends(commons.get_token_data), db: Session = Depends(get_db)):
     #LOGGER.info("Peticion [%s] - [%s]", str(request.document), str(request.documentType))
-    request2 = management_service_facade.CreateProjectRequest(project_name = request.projectName, start_date = request.startDate,\
-    active = request.active, details= request.details)
+    
+    start_date2 = string_to_date(start_date = request.startDate)
+    
+    request2 = management_service_facade.CreateProjectRequest(project_name = request.projectName, start_date = start_date2,\
+    active = bool(request.active), details= request.details)
         
     try:
         management_service_facade.create_project(request = request2, person_id = token_data.person_id , db = db)
@@ -65,3 +68,17 @@ async def get_projects(response: Response, db: Session = Depends(get_db)):
     else:
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No projects found")
+        
+
+
+def string_to_date(start_date: str)->Optional[datetime.date]:
+    
+   
+    date_format = '%Y-%m-%d'
+    
+    try:
+        new_date = datetime.datetime.strptime(start_date, date_format).date()
+    except:
+        raise management_service_facade.InvalidDateError
+    
+    return new_date

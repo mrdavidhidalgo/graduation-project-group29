@@ -19,6 +19,11 @@ class DateRangeInvalidError(Exception):
         self.message = f"The Range of dates is invalid"
         super().__init__(self.message)
 
+class InvalidDateError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = f"Incorrect data format, should be AAAA-MM-DD"
+        super().__init__(self.message)
+        
 import jwt
 class LoginResponse(BaseModel):
     token: str
