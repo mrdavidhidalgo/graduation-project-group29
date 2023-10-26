@@ -101,7 +101,7 @@ user_repository: user_repository.UserRepository, professional_repository: profes
         )
         
     try:
-        user_service.create_user(request.username, request.password, "CANDIDATE", request.document, user_repository)
+        user_service.create_user(request.username, request.password, user_model.UserRole.CANDIDATE, request.document, user_repository)
     except:
         person_repository.delete_person(request.document)
         LOGGER.info("Haciendo Rollback de usuario")

@@ -50,20 +50,12 @@ def create_user(username: str, password: str, role: str, person_id: str, user_re
     if persisted_user is not None:
         raise UserNameAlreadyExistError()
     
-    if role == "COMPANY":
-       role_aux = user_model.UserRole.CLIENT 
-    elif role == "RECRUITER":
-       role_aux = user_model.UserRole.RECRUITER 
-    else:
-       role_aux = user_model.UserRole.CANDIDATE
-    
-    
     user_repository.save(
         user = user_model.User(
             username = username,
             password = password,
             is_active = True,
-            role = role_aux,
+            role = role,
             person_id = person_id
             )
         )

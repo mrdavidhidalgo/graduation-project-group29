@@ -113,8 +113,8 @@ class CreateCompanyRequest(BaseModel):
     
 class CreateProjectRequest(BaseModel):
     project_name : str
-    start_date : str
-    active : str
+    start_date : datetime.date
+    active : bool
     details : str
 
 ######################################################################################################################################

@@ -18,16 +18,16 @@ router = APIRouter()
 
 class CreateProjectRequest(BaseModel):
     projectName : str
-    startDate : str
-    active : str
+    startDate : datetime.date
+    active : bool
     details : str
     
 class ReadProjectRequest(BaseModel):    
     id : int
     projectName : str
-    startDate : str
-    active : str
-    creationTime : str
+    startDate : datetime.date
+    active : bool
+    creationTime : datetime.datetime
     details : str
     companyId : str
 

@@ -88,7 +88,7 @@ user_repository: user_repository.UserRepository, company_repository: company_rep
         raise
         
     try:    
-        user_service.create_user(request.username, request.password, "COMPANY", request.document, user_repository)
+        user_service.create_user(request.username, request.password, user_model.UserRole.CLIENT, request.document, user_repository)
     except:
         LOGGER.info("Haciendo Rollback desde Usuario")
         company_repository.delete_company(request.taxpayer_id)

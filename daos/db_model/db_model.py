@@ -115,7 +115,7 @@ class Project(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     project_name = Column(String(100))
     start_date = Column(Date)
-    active = Column(String(1))
+    active = Column(Boolean, default=True)
     creation_time = Column(DateTime(timezone=False), server_default=func.now())
     details = Column(Text)
     company_id = Column(String(30))
