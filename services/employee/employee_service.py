@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 import datetime
+from typing import List, Optional
 
 #from .contracts import user_repository
 from services.employee.contracts import employee_repository
@@ -27,7 +28,7 @@ class EmployeeDoesNotExistError(Exception):
         super().__init__(self.message)
     
 
-def create_employee(profile: str, position: str, person_id: str, company_id: str,  
+def create_employee(profile: str, position: str, company_id: str, person_id: str,  
                         employee_repository: employee_repository.EmployeeRepository)-> None:
     
     LOGGER.info("Creating employee for person_id [%s]", person_id)
@@ -45,3 +46,12 @@ def create_employee(profile: str, position: str, person_id: str, company_id: str
             person_id = person_id )
         )
         
+def get_by_person_id(employee_repository: employee_repository.EmployeeRepository, person_id: str)-> Optional[employee_model.EmployeeReadModel]:
+    LOGGER.info("Search employees in service wirh person_id= [%s]", person_id)
+    list =  employee_repository.get_by_person_id(person_id = person_id)
+    if list is None:
+        LOGGER.info("Empty List in employee service")
+        raise EmployeeDoesNotExistError(person_id = person_id)
+    else:
+        LOGGER.info("Employee exists in service")
+        return list

@@ -15,9 +15,9 @@ import os
 def test_create_company_successfully():
     from services.company import company_service as subject
     
-    company_request = subject.CreateCompanyRequest(document="32534634",documentType="CC", firstName="German",lastName="Martinez",
-    username="cmra@aol.co",password="HRerv3498&.",taxpayerId="3645645",name="TECNISOFT",country="CO",city="CALI",
-    years="3",address="Calle 1 No 2-35",phoneNumber="32899837",profile="OPERATIVO",position="LIDER TECNICO")
+    company_request = subject.CreateCompanyRequest(document="32534634",document_type="CC", first_name="German",last_name="Martinez",
+    username="cmra@aol.co",password="HRerv3498&.",taxpayer_id="3645645",name="TECNISOFT",country="CO",city="CALI",
+    years="3",address="Calle 1 No 2-35", phone_number="32899837",profile="OPERATIVO",position="LIDER TECNICO")
     
     company=subject.create_company(request=company_request, person_repository=MockPerson(), user_repository=MockUser(),
     company_repository=MockCompany(), employee_repository=MockEmployee())
@@ -26,16 +26,16 @@ def test_create_company_successfully():
 def test_get_all_companies():
     from services.company import company_service as subject
 
-    company=subject.get_all(company_repository = MockCompany(company_by_id = company_model.Company(taxpayerId="1",name="TECNISOFT",country="CO",city="CALI",
-    years="3",address="Calle 1 No 2-35",phoneNumber="32899837")))
+    company=subject.get_all(company_repository = MockCompany(company_by_id = company_model.Company(taxpayer_id="1",name="TECNISOFT",country="CO",city="CALI",
+    years="3",address="Calle 1 No 2-35",phone_number="32899837")))
     assert company is None
 
 
-def test_get_comapny_by_id_with_value():
+def test_get_company_by_id_with_value():
     from services.company import company_service as subject 
-    company=subject.get_by_taxpayerId(company_repository = MockCompany(company_by_id = company_model.Company(taxpayerId="111111",name="TECNISOFT",country="CO",city="CALI",
-    years="3",address="Calle 1 No 2-35",phoneNumber="32899837")),taxpayerId="111111")
-    assert company.taxpayerId == "111111"
+    company=subject.get_by_taxpayerId(company_repository = MockCompany(company_by_id = company_model.Company(taxpayer_id="111111",name="TECNISOFT",country="CO",city="CALI",
+    years="3",address="Calle 1 No 2-35",phone_number="32899837")),taxpayer_id="111111")
+    assert company.taxpayer_id == "111111"
      
 class MockCompany(company_repository.CompanyRepository):
    
@@ -46,7 +46,7 @@ class MockCompany(company_repository.CompanyRepository):
     def create_company(self, company: company_model.Company)-> str:
         return "1"
     
-    def get_by_taxpayerId(self, taxpayerId: str)-> str:
+    def get_by_taxpayerId(self, taxpayer_id: str)-> str:
         return self.by_id
     
     def get_all(self)-> Optional[List[company_model.Company]]:
@@ -55,6 +55,8 @@ class MockCompany(company_repository.CompanyRepository):
     def save(self, company: company_model.Company)-> None:
         return None
         
+    def delete_company(self, taxpayer_id: int)-> Optional[int]:
+        return 1
     
 class MockPerson(person_repository.PersonRepository):
    
@@ -74,6 +76,9 @@ class MockPerson(person_repository.PersonRepository):
     def create_person(self, company: company_model.Company)-> str:
         return "1"
 
+    def delete_person(self, document: int)->int:
+        return 1
+        
 class MockUser(user_repository.UserRepository):
    
     def __init__(self,user_by_id: user_model.User=None,user_with_params:user_model.User=None)->None:
@@ -88,6 +93,9 @@ class MockUser(user_repository.UserRepository):
     
     def save(self, user: user_model.User)-> None:
         return None
+    
+    def delete_user(self, username: str)-> Optional[int]:
+        return 1
         
 class MockEmployee(employee_repository.EmployeeRepository):
    
@@ -103,3 +111,6 @@ class MockEmployee(employee_repository.EmployeeRepository):
     
     def save(self, employee: employee_model.EmployeeCreateModel)-> None:
         return None
+        
+    def delete_employee(self, person_id: int)-> Optional[int]:
+        return 1

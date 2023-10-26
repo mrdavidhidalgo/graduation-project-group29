@@ -8,7 +8,7 @@ from services import logs
 _LOGGER = logs.get_logger()
 #SQLALCHEMY_DATABASE_URL = "mysql+pymysql://frank:6543..AbcX@34.132.7.242:3306/hipergate7"
 #SQLALCHEMY_DATABASE_URL = "mysql://user:password@server"
-
+#SQLALCHEMY_DATABASE_URL="mysql+pymysql://abcjob:9876..@localhost/abcjobs"
 #SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
 # connect_args_only for sqllite

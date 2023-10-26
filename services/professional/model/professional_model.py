@@ -4,21 +4,21 @@ import datetime
 from services.commons import base
 
 class ProfessionalCreateModel(BaseModel):
-    birthDate: str
+    birth_date: str
     age: int
-    originCountry: base.Country
-    residenceCountry: base.Country
-    residenceCity: str
+    origin_country: base.Country
+    residence_country: base.Country
+    residence_city: str
     address: str
     person_id: str
     
 class ProfessionalReadModel(BaseModel):
     id: int
-    birthDate: str
+    birth_date: str
     age: int
-    originCountry: base.Country
-    residenceCountry: base.Country
-    residenceCity: str
+    origin_country: base.Country
+    residence_country: base.Country
+    residence_city: str
     address: str
     person_id: str
     

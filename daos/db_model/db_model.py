@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, Date, Enum, ForeignKey, Text, func
 import datetime
 from services.commons import base
 
@@ -11,10 +11,10 @@ class Person(Base):
     __tablename__ = "person"
     
     document = Column(String(30), primary_key=True, index=True)
-    documentType = Column(Enum(base.DocumentType))
-    firstName = Column(String(50))
-    lastName = Column(String(50))
-    phoneNumber = Column(String(20))
+    document_type = Column(Enum(base.DocumentType))
+    first_name = Column(String(50))
+    last_name = Column(String(50))
+    phone_number = Column(String(20))
     #users = relationship('User', cascade='all, delete, delete-orphan')
     #professional = relationship('Professional', uselist=False, back_populates="person")
 
@@ -22,11 +22,11 @@ class Professional(Base):
     __tablename__ = "professional"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    birthDate = Column(String(10))
+    birth_date = Column(String(10))
     age = Column(Integer)
-    originCountry = Column(Enum(base.Country))
-    residenceCountry = Column(Enum(base.Country))
-    residenceCity = Column(String(70))
+    origin_country = Column(Enum(base.Country))
+    residence_country = Column(Enum(base.Country))
+    residence_city = Column(String(70))
     address = Column(String(100))
     person_id = Column(String(30), ForeignKey('person.document'))
     #person = relationship("Person", back_populates="professional")
@@ -90,13 +90,13 @@ class Company(Base):
     __tablename__ = "company"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    taxpayerId = Column(String(20))
+    taxpayer_id = Column(String(20))
     name = Column(String(100))
     country = Column(Enum(base.Country))
     city = Column(String(70))
     years = Column(Integer)
     address = Column(String(100))
-    phoneNumber = Column(String(20))
+    phone_number = Column(String(20))
     #employees = relationship('Employee', cascade='all, delete, delete-orphan')
     
 class Employee(Base):
@@ -105,5 +105,17 @@ class Employee(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     profile = Column(String(50))
     position = Column(String(100))
-    person_id = Column(String(30), ForeignKey('person.document'))
+    person_id = Column(String(30))
+    company_id = Column(String(30))
+
+
+class Project(Base):
+    __tablename__ = "project"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    project_name = Column(String(100))
+    start_date = Column(Date)
+    active = Column(Boolean, default=True)
+    creation_time = Column(DateTime(timezone=False), server_default=func.now())
+    details = Column(Text)
     company_id = Column(String(30))

@@ -27,5 +27,7 @@ class ProfessionalRepository(abc.ABC):
     @abc.abstractmethod
     def add_technical_role_info(self, professional_id : int, technical_role_info: professional_model.ProfessionalTechnicalRole)-> None:
         ...
-        
     
+    @abc.abstractmethod
+    def delete_professional(self, person_id: int)-> Optional[int]:
+        ...

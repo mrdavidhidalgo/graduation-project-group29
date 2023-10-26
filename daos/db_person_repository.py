@@ -21,18 +21,18 @@ class DBPersonRepository(person_repository.PersonRepository):
         person = self.db.query(models.Person).filter(models.Person.document == document).first()
         #return user_model.User(username="frank", password = "remb", name = "Franklin", is_active=True)
         return None if person is None else person_model.Person(document=document, 
-                                                               document_type=person.documentType, 
-                                                               first_name = person.firstName, 
-                                                               last_name = person.lastName, 
-                                                               phone_number= person.phoneNumber )
+                                                               document_type=person.document_type, 
+                                                               first_name = person.first_name, 
+                                                               last_name = person.last_name, 
+                                                               phone_number= person.phone_number )
         
     def save(self, person: person_model.Person)-> None:
         new_person = models.Person(
             document = person.document,
-            documentType = person.document_type,
-            firstName = person.first_name,
-            lastName = person.last_name,
-            phoneNumber = person.phone_number
+            document_type = person.document_type,
+            first_name = person.first_name,
+            last_name = person.last_name,
+            phone_number = person.phone_number
         )
         
         self.db.add(new_person)
@@ -43,9 +43,14 @@ class DBPersonRepository(person_repository.PersonRepository):
         professional = self.db.query(models.Person).all()
         if len(professional) ==0:
             LOGGER.info("There are not person records")
-            return []
+            return None
         else:
             LOGGER.info("Sendind person list")
-            return [person_model.Person(document=person.document, document_type=person.documentType,
-             first_name = person.firstName, last_name = person.lastName, phone_number= person.phoneNumber ) 
+            return [person_model.Person(document=person.document, document_type=person.document_type,
+             first_name = person.first_name, last_name = person.last_name, phone_number= person.phone_number ) 
             for person in professional]
+    
+    def delete_person(self, document: int)-> Optional[int]:
+        person = self.db.query(models.Person).filter(models.Person.document == document).delete()
+        self.db.commit()
+        return person

@@ -11,11 +11,11 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
     
     def get_by_person_id(self, person_id: str)-> Optional[professional_model.ProfessionalReadModel]:
         return None if self.person_id is None else professional_model.ProfessionalReadModel(id=1, 
-                                                                                            birthDate="2023-05-01", 
+                                                                                            birth_date="2023-05-01",
                                                                                             age=35, 
-                                                                                            originCountry=base.Country.Colombia, 
-                                                                                            residenceCountry=base.Country.Colombia,
-                                                                                            residenceCity="Santa Marta",
+                                                                                            origin_country=base.Country.Colombia,
+                                                                                            residence_country=base.Country.Colombia,
+                                                                                            residence_city="Santa Marta",
                                                                                             address="Calle 125", 
                                                                                             person_id=person_id)
         
@@ -34,3 +34,5 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
     def add_technical_role_info(self, professional_id : int, technical_role_info: professional_model.ProfessionalTechnicalRole)-> None:
         ...
         
+    def delete_professional(self, person_id: int)-> Optional[int]:
+        return 1

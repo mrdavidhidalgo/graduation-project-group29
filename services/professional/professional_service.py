@@ -28,11 +28,11 @@ class ProfessionalDoesNotExistError(Exception):
         super().__init__(self.message)
     
 
-def create_professional(birthDate: str, 
+def create_professional(birth_date: str, 
                         age: int,
-                        originCountry: base.Country, 
-                        residenceCountry: base.Country, 
-                        residenceCity: str, 
+                        origin_country: base.Country, 
+                        residence_country: base.Country, 
+                        residence_city: str, 
                         address: str, 
                         person_id: str, 
                         professional_repository: professional_repository.ProfessionalRepository)-> None:
@@ -46,11 +46,11 @@ def create_professional(birthDate: str,
     
     professional_repository.save(
         professional = professional_model.ProfessionalCreateModel(
-            birthDate = birthDate,
+            birth_date = birth_date,
             age = age,
-            originCountry = originCountry,
-            residenceCountry = residenceCountry,
-            residenceCity = residenceCity,
+            origin_country = origin_country,
+            residence_country = residence_country,
+            residence_city = residence_city,
             address = address,
             person_id = person_id )
         )
