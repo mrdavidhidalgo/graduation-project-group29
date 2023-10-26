@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from daos.db_model.database import SessionLocal
 
-from controllers import management_service_facade
+from controllers import management_service_facade, commons
 from services import logs
 LOGGER = logs.get_logger()
 
@@ -21,7 +21,6 @@ class CreateProjectRequest(BaseModel):
     startDate : str
     active : str
     details : str
-    companyId : str
     
 class ReadProjectRequest(BaseModel):    
     id : int
@@ -43,15 +42,15 @@ def get_db() -> Session:
 
 
 @router.post("/projects")
-async def create_project(request: CreateProjectRequest, db: Session = Depends(get_db)):
+async def create_project(request: CreateProjectRequest, token_data: commons.TokenData = Depends(commons.get_token_data), db: Session = Depends(get_db)):
     #LOGGER.info("Peticion [%s] - [%s]", str(request.document), str(request.documentType))
     request2 = management_service_facade.CreateProjectRequest(project_name = request.projectName, start_date = request.startDate,\
-    active = request.active, details= request.details,  company_id = request.companyId)
+    active = request.active, details= request.details)
         
     try:
-        management_service_facade.create_project(request = request2, db = db)
+        management_service_facade.create_project(request = request2, person_id = token_data.person_id , db = db)
         return {"msg": "Project has been created"}
-    except (management_service_facade.ProjectNameAlreadyExistError) as e:
+    except (management_service_facade.ProjectNameAlreadyExistError, management_service_facade.EmployeeDoesNotExistError) as e:
         raise HTTPException(status_code=400, detail=e.message)
         
 @router.get("/projects")

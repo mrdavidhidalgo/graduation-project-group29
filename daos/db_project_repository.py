@@ -21,14 +21,14 @@ class DBProjectRepository(project_repository.ProjectRepository):
        
         return None if project is None else project_model.ProjectRead(id = project.id, project_name=project_name,\
          start_date = str(project.start_date), active= project.active, creation_time = str(project.creation_time), details = project.details,\
-          company_id = company_id)
+          company_id = str(company_id))
           
     def get_by_project_id(self, project_id: str)-> project_model.ProjectRead:
         project = self.db.query(models.Project).filter(models.Project.project_id == project_id).first()
        
         return None if project is None else project_model.ProjectRead(id = project_id, project_name=project.project_name,\
          start_date = project.start_date, active= project.active, creation_time = project.creation_time, details = project.details,\
-          company_id = project.company_id)
+          company_id = str(project.company_id))
     
     def get_all(self)-> Optional[List[project_model.ProjectRead]]:
         
@@ -40,7 +40,7 @@ class DBProjectRepository(project_repository.ProjectRepository):
             LOGGER.info("Sending project list")
             return [project_model.ProjectRead(id = project.id, project_name=project.project_name,\
             start_date = str(project.start_date), active= project.active, creation_time = str(project.creation_time),\
-            details = project.details, company_id = project.company_id)   for project in projects]
+            details = project.details, company_id = str(project.company_id))   for project in projects]
                 
     def save(self, project: project_model.ProjectCreate)-> None:
         new_project = models.Project(

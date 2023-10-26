@@ -51,6 +51,8 @@ CompanyTaxprayerAlreadyExistError = company_service.CompanyTaxprayerAlreadyExist
 
 ProjectNameAlreadyExistError = project_service.ProjectNameAlreadyExistError
 
+EmployeeDoesNotExistError = employee_service.EmployeeDoesNotExistError
+
 #LOGGER = user_service.LOGGER
 from services import logs
 LOGGER = logs.get_logger()
@@ -114,7 +116,6 @@ class CreateProjectRequest(BaseModel):
     start_date : str
     active : str
     details : str
-    company_id : str
 
 ######################################################################################################################################
 #                                                           USER                                                                     #
@@ -261,15 +262,16 @@ def get_companies(db: Session)->Optional[List[company_service.company_model.Comp
 #                                                           PROJECT                                                                  #
 ######################################################################################################################################
 
-def create_project(request: CreateProjectRequest, db: Session)->None:
+def create_project(request: CreateProjectRequest, person_id: str, db: Session)->None:
 
     LOGGER.info("Starting Create project with name [%s]", request.project_name)
     project_repository = db_project_repository.DBProjectRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
     
     new_project = project_service.CreateProjectRequest.model_validate(request.model_dump())
     
-    project_service.create_project(request=new_project, 
-                                       project_repository=project_repository)
+    project_service.create_project(request=new_project, person_id= person_id, 
+                                       project_repository=project_repository, employee_repository = employee_repository)
 
 def get_projects(db: Session)->Optional[List[project_service.project_model.ProjectRead]]:
     LOGGER.info("Listing all projects")
