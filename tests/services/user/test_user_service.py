@@ -16,7 +16,7 @@ def test_should_raise_exception_trying_to_create_user_but_username_already_exist
         subject.create_user(
             username="ftesst", 
             password = "1234", 
-            role = "COMPANY", 
+            role = user_model.UserRole.CLIENT, 
             person_id = "1", 
             user_repository = mocks.FakeUserRepository(username="1")
         )
@@ -27,7 +27,7 @@ def test_should_create_company_as_user_succesfully()->None:
     subject.create_user(
         username="ftesst", 
         password = "1234", 
-        role = "COMPANY", 
+        role = user_model.UserRole.CLIENT, 
         person_id = "1", 
         user_repository = mocks.FakeUserRepository()
     )
@@ -38,7 +38,7 @@ def test_should_create_recruiter_as_user_succesfully()->None:
     subject.create_user(
         username="ftesst", 
         password = "1234", 
-        role = "RECRUITER", 
+        role = user_model.UserRole.RECRUITER, 
         person_id = "1", 
         user_repository = mocks.FakeUserRepository()
     )
@@ -49,7 +49,7 @@ def test_should_create_candidate_as_user_succesfully()->None:
     subject.create_user(
         username="ftesst", 
         password = "1234", 
-        role = "CANDIDATE", 
+        role = user_model.UserRole.CANDIDATE, 
         person_id = "1", 
         user_repository = mocks.FakeUserRepository()
     )
