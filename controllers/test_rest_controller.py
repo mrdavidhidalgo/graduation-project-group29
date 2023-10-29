@@ -13,19 +13,21 @@ from daos.db_model.database import SessionLocal
 from controllers import management_service_facade
 from services import logs
 from datetime import datetime, date
-
+import enum
 
 
 
 _LOGGER = logs.get_logger()
 
 router = APIRouter()
-
+class Status(enum.Enum):
+    ENABLED = "ENABLED"
+    DISABLED = "DISABLED"
 class CreateTestRequest(BaseModel):
     name : str = Field(min_length=1,max_length=200)
     technology :str= Field(min_length=2,max_length=200)
     duration_minutes : int = Field(gt=0)
-    status : bool
+    status : Status
     start_date : date 
     end_date: date
     description :str= Field(min_length=1,max_length=5000)
@@ -49,7 +51,7 @@ def get_db() -> Session:
 async def create_test(request: CreateTestRequest,token_data: commons.TokenData = Depends(commons.get_token_data),
                       db: Session = Depends(get_db)):
     
-    request = management_service_facade.CreateTestRequest(**request.dict())
+    request = management_service_facade.CreateTestRequest(**request.copy(exclude={"status"}).dict(),status=request.status.name)
     
     try:
         management_service_facade.create_test(request = request, db = db)

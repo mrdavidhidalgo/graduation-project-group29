@@ -8,7 +8,7 @@ class Test(BaseModel):
     name : str
     technology : str
     duration_minutes : int
-    status : bool
+    status : str
     start_date : date 
     end_date: date
     description : str

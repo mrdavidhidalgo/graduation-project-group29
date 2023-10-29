@@ -12,7 +12,7 @@ class TestNameAlreadyExistError(Exception):
         
         
         
-def create_test(name: str, technology: str,duration_minutes:int, status : bool, 
+def create_test(name: str, technology: str,duration_minutes:int, status : str, 
                 start_date : date ,end_date: date,description : str, 
                 test_repository: test_repository.TestRepository)-> None:
     

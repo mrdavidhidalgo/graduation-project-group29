@@ -6,7 +6,7 @@ from services.company import company_service
 from services.employee import employee_service
 from services.test import test_service
 from services.user import user_service
-
+import enum
 from services.person import person_service
 from services.professional import professional_service
 from services.project import project_service
@@ -127,11 +127,15 @@ class CreateProjectRequest(BaseModel):
     active : bool
     details : str
 
+
+class Status(enum.Enum):
+    ENABLED = "ENABLED"
+    DISABLED = "DISABLED"
 class CreateTestRequest(BaseModel):
     name : str
     technology : str
     duration_minutes : int
-    status : bool
+    status : Status
     start_date : date 
     end_date: date
     description : str 
@@ -289,7 +293,7 @@ def create_test(request: CreateTestRequest, db: Session)->None:
     
     test_repository = db_test_repository.DBTestRepository(db = db)
     
-    test_service.create_test(**request.dict(), test_repository=test_repository)
+    test_service.create_test(**request.copy(exclude={"status"}).dict(),status=request.status.name, test_repository=test_repository)
     
         
         

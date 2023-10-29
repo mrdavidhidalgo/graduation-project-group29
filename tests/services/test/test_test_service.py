@@ -15,7 +15,7 @@ class MockTest(test_repository.TestRepository):
     
     def get_by_name(self, name: str)-> Optional[test_model.Test]:
         if name == "error":
-            return test_model.Test(name= "", technology="JAVA",duration_minutes=5, status=True, 
+            return test_model.Test(name= "", technology="JAVA",duration_minutes=5, status="ENABLED", 
                 start_date = date.fromisoformat('2019-12-04') ,end_date= date.fromisoformat('2019-12-04'),description ="description")
         return None
     
@@ -26,7 +26,7 @@ class MockTest(test_repository.TestRepository):
 def test_create_test_successfully():
     from services.test import test_service as subject
     
-    test = subject.create_test(name= "Test1 ", technology="JAVA",duration_minutes=5, status=True, 
+    test = subject.create_test(name= "Test1 ", technology="JAVA",duration_minutes=5, status="ENABLED", 
                 start_date = date.fromisoformat('2019-12-04'),end_date= date.fromisoformat('2019-12-04'),description ="description", 
                 test_repository= MockTest())
     
@@ -36,7 +36,7 @@ def test_create_test_already_exist():
     from services.test import test_service as subject
     
     with pytest.raises(subject.TestNameAlreadyExistError):
-        subject.create_test(name= "error", technology="JAVA",duration_minutes=5, status=True, 
+        subject.create_test(name= "error", technology="JAVA",duration_minutes=5, status="ENABLED", 
                     start_date = date.fromisoformat('2019-12-04') ,end_date= date.fromisoformat('2019-12-04'),description ="description", 
                     test_repository= MockTest())
 

@@ -129,6 +129,6 @@ class Test(Base):
     duration_minutes = Column(Integer)
     start_date = Column(Date, default=datetime.datetime.utcnow)
     end_date = Column(Date, default=datetime.datetime.utcnow)
-    status = Column(Boolean)
+    status =  Column(Enum(base.TestStatus))
     description = Column(String(5000))
     
