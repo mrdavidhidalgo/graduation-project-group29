@@ -9,9 +9,11 @@ from services.user import user_service
 
 from services.person import person_service
 from services.professional import professional_service
-from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository
+from services.project import project_service
+from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository, db_project_repository
 from pydantic import BaseModel
 from services.professional.model import professional_model
+from services.project.model import project_model
 from services.commons import base
 from datetime import date
 class DateRangeInvalidError(Exception):
@@ -19,6 +21,11 @@ class DateRangeInvalidError(Exception):
         self.message = f"The Range of dates is invalid"
         super().__init__(self.message)
 
+class InvalidDateError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = f"Incorrect data format, should be AAAA-MM-DD"
+        super().__init__(self.message)
+        
 import jwt
 class LoginResponse(BaseModel):
     token: str
@@ -45,8 +52,13 @@ UserNameDoesNotExistError = user_service.UserNameDoesNotExistError
 
 ProfessionalDoesNotExistError = professional_service.ProfessionalDoesNotExistError
 
+ProfessionalAlreadyExistError = professional_service.ProfessionalAlreadyExistError
+
 CompanyTaxprayerAlreadyExistError = company_service.CompanyTaxprayerAlreadyExistError
 
+ProjectNameAlreadyExistError = project_service.ProjectNameAlreadyExistError
+
+EmployeeDoesNotExistError = employee_service.EmployeeDoesNotExistError
 TestNameAlreadyExistError = test_service.TestNameAlreadyExistError
 
 
@@ -68,17 +80,17 @@ class CreateUserRequest(BaseModel):
 
 class CreateCandidateRequest(BaseModel):
     document: str
-    documentType: base.DocumentType
-    firstName: str
-    lastName: str
-    phoneNumber: str
+    document_type: base.DocumentType
+    first_name: str
+    last_name: str
+    phone_number: str
     username: str
     password: str
-    birthDate: str
+    birth_date: str
     age: int
-    originCountry: base.Country
-    residenceCountry: base.Country
-    residenceCity: str
+    origin_country: base.Country
+    residence_country: base.Country
+    residence_city: str
     address: str
     
 class CreateCandidateLaboralInfoRequest(BaseModel):
@@ -94,21 +106,27 @@ class CreateCandidateLaboralInfoRequest(BaseModel):
 
 class CreateCompanyRequest(BaseModel):
     document: str
-    documentType: str
-    firstName: str
-    lastName: str
+    document_type: str
+    first_name: str
+    last_name: str
     username: str
     password: str
-    taxpayerId: str
+    taxpayer_id: str
     name: str
     country: str
     city: str
     years: str
     address: str
-    phoneNumber: str
+    phone_number: str
     profile: str
     position: str
     
+class CreateProjectRequest(BaseModel):
+    project_name : str
+    start_date : datetime.date
+    active : bool
+    details : str
+
 class CreateTestRequest(BaseModel):
     name : str
     technology : str
@@ -193,7 +211,7 @@ def get_candidates(db: Session)->List[person_service.person_model.Person]:
     
     if professional_list is None:
         LOGGER.info("Empty List in facade")
-        return []
+        return None
     else:
         LOGGER.info("List with data in facade")
         return professional_list
@@ -233,7 +251,7 @@ def add_candidate_technology_info(request: CreateCandidateTechnologyInfoRequest,
 
 def create_company(request: CreateCompanyRequest, db: Session)->None:
 
-    LOGGER.info("Starting Create company with username [%s]", request.username)
+    LOGGER.info("Starting Create company with username [%s]", request.name)
     company_repository = db_company_repository.DBCompanyRepository(db = db)
     person_repository = db_person_repository.DBPersonRepository(db = db)
     user_repository = db_user_repository.DBUserRepository(db = db)
@@ -273,3 +291,31 @@ def create_test(request: CreateTestRequest, db: Session)->None:
     
     test_service.create_test(**request.dict(), test_repository=test_repository)
     
+        
+        
+######################################################################################################################################
+#                                                           PROJECT                                                                  #
+######################################################################################################################################
+
+def create_project(request: CreateProjectRequest, person_id: str, db: Session)->None:
+
+    LOGGER.info("Starting Create project with name [%s]", request.project_name)
+    project_repository = db_project_repository.DBProjectRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    
+    new_project = project_service.CreateProjectRequest.model_validate(request.model_dump())
+    
+    project_service.create_project(request=new_project, person_id= person_id, 
+                                       project_repository=project_repository, employee_repository = employee_repository)
+
+def get_projects(db: Session)->Optional[List[project_service.project_model.ProjectRead]]:
+    LOGGER.info("Listing all projects")
+    project_repository = db_project_repository.DBProjectRepository(db = db)
+    project_list = project_service.get_all(project_repository=project_repository)
+    
+    if project_list is None:
+        LOGGER.info("Empty Project List in facade")
+        return None
+    else:
+        LOGGER.info("Project List with data in facade")
+        return project_list

@@ -15,12 +15,12 @@ class DBCompanyRepository(company_repository.CompanyRepository):
         super().__init__()
         self.db = db
         
-    def get_by_taxpayerId(self, taxpayerId: str)-> Optional[company_model.Company]:
-        company = self.db.query(models.Company).filter(models.Company.taxpayerId == taxpayerId).first()
+    def get_by_taxpayerId(self, taxpayer_id: str)-> Optional[company_model.Company]:
+        company = self.db.query(models.Company).filter(models.Company.taxpayer_id == taxpayer_id).first()
        
-        return None if company is None else company_model.Company(id = company.id, taxpayerId=taxpayerId, name = company.name,\
+        return None if company is None else company_model.Company(id = company.id, taxpayer_id=taxpayer_id, name = company.name,\
         country= company.country, city = company.city, years=str(company.years), address = company.address,\
-        phoneNumber = company.phoneNumber)
+        phone_number = company.phone_number)
     
     def get_all(self)-> Optional[List[company_model.Company]]:
         
@@ -30,23 +30,26 @@ class DBCompanyRepository(company_repository.CompanyRepository):
             None
         else:
             LOGGER.info("Sending company list")
-            return [company_model.Company(id = company.id , taxpayerId=company.taxpayerId, name=company.name,
-             country = company.country, city = company.city, years= company.years, address = company.phoneNumber ) 
+            return [company_model.Company(id = company.id , taxpayer_id=company.taxpayer_id, name=company.name,
+             country = company.country, city = company.city, years= str(company.years), address = company.address, phone_number = company.phone_number ) 
             for company in companies]
                 
     def save(self, company: company_model.Company)-> None:
         new_company = models.Company(
-            taxpayerId = company.taxpayerId,
+            taxpayer_id = company.taxpayer_id,
             name = company.name,
             country = company.country,
             city = company.city,
             years = company.years,
             address = company.address,
-            phoneNumber = company.phoneNumber
+            phone_number = company.phone_number
         )
         
         self.db.add(new_company)
         self.db.commit()
 
-        
+    def delete_company(self, taxpayer_id: int)-> Optional[int]:
+        company = self.db.query(models.Company).filter(models.Company.taxpayer_id == taxpayer_id).delete()
+        self.db.commit()
+        return company   
         

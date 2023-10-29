@@ -16,17 +16,17 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
     def get_by_person_id(self, person_id: str)-> Optional[professional_model.ProfessionalReadModel]:
         professional = self.db.query(models.Professional).filter(models.Professional.person_id == person_id).first()
        
-        return None if professional is None else professional_model.ProfessionalReadModel(id = professional.id, birthDate = professional.birthDate , age=professional.age,\
-        originCountry= professional.originCountry, residenceCountry = professional.residenceCountry, residenceCity = professional.residenceCity,\
+        return None if professional is None else professional_model.ProfessionalReadModel(id = professional.id, birth_date = professional.birth_date , age=professional.age,\
+        origin_country= professional.origin_country, residence_country = professional.residence_country, residence_city = professional.residence_city,\
         address = professional.address, person_id = person_id )
         
     def save(self, professional: professional_model.ProfessionalCreateModel)-> None:
         new_professional = models.Professional(
-            birthDate = professional.birthDate,
+            birth_date = professional.birth_date,
             age = professional.age,
-            originCountry = professional.originCountry,
-            residenceCountry = professional.residenceCountry,
-            residenceCity = professional.residenceCity,
+            origin_country = professional.origin_country,
+            residence_country = professional.residence_country,
+            residence_city = professional.residence_city,
             address = professional.address,
             person_id = professional.person_id
         )
@@ -89,4 +89,8 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(technology_info)
         self.db.commit()
         
-        
+    def delete_professional(self, person_id: int)-> Optional[int]:
+        professional = self.db.query(models.Professional).filter(models.Professional.person_id == person_id).delete()
+        self.db.commit()
+        return professional 
+  

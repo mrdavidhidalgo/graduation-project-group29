@@ -35,61 +35,72 @@ class CompanyTaxprayerAlreadyExistError(Exception):
         
 class CreateCompanyRequest(BaseModel):
     document: str
-    documentType: str
-    firstName: str
-    lastName: str
+    document_type: str
+    first_name: str
+    last_name: str
     username: str
     password: str
-    taxpayerId: str
+    taxpayer_id: str
     name: str
     country: str
     city: str
     years: str
     address: str
-    phoneNumber: str
+    phone_number: str
     profile: str
     position: str
 
 def create_company(request : CreateCompanyRequest, person_repository: person_repository.PersonRepository,\
 user_repository: user_repository.UserRepository, company_repository: company_repository.CompanyRepository, employee_repository = employee_repository.EmployeeRepository)-> None:
     
-    LOGGER.info("Creating Comapny with taxPayerId [%s] and name [%s]", request.taxpayerId, request.name)
+    LOGGER.info("Creating Comapny with taxPayerId [%s] and name [%s]", request.taxpayer_id, request.name)
     
-    persisted_company = company_repository.get_by_taxpayerId(taxpayerId = request.taxpayerId)
+    persisted_company = company_repository.get_by_taxpayerId(taxpayer_id = request.taxpayer_id)
     
     if persisted_company is not None:
         raise CompanyTaxprayerAlreadyExistError()
     
     person_request = person_service.CreateEmployeeRequest
     person_request.document = request.document
-    person_request.documentType = request.documentType
-    person_request.firstName = request.firstName
-    person_request.lastName = request.lastName
+    person_request.document_type = request.document_type
+    person_request.first_name = request.first_name
+    person_request.last_name = request.last_name
     person_request.profile = request.profile
     person_request.position = request.position
-    person_request.taxpayerId = request.taxpayerId
+    person_request.taxpayer_id = request.taxpayer_id
     
     company_repository.save(
         company = company_model.Company(
-            taxpayerId = request.taxpayerId,
+            taxpayer_id = request.taxpayer_id,
             name = request.name,
             country = request.country,
             city = request.city,
             years = request.years,
             address = request.address,
-            phoneNumber = request.phoneNumber)
+            phone_number = request.phone_number)
         )
     
-    
-    person_service.create_employee(person_request, person_repository, employee_repository)
+    try:
+        person_service.create_employee(person_request, person_repository, employee_repository)
+    except:
+        LOGGER.info("Haciendo Rollback de Empresa")
+        company_repository.delete_company(request.taxpayer_id)
+        raise
         
-    user_service.create_user(request.username, request.password, "COMPANY", request.document, user_repository)
+    try:    
+        user_service.create_user(request.username, request.password, user_model.UserRole.CLIENT, request.document, user_repository)
+    except:
+        LOGGER.info("Haciendo Rollback desde Usuario")
+        company_repository.delete_company(request.taxpayer_id)
+        employee_repository.delete_employee(request.document)
+        person_repository.delete_person(request.document)
+        raise user_service.UserNameAlreadyExistError()
     
     
-def get_by_taxpayerId(company_repository: company_repository.CompanyRepository, taxpayerId: str)-> Optional[company_model.Company]:   
+def get_by_taxpayerId(company_repository: company_repository.CompanyRepository, taxpayer_id: str)-> Optional[company_model.Company]:   
     LOGGER.info("Search for company by id")
-    company =  company_repository.get_by_taxpayerId(taxpayerId)
-    if list is None:
+    company =  company_repository.get_by_taxpayerId(taxpayer_id)
+    if company is None:
         LOGGER.info("Company not exists")
         return None
     else:

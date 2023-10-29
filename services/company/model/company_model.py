@@ -4,10 +4,10 @@ import datetime
 from services.commons import base
 
 class Company(BaseModel):
-    taxpayerId: str
+    taxpayer_id: str
     name: str
     country: base.Country
     city: str
     years: str
     address: str
-    phoneNumber: str
+    phone_number: str

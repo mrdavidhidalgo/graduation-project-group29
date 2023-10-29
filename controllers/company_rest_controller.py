@@ -46,16 +46,17 @@ def get_db() -> Session:
 @router.post("/companies")
 async def create_company(request: CreateCompanyRequest, db: Session = Depends(get_db)):
     #LOGGER.info("Peticion [%s] - [%s]", str(request.document), str(request.documentType))
-    request2 = management_service_facade.CreateCompanyRequest(document = request.document, documentType = request.documentType
-    , firstName = request.firstName, lastName = request.lastName, username = request.username,
-    password = request.password, taxpayerId = request.taxpayerId, name = request.name, country = request.country,\
-    city = request.city, years = request.years, address = request.address, phoneNumber = request.phoneNumber,\
+    request2 = management_service_facade.CreateCompanyRequest(document = request.document, document_type = request.documentType
+    , first_name = request.firstName, last_name = request.lastName, username = request.username,
+    password = request.password, taxpayer_id = request.taxpayerId, name = request.name, country = request.country,\
+    city = request.city, years = request.years, address = request.address, phone_number = request.phoneNumber,\
     profile = request.profile, position = request.position)
         
     try:
         management_service_facade.create_company(request = request2, db = db)
         return {"msg": "Company has been created"}
-    except (management_service_facade.CompanyTaxprayerAlreadyExistError, management_service_facade.UserNameAlreadyExistError) as e:
+    except (management_service_facade.CompanyTaxprayerAlreadyExistError, management_service_facade.UserNameAlreadyExistError,\
+    management_service_facade.PersonDocumentAlreadyExistError) as e:
         raise HTTPException(status_code=400, detail=e.message)
         
 @router.get("/companies")
@@ -65,7 +66,7 @@ async def get_companies(response: Response, db: Session = Depends(get_db)):
     if companies_list is not None:
         data=[]
         for company in companies_list:
-            data.append({'id': str(company.id),'taxpayerId': str(company.taxpayerId),'name': str(company.name)})
+            data.append({'taxpayerId': str(company.taxpayer_id),'name': str(company.name)})
         return data
     else:
         LOGGER.info("Return 404 error")
