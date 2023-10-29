@@ -19,7 +19,7 @@ class DBTestRepository(test_repository.TestRepository):
                                                          name = test.name,
                                                          technology = test.technology,
                                                          duration_minutes = test.duration_minutes,
-                                                         status = test.status,
+                                                         status = test.status.name,
                                                          start_date = test.start_date,
                                                          end_date = test.end_date,
                                                          description = test.description)
