@@ -4,16 +4,18 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from services.company import company_service
 from services.employee import employee_service
+from services.test import test_service
 from services.user import user_service
+import enum
 from services.person import person_service
 from services.professional import professional_service
 from services.project import project_service
-from daos import db_user_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository, db_project_repository
+from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository, db_project_repository
 from pydantic import BaseModel
 from services.professional.model import professional_model
 from services.project.model import project_model
 from services.commons import base
-
+from datetime import date
 class DateRangeInvalidError(Exception):
      def __init__(self, *args: object) -> None:
         self.message = f"The Range of dates is invalid"
@@ -57,6 +59,9 @@ CompanyTaxprayerAlreadyExistError = company_service.CompanyTaxprayerAlreadyExist
 ProjectNameAlreadyExistError = project_service.ProjectNameAlreadyExistError
 
 EmployeeDoesNotExistError = employee_service.EmployeeDoesNotExistError
+TestNameAlreadyExistError = test_service.TestNameAlreadyExistError
+
+
 
 #LOGGER = user_service.LOGGER
 from services import logs
@@ -122,6 +127,19 @@ class CreateProjectRequest(BaseModel):
     active : bool
     details : str
 
+
+class Status(enum.Enum):
+    ENABLED = "ENABLED"
+    DISABLED = "DISABLED"
+class CreateTestRequest(BaseModel):
+    name : str
+    technology : str
+    duration_minutes : int
+    status : Status
+    start_date : date 
+    end_date: date
+    description : str 
+    
 ######################################################################################################################################
 #                                                           USER                                                                     #
 ######################################################################################################################################
@@ -147,6 +165,7 @@ def create_user(request: CreateUserRequest, db: Session)->None:
     
     user_service.create_user(user_repository=user_repository, username=request.username, password=request.password, role=request.role, person = request.person)
     
+
 
 ######################################################################################################################################
 #                                                       CANDIDATE                                                                    #
@@ -261,6 +280,21 @@ def get_companies(db: Session)->Optional[List[company_service.company_model.Comp
     else:
         LOGGER.info("List with data in facade")
         return company_list
+    
+    
+
+    
+
+######################################################################################################################################
+#                                                         TEST                                                                       #
+######################################################################################################################################
+
+def create_test(request: CreateTestRequest, db: Session)->None:
+    
+    test_repository = db_test_repository.DBTestRepository(db = db)
+    
+    test_service.create_test(**request.copy(exclude={"status"}).dict(),status=request.status.name, test_repository=test_repository)
+    
         
         
 ######################################################################################################################################

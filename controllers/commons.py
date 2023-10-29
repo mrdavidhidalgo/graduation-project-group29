@@ -2,7 +2,6 @@ from fastapi import Header, Depends, HTTPException
 import jwt
 from pydantic import BaseModel
 from typing import Dict
-from controllers import candidate_rest_controller
 import os
 
 _JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATA")

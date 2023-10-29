@@ -1,5 +1,8 @@
 import enum
     
+class TestStatus(enum.Enum):
+    ENABLED = "ENABLED"
+    DISABLED = "DISABLED"
 class DocumentType(enum.Enum):
     CC = "CC"
     PASSPORT = "PA"
