@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum, ForeignKey,Date
 import datetime
 from services.commons import base
 
@@ -107,3 +107,18 @@ class Employee(Base):
     position = Column(String(100))
     person_id = Column(String(30), ForeignKey('person.document'))
     company_id = Column(String(30), ForeignKey('company.taxpayerId'))
+
+
+
+class Test(Base):
+    __tablename__ = "test"
+    
+    name = Column(String(200), primary_key=True, index=True)
+    technology = Column(String(200))
+    duration_minutes = Column(Integer)
+    start_date = Column(Date, default=datetime.datetime.utcnow)
+    end_date = Column(Date, default=datetime.datetime.utcnow)
+    status = Column(Boolean)
+    description = Column(String(5000))
+    
+    
