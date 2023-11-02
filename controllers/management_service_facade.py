@@ -10,10 +10,16 @@ import enum
 from services.person import person_service
 from services.professional import professional_service
 from services.project import project_service
-from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository, db_project_repository
+from services.technology import technology_service
+from services.ability import ability_service
+from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
+db_employee_repository, db_company_repository, db_project_repository, db_technology_repository,\
+db_ability_repository
+
 from pydantic import BaseModel
 from services.professional.model import professional_model
 from services.project.model import project_model
+from services.technology.model import technology_model
 from services.commons import base
 from datetime import date
 class DateRangeInvalidError(Exception):
@@ -59,9 +65,14 @@ CompanyTaxprayerAlreadyExistError = company_service.CompanyTaxprayerAlreadyExist
 ProjectNameAlreadyExistError = project_service.ProjectNameAlreadyExistError
 
 EmployeeDoesNotExistError = employee_service.EmployeeDoesNotExistError
+
 TestNameAlreadyExistError = test_service.TestNameAlreadyExistError
 
+TechnologyAlreadyExistError = technology_service.TechnologyAlreadyExistError
 
+AbilityAlreadyExistError = ability_service.AbilityAlreadyExistError
+
+ProfessionalSearchError = professional_service.ProfessionalSearchError
 
 #LOGGER = user_service.LOGGER
 from services import logs
@@ -139,7 +150,18 @@ class CreateTestRequest(BaseModel):
     start_date : date 
     end_date: date
     description : str 
+
+class CreateTechnologyRequest(BaseModel):
+    technology_name : str
+    details : str
+    category : base.TechnologyCategory
     
+class ReadTechnologyRequest(BaseModel):    
+    id : int
+    technology_name : str
+    details : str
+    category : base.TechnologyCategory
+  
 ######################################################################################################################################
 #                                                           USER                                                                     #
 ######################################################################################################################################
@@ -193,6 +215,16 @@ class CreateCandidateTechnologyInfoRequest(BaseModel):
     experience_years: int
     level: int
     description : str
+    
+class CandidateSearchRequest(BaseModel):
+    role_filter: str
+    role: str
+    role_experience: str
+    technologies: list = []
+    abilities: list = []
+    title_filter: str
+    title: str
+    title_experience: str
 
 def create_candidate(request: CreateCandidateRequest, db: Session)->None:
 
@@ -247,7 +279,18 @@ def add_candidate_technology_info(request: CreateCandidateTechnologyInfoRequest,
     
     professional_service.add_technology_info(technology_info=professional_model.ProfessionalTechnologyInfo.model_validate(request.model_dump()), 
                                            professional_repository = professional_repository)
-                                           
+
+def search_for_candidates(request: CandidateSearchRequest, db: Session)->Optional[List[professional_model.ProfessionalSearchResult]]:
+    LOGGER.info("Listing all candidates")
+    professional_repository = db_professional_repository.DBProfessionalRepository(db = db)
+    professional_list = professional_service.search_for_candidates(request, professional_repository=professional_repository)
+    
+    if professional_list is None:
+        LOGGER.info("Empty List in facade")
+        return None
+    else:
+        LOGGER.info("List with data in facade")
+        return professional_list
 
 ######################################################################################################################################
 #                                                       COMPANIES                                                                    #
@@ -323,3 +366,38 @@ def get_projects(db: Session)->Optional[List[project_service.project_model.Proje
     else:
         LOGGER.info("Project List with data in facade")
         return project_list
+
+
+######################################################################################################################################
+#                                                      TECHNOLOGY                                                                    #
+######################################################################################################################################
+
+
+def get_technologies(db: Session)->Optional[List[technology_service.technology_model.TechnologyRead]]:
+    LOGGER.info("Listing all technologies")
+    technology_repository = db_technology_repository.DBTechnologyRepository(db = db)
+    technology_list = technology_service.get_all(technology_repository=technology_repository)
+    
+    if technology_list is None:
+        LOGGER.info("Empty Technology List in facade")
+        return None
+    else:
+        LOGGER.info("Technology List with data in facade")
+        return technology_list
+        
+
+######################################################################################################################################
+#                                                      ABILITY                                                                       #
+######################################################################################################################################
+
+def get_abilities(db: Session)->Optional[List[ability_service.ability_model.AbilityRead]]:
+    LOGGER.info("Listing all abilities")
+    ability_repository = db_ability_repository.DBAbilityRepository(db = db)
+    ability_list = ability_service.get_all(ability_repository=ability_repository)
+    
+    if ability_list is None:
+        LOGGER.info("Empty Ability List in facade")
+        return None
+    else:
+        LOGGER.info("Ability List with data in facade")
+        return ability_list

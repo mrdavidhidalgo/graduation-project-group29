@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Header, Response
+from fastapi import APIRouter, HTTPException, Header, Response, status, Request
 
 from fastapi import Depends
 from typing import Annotated, Any, Optional, Tuple
@@ -71,7 +71,15 @@ class CreateCandidateRequest(BaseModel):
     residenceCity: str
     address: str
 
-
+class CandidateSearchRequest(BaseModel):
+    roleFilter: Optional[str]
+    role: Optional[str]
+    roleExperience: Optional[str]
+    technologies: Optional[str]
+    abilities: Optional[str]
+    titleFilter: Optional[str]
+    title: Optional[str]
+    titleExperience: Optional[str]
 
 # Dependency
 def get_db() -> Session:
@@ -239,4 +247,29 @@ def get_and_validates_dates(request: CreateCandidateAcademicInfoRequest)->Tuple[
 
     return start_date, end_date
     
+@router.get("/candidates/search")
+async def search_for_candidates(request: Request, db: Session = Depends(get_db)):
+
+    technologies=[]
+    abilities=[]
+    technologies=request.query_params['technologies'].split(',')
+    abilities=request.query_params['abilities'].split(',')
     
+    request2 = management_service_facade.CandidateSearchRequest(role_filter = request.query_params['roleFilter'],\
+     role = request.query_params['role'],  role_experience=request.query_params['roleExperience'],\
+     technologies= technologies,\
+     abilities= abilities, title_filter=request.query_params['titleFilter'],\
+     title=request.query_params['title'],title_experience=request.query_params['titleExperience'])
+    
+    candidates_list = management_service_facade.search_for_candidates(request=request2, db = db)
+    
+    if len(candidates_list) > 0:
+        data=[]
+        for c in candidates_list:
+            data.append({'person_id': str(c.person_id),'first_name': str(c.first_name), 'age:': str(c.age),\
+             'roles': c.roles, 'technologies': c.technologies,\
+             'titles': c.titles, 'abilities': c.abilities, 'score': c.score })
+        return data
+    else:
+        _LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No candidates found")    

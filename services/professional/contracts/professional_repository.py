@@ -31,3 +31,9 @@ class ProfessionalRepository(abc.ABC):
     @abc.abstractmethod
     def delete_professional(self, person_id: int)-> Optional[int]:
         ...
+        
+    @abc.abstractmethod
+    def search_for_candidates(self, role_filter: str, role: str, role_experience: str,\
+     technologies: list, abilities: list , title_filter: str, title: str, title_experience: str)->Optional[List[professional_model.ProfessionalSearchResult]]:
+        ...
+        

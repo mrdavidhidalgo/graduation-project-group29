@@ -55,4 +55,25 @@ class ProfessionalTechnicalRole(BaseModel):
     role: str
     experience_years: int
     description : str
-    
+
+class ProfessionalSearchResult(BaseModel):
+    person_id: str
+    first_name: str
+    last_name: str
+    age: int
+    roles: list = []
+    titles: list = []
+    technologies: list = []
+    abilities: list = []
+    score: str
+
+class ProfessionalSearchRequest(BaseModel):
+    role_filter: str
+    role: str
+    role_experience: str
+    technologies: list = []
+    abilities: list = []
+    titles: list = []
+    title_filter: str
+    title: str
+    title_experience: str
