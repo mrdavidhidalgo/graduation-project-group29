@@ -1,14 +1,28 @@
 import datetime
-from fastapi import APIRouter, HTTPException, Header, Response, status
+from fastapi import APIRouter, HTTPException, Response
 
 from fastapi import Depends
-from fastapi.responses import JSONResponse
-from typing import Annotated, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from daos.db_model.database import SessionLocal
+from fastapi import APIRouter, HTTPException 
+
+from fastapi import Depends
+from typing import Optional
+ 
+from controllers import commons
+from pydantic import BaseModel, Field
+
+from sqlalchemy.orm import Session
+
+from daos.db_model.database import SessionLocal 
+
+from controllers import management_service_facade
+from services import logs
+import datetime 
 
 from controllers import management_service_facade, commons
 from services import logs
@@ -82,3 +96,35 @@ def string_to_date(start_date: str)->Optional[datetime.date]:
         raise management_service_facade.InvalidDateError
     
     return new_date
+
+
+ 
+class CreateProfileRequest(BaseModel):
+    name : str = Field(min_length=6,max_length=200)
+    description : str = Field(min_length=6,max_length=500)
+    role :str= Field(min_length=1,max_length=200)
+    experience_in_years : int = Field(gt=-1)
+    technology :str= Field(min_length=2,max_length=200)
+    category:str= Field(min_length=2,max_length=200)
+    title:str= Field(min_length=2,max_length=200)
+    
+
+# Dependency
+def get_db() -> Session:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@router.post("/projects/profiles")
+async def create_test(request: CreateProfileRequest,token_data: commons.TokenData = Depends(commons.get_token_data),
+                      db: Session = Depends(get_db)):
+    
+    request = management_service_facade.CreateProfileRequest(**request.dict())
+    
+    try:
+        management_service_facade.create_profile(request = request, db = db)
+        return {"msg": "Profile has been created"}
+    except (management_service_facade.ProfileNameAlreadyExistError):
+        raise HTTPException(status_code=400, detail="Profile duplicated by name")
