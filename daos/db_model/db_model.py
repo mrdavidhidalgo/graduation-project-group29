@@ -132,3 +132,14 @@ class Test(Base):
     status =  Column(Enum(base.TestStatus))
     description = Column(String(5000))
     
+
+class Profile(Base):
+    __tablename__ = "profile"
+    
+    name = Column(String(200), primary_key=True, index=True)
+    description = Column(String(500))
+    role = Column(String(200))
+    experience_in_years =  Column(Integer)
+    technology = Column(String(200))
+    category = Column(String(200))
+    title = Column(String(200))

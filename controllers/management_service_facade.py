@@ -4,13 +4,14 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from services.company import company_service
 from services.employee import employee_service
+from services.project.contracts import project_repository
 from services.test import test_service
 from services.user import user_service
 import enum
 from services.person import person_service
 from services.professional import professional_service
-from services.project import project_service
-from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository, db_project_repository
+from services.project import project_service, profile_service
+from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository, db_employee_repository, db_company_repository, db_project_repository, db_profile_repository
 from pydantic import BaseModel
 from services.professional.model import professional_model
 from services.project.model import project_model
@@ -60,7 +61,7 @@ ProjectNameAlreadyExistError = project_service.ProjectNameAlreadyExistError
 
 EmployeeDoesNotExistError = employee_service.EmployeeDoesNotExistError
 TestNameAlreadyExistError = test_service.TestNameAlreadyExistError
-
+ProfileNameAlreadyExistError = profile_service.ProfileNameAlreadyExistError
 
 
 #LOGGER = user_service.LOGGER
@@ -323,3 +324,24 @@ def get_projects(db: Session)->Optional[List[project_service.project_model.Proje
     else:
         LOGGER.info("Project List with data in facade")
         return project_list
+
+######################################################################################################################################
+#                                                           PROFILE                                                                  #
+######################################################################################################################################
+
+ 
+class CreateProfileRequest(BaseModel):
+    name : str
+    description : str 
+    role :str
+    experience_in_years : int
+    technology :str
+    category:str
+    title:str
+
+def create_profile(request: CreateProfileRequest, db: Session)->None:
+
+    LOGGER.info("Starting Create profile with name [%s]", request.name)
+    
+    profile_service.create_profile(**request.model_dump(),
+                                       profile_repository=db_profile_repository.DBProfileRepository(db = db))
