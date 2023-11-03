@@ -2,13 +2,13 @@
 
 from datetime import timedelta
 import datetime
-
+from typing import List, Optional
 #from .contracts import user_repository
 from services.professional.contracts import professional_repository
 from services.user.contracts import user_repository
 from services.professional.model import professional_model
 from services.commons import base
-
+from pydantic import BaseModel
 
 
 from services import logs
@@ -26,8 +26,23 @@ class ProfessionalDoesNotExistError(Exception):
      def __init__(self, person_id: str, *args: object) -> None:
         self.message = f"The Professional with personID {person_id} does not exist"
         super().__init__(self.message)
-    
 
+class ProfessionalSearchError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = "There are not professionals associated"
+        super().__init__(self.message)
+
+    
+class CandidateSearchRequest(BaseModel):
+    role_filter: str
+    role: str
+    role_experience: str
+    technologies: list = []
+    abilities: list = []
+    title_filter: str
+    title: str
+    title_experience: str
+    
 def create_professional(birth_date: str, 
                         age: int,
                         origin_country: base.Country, 
@@ -111,3 +126,16 @@ def add_technology_info(technology_info :professional_model.ProfessionalTechnolo
     professional_repository.add_technology_info(professional_id=professional.id, technology_info=technology_info)
     
     LOGGER.info("Technology info for professional [%s] was created", professional.id)
+    
+def search_for_candidates(request: CandidateSearchRequest, professional_repository: professional_repository.ProfessionalRepository)->Optional[List[professional_model.ProfessionalSearchResult]]:
+    LOGGER.info("Search for candidates with filters")
+    
+    candidates = professional_repository.search_for_candidates(role_filter= request.role_filter, role= request.role,\
+     role_experience=request.role_experience ,technologies_list=request.technologies,\
+     abilities_list= request.abilities, title_filter=request.title_filter, title=request.title, title_experience=request.title_experience)
+    if candidates is None:
+        LOGGER.info("NO candidates found on service")
+        return None
+    else:
+        LOGGER.info("Candidates list exists in service")
+        return candidates

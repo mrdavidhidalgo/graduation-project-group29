@@ -5,6 +5,7 @@ from services.professional.model import professional_model
 from tests.services.professional import mocks
 import pytest
 
+
 ###########################################################################################
 #                                   create_professional()                                 #
 ###########################################################################################
@@ -183,3 +184,38 @@ def test_should_add_technology_info_succesfully()->None:
         ), 
         professional_repository=mocks.FakeProfesionalRepository(person_id="1")
     )
+
+###########################################################################################
+#                                  search_for_candidates()                                #
+###########################################################################################
+
+@pytest.mark.unittests
+def test_should_get_candidates_sucessfully()->None:
+    
+    subject.search_for_candidates(subject.CandidateSearchRequest(
+        role_filter = "contains",
+        role = "",
+        role_experience = "2",
+        technologies = ["JAVA","PYTHON"],
+        abilities = [],
+        title_filter = "start",
+        title = "PR",
+        title_experience = "3"),
+        professional_repository= mocks.FakeProfesionalRepository()
+    )
+    
+    
+def test_should_get_candidates_not_found()->None:
+   
+    search_result = subject.search_for_candidates(subject.CandidateSearchRequest(
+        role_filter = "contains",
+        role = "",
+        role_experience = "15",
+        technologies = [],
+        abilities = [],
+        title_filter = "start",
+        title = "",
+        title_experience = "3"),
+        professional_repository= mocks.FakeProfesionalRepository()
+    )
+    assert search_result is None

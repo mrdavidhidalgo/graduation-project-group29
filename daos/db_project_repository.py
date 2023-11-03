@@ -54,8 +54,8 @@ class DBProjectRepository(project_repository.ProjectRepository):
         self.db.add(new_project)
         self.db.commit()
 
-    def delete_project(self, project_id: int)-> Optional[int]:
+    """def delete_project(self, project_id: int)-> Optional[int]:
         project = self.db.query(models.Project).filter(models.Project.id == project_id).delete()
         self.db.commit()
-        return project
+        return project"""
         

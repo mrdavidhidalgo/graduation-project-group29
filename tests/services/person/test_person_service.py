@@ -44,8 +44,8 @@ class MockPerson(person_repository.PersonRepository):
     def get_all(self)-> Optional[List[person_model.Person]]:
         return self.person_with_params
       
-    def delete_person(self, document: int)->int:
-        return 1  
+    #def delete_person(self, document: int)->int:
+    #    return 1  
 
 class MockUser(user_repository.UserRepository):
    
@@ -91,3 +91,17 @@ class MockProfessional(professional_repository.ProfessionalRepository):
     
     def delete_professional(self, person_id: int)-> Optional[int]:
         return 1
+        
+    def search_for_candidates(self, role_filter: str, role: str, role_experience: str,\
+     technologies: list, abilities: list , title_filter: str, title: str, title_experience: str)->Optional[List[professional_model.ProfessionalSearchResult]]:
+        return None if (len(role)==0) & (len(title)==0) & (len(technologies)==0)\
+            else [professional_model.ProfessionalSearchResult(person_id = 1,
+                first_name= "Andres",
+                last_name="Gomez", 
+                age = "30",
+                roles = [{'roles': 'PROGRAMADOR[5]'}],
+                titles = [{'title': 'ING SISTEMAS[8]'}],
+                technologies= [{'name': 'JAVA[5]'}],
+                abilities= {'name': 'Ninguna'},
+                score= "9"
+        )]
