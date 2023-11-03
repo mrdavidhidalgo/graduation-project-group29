@@ -133,6 +133,7 @@ class Test(Base):
     description = Column(String(5000))
 
 
+
 class Technology(Base):
     __tablename__ = "technology"
     
@@ -149,3 +150,16 @@ class Ability(Base):
     ability_name = Column(String(100))
     details = Column(Text)
     category = Column(Enum(base.AbilityCategory))
+
+    
+
+class Profile(Base):
+    __tablename__ = "profile"
+    
+    name = Column(String(200), primary_key=True, index=True)
+    description = Column(String(500))
+    role = Column(String(200))
+    experience_in_years =  Column(Integer)
+    technology = Column(String(200))
+    category = Column(String(200))
+    title = Column(String(200))
