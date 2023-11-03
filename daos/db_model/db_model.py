@@ -163,3 +163,4 @@ class Profile(Base):
     technology = Column(String(200))
     category = Column(String(200))
     title = Column(String(200))
+    project_id = Column(String(200))

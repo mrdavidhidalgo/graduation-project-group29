@@ -421,6 +421,7 @@ class CreateProfileRequest(BaseModel):
     technology :str
     category:str
     title:str
+    project_id:str
 
 def create_profile(request: CreateProfileRequest, db: Session)->None:
 

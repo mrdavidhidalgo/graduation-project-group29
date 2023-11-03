@@ -14,7 +14,7 @@ from services import logs
 from services.user.model import user_model
 # Configura un secreto para firmar los tokens JWT
 _JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATA")
-_JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES = os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES", 15)
+_JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES = os.getenv("JWT_ACCESS_TOKEN_EXPIRES_IN_MINUTES", 120)
 _ALGORITHM = "HS256"
 
 

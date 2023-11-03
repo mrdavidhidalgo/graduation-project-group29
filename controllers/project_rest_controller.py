@@ -71,9 +71,10 @@ async def create_project(request: CreateProjectRequest, token_data: commons.Toke
         raise HTTPException(status_code=400, detail=e.message)
         
 @router.get("/projects")
-async def get_projects(response: Response, db: Session = Depends(get_db)):
+async def get_projects(company_id: str = None, db: Session = Depends(get_db)):
     project_list = management_service_facade.get_projects(db = db)
-    
+    if company_id:
+        project_list = list(filter(lambda x: x.company_id==company_id,project_list))
     if project_list is not None:
         data=[]
         for project in project_list:
@@ -107,6 +108,7 @@ class CreateProfileRequest(BaseModel):
     technology :str= Field(min_length=2,max_length=200)
     category:str= Field(min_length=2,max_length=200)
     title:str= Field(min_length=2,max_length=200)
+    project_id:str= Field(max_length=200)
     
 
 # Dependency

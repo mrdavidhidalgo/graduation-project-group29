@@ -27,6 +27,7 @@ class DBProfileRepository(profile_repository.ProfileRepository):
                 technology=profile.technology,
                 category=profile.category,
                 title=profile.title,
+                project_id=profile.project_id
         )
           
     def save(self, profile: profile_model.Profile)-> None:
@@ -38,6 +39,7 @@ class DBProfileRepository(profile_repository.ProfileRepository):
                 technology=profile.technology,
                 category=profile.category,
                 title=profile.title,
+                project_id=profile.project_id
         )
         
         self.db.add(new_profile)

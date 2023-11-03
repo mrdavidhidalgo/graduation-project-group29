@@ -20,7 +20,7 @@ class CreateProfileRequest(BaseModel):
     title:str= Field(min_length=2,max_length=200)      
         
 def create_profile(name: str, description : str, role:str,experience_in_years: int,
-                technology: str, category:str, title:str,
+                technology: str, category:str, title:str,project_id:str,
                 profile_repository: profile_repository.ProfileRepository)-> None:
     
     LOGGER.info("Creating profile with name [%s]", name)
@@ -39,7 +39,8 @@ def create_profile(name: str, description : str, role:str,experience_in_years: i
             experience_in_years = experience_in_years,
             category = category,
             title=title,
-            description=description
+            description=description,
+            project_id=project_id
             )
         )
     
