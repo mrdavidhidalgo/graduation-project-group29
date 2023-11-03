@@ -11,3 +11,4 @@ class Profile(BaseModel):
     technology :str
     category:str
     title:str   
+    project_id:str
