@@ -4,3 +4,8 @@ build-backend = "hatchling.build"
 [project]
 description = ""
 version = "0.1.0"
+
+[tool.coverage.run]
+omit = [
+    "daos/db_professional_repository.py"
+]

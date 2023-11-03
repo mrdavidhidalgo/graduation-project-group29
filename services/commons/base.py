@@ -8,6 +8,24 @@ class DocumentType(enum.Enum):
     PASSPORT = "PA"
     NATIONAL_ID = "NI"
 
+class TechnologyCategory(enum.Enum):
+    Develop="DEV"
+    Networking="TEL"
+    Support="SOP"
+    Design="DES"
+    Configuration="CON"
+    Accounting="ACO"
+    Virtualization="VIR"
+    Security="SEC"
+    Storage="STO"
+    Industrial="IND"
+    Testing="TES"
+
+class AbilityCategory(enum.Enum):
+    SOFT="SOFT"
+    HARD="HARD"
+    COGNITIVE="COGN"
+    
 class Country(enum.Enum):
     Afganistan="AF"
     Albania="AL"

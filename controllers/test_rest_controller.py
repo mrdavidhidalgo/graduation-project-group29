@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException 
+from fastapi import APIRouter, HTTPException ,Response, status
 
 from fastapi import Depends
 from typing import Annotated, Any, Optional, Tuple,cast
@@ -59,4 +59,16 @@ async def create_test(request: CreateTestRequest,token_data: commons.TokenData =
     except (management_service_facade.TestNameAlreadyExistError):
         raise HTTPException(status_code=400, detail="Test duplicated by name")
 
+@router.get("/technologies")
+async def get_technologies(response: Response, db: Session = Depends(get_db)):
+    technologies_list = management_service_facade.get_technologies(db = db)
     
+    if technologies_list is not None:
+        data=[]
+        for technology in technologies_list:
+            data.append({'technologyId': str(technology.id),'name': str(technology.technology_name),\
+             "category": str(technology.category)})
+        return data
+    else:
+        _LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No technologies found")
