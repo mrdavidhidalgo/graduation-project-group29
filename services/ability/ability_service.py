@@ -33,7 +33,7 @@ def create_ability(request : CreateAbilityRequest, ability_repository: ability_r
     
     LOGGER.info("Creating ability with Name [%s]", request.ability_name)
     
-    persisted_ability = ability_repository.get_by_name(abilitygy_name = request.ability_name)
+    persisted_ability = ability_repository.get_by_name(ability_name = request.ability_name)
     
     if persisted_ability is not None:
         raise AbilityAlreadyExistError()

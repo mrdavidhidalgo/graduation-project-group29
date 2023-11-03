@@ -35,7 +35,7 @@ class DBEmployeeRepository(employee_repository.EmployeeRepository):
         self.db.add(new_employee)
         self.db.commit()
     
-    def delete_employee(self, person_id: int)-> Optional[int]:
+    """def delete_employee(self, person_id: int)-> Optional[int]:
         employee = self.db.query(models.Employee).filter(models.Employee.person_id == person_id).delete()
         self.db.commit()
-        return employee   
+        return employee"""

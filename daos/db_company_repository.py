@@ -48,8 +48,8 @@ class DBCompanyRepository(company_repository.CompanyRepository):
         self.db.add(new_company)
         self.db.commit()
 
-    def delete_company(self, taxpayer_id: int)-> Optional[int]:
+"""def delete_company(self, taxpayer_id: int)-> Optional[int]:
         company = self.db.query(models.Company).filter(models.Company.taxpayer_id == taxpayer_id).delete()
         self.db.commit()
-        return company   
+        return company   """
         

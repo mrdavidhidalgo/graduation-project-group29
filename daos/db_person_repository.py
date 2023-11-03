@@ -50,7 +50,7 @@ class DBPersonRepository(person_repository.PersonRepository):
              first_name = person.first_name, last_name = person.last_name, phone_number= person.phone_number ) 
             for person in professional]
     
-    def delete_person(self, document: int)-> Optional[int]:
+    """"def delete_person(self, document: int)-> Optional[int]:
         person = self.db.query(models.Person).filter(models.Person.document == document).delete()
         self.db.commit()
-        return person
+        return person"""

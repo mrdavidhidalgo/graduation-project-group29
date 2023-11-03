@@ -20,6 +20,6 @@ class ProjectRepository(abc.ABC):
     def get_all(self)->List[project_model.ProjectRead]:
         ...
         
-    @abc.abstractmethod    
-    def delete_project(self, project_id: int)-> Optional[int]:
-        ...
+    #@abc.abstractmethod    
+    #def delete_project(self, project_id: int)-> Optional[int]:
+    #    ...

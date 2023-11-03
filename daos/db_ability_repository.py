@@ -43,9 +43,9 @@ class DBAbilityRepository(ability_repository.AbilityRepository):
         return None if ability is None else ability_model.AbilityRead(id = ability.id, ability_name=ability.ability_name,\
             details = ability.details, category = ability.category)
 
-    def delete_hability(self, ability_id: int)->Optional[int]:
+    """def delete_hability(self, ability_id: int)->Optional[int]:
         ability = self.db.query(models.Ability).filter(models.Ability.id == ability_id).delete()
         self.db.commit()
-        return ability
+        return ability"""
  
   

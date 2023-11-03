@@ -33,14 +33,14 @@ def create_technology(request : CreateTechnologyRequest, technology_repository: 
     
     LOGGER.info("Creating Technology with Name [%s]", request.technology_name)
     
-    persisted_technology = technology_repository.get_by_name(techonology_name = request.technology_name)
+    persisted_technology = technology_repository.get_by_name(technology_name = request.technology_name)
     
     if persisted_technology is not None:
         raise TechnologyAlreadyExistError()
         
     technology_repository.save(
         technology=technology_model.TechnologyCreate(
-            project_name = request.project_name,
+            technology_name = request.technology_name,
             details = request.details,
             category = request.category
             )

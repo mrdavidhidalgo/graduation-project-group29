@@ -94,11 +94,12 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(technology_info)
         self.db.commit()
         
-    def delete_professional(self, person_id: int)-> Optional[int]:
+    """def delete_professional(self, person_id: int)-> Optional[int]:
         professional = self.db.query(models.Professional).filter(models.Professional.person_id == person_id).delete()
         self.db.commit()
         return professional 
-  
+    """ 
+    
     def search_for_candidates(self, role_filter: str, role: str, role_experience: str,technologies_list: list,\
     abilities_list: list, title_filter: str, title: str, title_experience: str)->Optional[List[professional_model.ProfessionalSearchResult]]:
         LOGGER.info("Profesional search")
@@ -158,7 +159,7 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
             for r in rol:
                 LOGGER.info("Roles de : [%s] - [%s] - Experiencia [%d] ",p.first_name,r.role, r.experience_years)
                 aux=r.role + "[" + str(r.experience_years) + "]"
-                roles.append({'roles' : aux})
+                roles.append({'role' : aux})
 
             if (len(roles)==0) & (len(filter_role) > 0):
                 continue

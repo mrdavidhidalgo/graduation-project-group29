@@ -43,9 +43,9 @@ class DBTechnologyRepository(technology_repository.TechnologyRepository):
         return None if technology is None else technology_model.TechnologyRead(id = technology.id, project_name=technology.project_name,\
             details = technology.details, category = technology.category)
 
-    def delete_technology(self, technology_id: int)-> Optional[int]:
+    """def delete_technology(self, technology_id: int)-> Optional[int]:
         technology = self.db.query(models.Technology).filter(models.Technology.id == technology_id).delete()
         self.db.commit()
-        return technology
+        return technology"""
  
   
