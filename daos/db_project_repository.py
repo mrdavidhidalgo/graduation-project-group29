@@ -53,7 +53,18 @@ class DBProjectRepository(project_repository.ProjectRepository):
         
         self.db.add(new_project)
         self.db.commit()
-
+    
+    def get_projects_by_company_id(self,company_id: str)->Optional[List[project_model.ProjectRead]]:
+        projects = self.db.query(models.Project).filter(models.Project.company_id == company_id).all()
+        if len(projects) ==0:
+            LOGGER.info("There are not project records associated to company [%s]", company_id)
+            None
+        else:
+            LOGGER.info("Sending project list [%s]", company_id)
+            return [project_model.ProjectRead(id = project.id, project_name=project.project_name,\
+            start_date = str(project.start_date), active= project.active, creation_time = str(project.creation_time),\
+            details = project.details, company_id = str(project.company_id))   for project in projects]
+    
     """def delete_project(self, project_id: int)-> Optional[int]:
         project = self.db.query(models.Project).filter(models.Project.id == project_id).delete()
         self.db.commit()

@@ -1,5 +1,5 @@
 import abc
-from typing import Optional
+from typing import Optional, List
 from services.project.model import profile_model
 
 class ProfileRepository(abc.ABC):
@@ -8,4 +8,7 @@ class ProfileRepository(abc.ABC):
         ... 
         
     def save(self, profile: profile_model.Profile)-> None:
+        ...
+
+    def get_profiles_by_project_id(self, project_id: str)->Optional[List[profile_model.Profile]]:
         ...

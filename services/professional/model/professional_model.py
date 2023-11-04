@@ -61,10 +61,10 @@ class ProfessionalSearchResult(BaseModel):
     first_name: str
     last_name: str
     age: int
-    roles: list = []
-    titles: list = []
-    technologies: list = []
-    abilities: list = []
+    roles: str
+    titles: str
+    technologies: str
+    abilities: str
     score: str
 
 class ProfessionalSearchRequest(BaseModel):

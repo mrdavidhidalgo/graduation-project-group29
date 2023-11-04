@@ -240,7 +240,57 @@
 					},
 					"response": []
 				}
-			]
+			],
+                        "item": [
+                            {
+                                    "name": "create project",
+                                    "request": {
+                                            "url": "http://localhost:8000/projects",
+                                            "method": "POST",
+                                            "header": [
+                                                    {
+                                                            "key": "Authorization",
+                                                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY3BlcmV6QGFvbC5jbyIsInJvbGUiOiJDTElFTlQiLCJwZXJzb25faWQiOiIzNDY0MzYzNCIsImV4cCI6MTY5ODMxMzE3M30.0lQarWJzrxm4mXP35k9nq6x5kgrYe9LlEM1Ws2Ju9HY",
+                                                            "description": ""
+                                                    },
+                                                    {
+                                                            "key": "Content-Type",
+                                                            "value": "application/json",
+                                                            "description": ""
+                                                    }
+                                            ],
+                                            "body": {
+                                                    "mode": "raw",
+                                                    "raw": "{\n    \"projectName\" : \"Desarrollo Python\",\n    \"startDate\" : \"2023-12-01\",\n    \"active\" : 1,\n    \"details\" : \"Este proyecto desarrolla una API en Python\"\n}"
+                                            },
+                                            "description": "Permite crear un nuevo proyecto"
+                                    },
+                                    "response": []
+                            },
+                            {
+                                    "name": "Get a company Projects ",
+                                    "request": {
+                                            "url": "http://localhost:8000/projects/myself",
+                                            "method": "GET",
+                                            "header": [
+                                                    {
+                                                            "key": "Content-Type",
+                                                            "value": "application/json",
+                                                            "description": "",
+                                                            "disabled": true
+                                                    },
+                                                    {
+                                                            "key": "Authorization",
+                                                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY3BlcmV6QGFvbC5jbyIsInJvbGUiOiJDTElFTlQiLCJwZXJzb25faWQiOiIzNDY0MzYzNCIsImV4cCI6MTY5OTA3NzcwM30.uHKWrwLaXU8w5Vc-dfrET3jYOrr0pkSo_RAAbaS4cgw",
+                                                            "description": ""
+                                                    }
+                                            ],
+                                            "description": "Get projects from a company"
+                                    },
+                                    "response": []
+                            }
+                    ]
+                        
 		},
 		{
 			"name": "User",
@@ -258,6 +308,7 @@
 				}
 			]
 		},
+                
 		{
 			"name": "Test",
 			"item": [

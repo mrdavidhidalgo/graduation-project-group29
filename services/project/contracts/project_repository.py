@@ -19,6 +19,10 @@ class ProjectRepository(abc.ABC):
     @abc.abstractmethod
     def get_all(self)->List[project_model.ProjectRead]:
         ...
+    
+    @abc.abstractmethod
+    def get_projects_by_company_id(self,company_id: str)->Optional[List[project_model.ProjectRead]]:
+        ...
         
     #@abc.abstractmethod    
     #def delete_project(self, project_id: int)-> Optional[int]:

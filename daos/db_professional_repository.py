@@ -155,33 +155,37 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
 
             LOGGER.info("Profesional: [%d] - [%s] - [%s] - [%d]",p.id, p.first_name,p.last_name, p.age)
 
-            roles=[]
+            roles=""
             for r in rol:
                 LOGGER.info("Roles de : [%s] - [%s] - Experiencia [%d] ",p.first_name,r.role, r.experience_years)
-                aux=r.role + "[" + str(r.experience_years) + "]"
-                roles.append({'role' : aux})
+                roles=roles + r.role + "[" + str(r.experience_years) + "],"
+            roles=roles[0:-1]
+                #roles.append({'role' : aux})
 
             if (len(roles)==0) & (len(filter_role) > 0):
                 continue
 
-            titles=[]
+            titles=""
             for ac in academic:
                 years = self.date_compare(datetime.now().strftime("%Y-%m-%d %H:%M"), ac.end_date.strftime("%Y-%m-%d %H:%M"))
                 LOGGER.info("Titulos de : [%s] - [%s] - Experiencia [%d] ",p.first_name,ac.title, years)
-                aux2=ac.title + "[" + str(years) + "]"
-                titles.append({'title' : aux2 })
+                titles=titles + ac.title + "[" + str(years) + "],"
+            titles=titles[0:-1]    
+                #titles.append({'title' : aux2 })
                     #titles=titles + "," + ac.title
 
-            abilities=[]
-            abilities.append({'name': 'Ninguna'})
+            abilities="Ninguna"
+            #abilities.append({'name': 'Ninguna'})
+            
             if (len(titles)==0) & (len(filter_title) > 0):
                 continue
 
-            technologies=[]
+            technologies=""
             for ti in technology:
                 LOGGER.info("Tecnologias de : [%s] - [%s] - Nivel [%d] ",p.first_name,ti.name, ti.level)
-                aux3=ti.name + "[" + str(ti.level) + "]"
-                technologies.append({'name': aux3})
+                technologies=technologies + ti.name + "[" + str(ti.level) + "],"
+            technologies=technologies[0:-1]      
+                #technologies.append({'name': aux3})
 
             if (len(technologies)==0) & (len(technologies_list) > 0):
                 continue

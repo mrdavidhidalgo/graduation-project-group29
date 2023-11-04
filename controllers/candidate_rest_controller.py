@@ -266,7 +266,8 @@ async def search_for_candidates(request: Request, db: Session = Depends(get_db))
     if len(candidates_list) > 0:
         data=[]
         for c in candidates_list:
-            data.append({'person_id': str(c.person_id),'first_name': str(c.first_name), 'age:': str(c.age),\
+            data.append({'person_id': str(c.person_id),'first_name': str(c.first_name), 'last_name': str(c.last_name),\
+             'age:': str(c.age),\
              'roles': c.roles, 'technologies': c.technologies,\
              'titles': c.titles, 'abilities': c.abilities, 'score': c.score })
         return data
