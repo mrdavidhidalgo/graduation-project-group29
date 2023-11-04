@@ -1,0 +1,19 @@
+
+from services.company.model import company_model
+from datetime import datetime
+import pytest
+import app as context_app
+
+
+    
+    
+
+
+@pytest.fixture(scope="session", autouse=True)
+def app():
+    app = context_app.create_app()
+    app.config.update({
+        "TESTING": True,
+    })
+
+    yield app

@@ -70,7 +70,7 @@ async def create_project(request: CreateProjectRequest, token_data: commons.Toke
     except (management_service_facade.ProjectNameAlreadyExistError, management_service_facade.EmployeeDoesNotExistError) as e:
         raise HTTPException(status_code=400, detail=e.message)
         
-@router.get("/projects")
+@router.get("/projects/")
 async def get_projects(company_id: str = None, db: Session = Depends(get_db)):
     project_list = management_service_facade.get_projects(db = db)
     if company_id:
@@ -84,6 +84,18 @@ async def get_projects(company_id: str = None, db: Session = Depends(get_db)):
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No projects found")
         
+@router.get("/projects/myself")
+async def get_projects_by_company(token_data: commons.TokenData = Depends(commons.get_token_data), db: Session = Depends(get_db)):
+    project_list = management_service_facade.get_projects_by_company_id(person_id = token_data.person_id, db = db)
+
+    if project_list is not None:
+        data=[]
+        for project in project_list:
+            data.append({'id': str(project.id),'project_name': str(project.project_name)})
+        return data
+    else:
+        LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No projects found")
 
 
 def string_to_date(start_date: str)->Optional[datetime.date]:
@@ -130,3 +142,16 @@ async def create_test(request: CreateProfileRequest,token_data: commons.TokenDat
         return {"msg": "Profile has been created"}
     except (management_service_facade.ProfileNameAlreadyExistError):
         raise HTTPException(status_code=400, detail="Profile duplicated by name")
+
+@router.get("/projects/profiles/{project_id}")
+async def get_profiles_by_project_id(project_id: str, token_data: commons.TokenData = Depends(commons.get_token_data), db: Session = Depends(get_db)):
+    profiles_list = management_service_facade.get_profiles_by_project_id(project_id=project_id, person_id = token_data.person_id, db = db)
+    
+    if profiles_list is not None:
+        data=[]
+        for profile in profiles_list:
+            data.append({'projectId': str(project_id), 'name': str(profile.name)})
+        return data
+    else:
+        LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No profiles found")

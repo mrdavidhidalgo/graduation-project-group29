@@ -45,3 +45,16 @@ class DBProfileRepository(profile_repository.ProfileRepository):
         self.db.add(new_profile)
         self.db.commit()
 
+    def get_profiles_by_project_id(self, project_id: str)->Optional[List[profile_model.Profile]]:
+        profiles = self.db.query(models.Profile).filter(models.Profile.project_id == project_id).all()
+        if len(profiles) ==0:
+            LOGGER.info("There are not profiles records associated to project [%s]", project_id)
+            None
+        else:
+            LOGGER.info("Sending profile list [%s]", project_id)
+            return [profile_model.Profile( name=profile.name, description = profile.description,\
+             role= profile.role, experience_in_years = profile.experience_in_years,\
+            technology = profile.technology, category = profile.category, title = profile.title,\
+             project_id = str(project_id))   for profile in profiles]
+    
+ 

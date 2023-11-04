@@ -72,3 +72,17 @@ async def get_technologies(response: Response, db: Session = Depends(get_db)):
     else:
         _LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No technologies found")
+        
+@router.get("/abilities")
+async def get_abilities(response: Response, db: Session = Depends(get_db)):
+    abilities_list = management_service_facade.get_abilities(db = db)
+    
+    if abilities_list is not None:
+        data=[]
+        for ability in abilities_list:
+            data.append({'abilityId': str(ability.id),'name': str(ability.ability_name),\
+             "category": str(ability.category)})
+        return data
+    else:
+        _LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No technologies found")

@@ -15,15 +15,17 @@ from services.technology import technology_service
 from services.ability import ability_service
 from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
 db_employee_repository, db_company_repository, db_project_repository, db_technology_repository,\
-db_ability_repository
+db_ability_repository, db_profile_repository
 
 from services.project import project_service, profile_service
 from pydantic import BaseModel
 from services.professional.model import professional_model
-from services.project.model import project_model
+from services.project.model import project_model, profile_model
+
 from services.technology.model import technology_model
 from services.commons import base
 from datetime import date
+
 class DateRangeInvalidError(Exception):
      def __init__(self, *args: object) -> None:
         self.message = f"The Range of dates is invalid"
@@ -374,6 +376,21 @@ def get_projects(db: Session)->Optional[List[project_service.project_model.Proje
         return project_list
 
 
+def get_projects_by_company_id(person_id: str, db: Session)->Optional[List[project_service.project_model.ProjectRead]]:
+    LOGGER.info("Listing all projects for company")
+    project_repository = db_project_repository.DBProjectRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    project_list = project_service.get_projects_by_company_id(person_id= person_id,\
+     project_repository=project_repository, employee_repository = employee_repository)
+    
+    if project_list is None:
+        LOGGER.info("Empty Company Project List in facade")
+        return None
+    else:
+        LOGGER.info("Company Project List with data in facade")
+        return project_list
+
+
 ######################################################################################################################################
 #                                                      TECHNOLOGY                                                                    #
 ######################################################################################################################################
@@ -429,3 +446,18 @@ def create_profile(request: CreateProfileRequest, db: Session)->None:
     
     profile_service.create_profile(**request.model_dump(),
                                        profile_repository=db_profile_repository.DBProfileRepository(db = db))
+
+
+def get_profiles_by_project_id(project_id: str, person_id: str, db: Session)->Optional[List[profile_model.Profile]]:
+    LOGGER.info("Listing all profiles for project [%s]", str(project_id))
+    profile_repository = db_profile_repository.DBProfileRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    profile_list = profile_service.get_profiles_by_project_id(project_id=project_id, person_id= person_id,\
+     profile_repository=profile_repository, employee_repository = employee_repository)
+    
+    if profile_list is None:
+        LOGGER.info("Empty Profiles Project List in facade")
+        return None
+    else:
+        LOGGER.info("Profiles Project List with data in facade")
+        return profile_list

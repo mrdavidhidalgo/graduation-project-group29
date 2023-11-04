@@ -86,10 +86,10 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
                 first_name= "Andres",
                 last_name="Gomez", 
                 age = "30",
-                roles = [{'roles': 'PROGRAMADOR[5]'}],
-                titles = [{'title': 'ING SISTEMAS[8]'}],
-                technologies= [{'name': 'JAVA[5]'}],
-                abilities= [{'name': 'Ninguna'}],
+                roles = "PROGRAMADOR[5]",
+                titles = "ING SISTEMAS[8]",
+                technologies= "JAVA[5]",
+                abilities= "Ninguna",
                 score= "9"
         )]
         
