@@ -45,6 +45,12 @@ class ReadProjectRequest(BaseModel):
     details : str
     companyId : str
 
+class CreateMemberRequest(BaseModel):
+    active : bool
+    description : str
+    personId : str
+    profileId : str
+    projectId : str
     
 # Dependency
 def get_db() -> Session:
@@ -155,3 +161,16 @@ async def get_profiles_by_project_id(project_id: str, token_data: commons.TokenD
     else:
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No profiles found")
+
+
+@router.post("/members")
+async def create_member(request: CreateMemberRequest, token_data: commons.TokenData = Depends(commons.get_token_data), db: Session = Depends(get_db)):
+    #LOGGER.info("Peticion [%s] - [%s]", str(request.document), str(request.documentType))
+    request2 = management_service_facade.CreateMemberRequest(active = bool(request.active), description= request.description,\
+    person_id=request.personId, profile_id = request.profileId, project_id= request.projectId)
+        
+    try:
+        management_service_facade.create_member(request = request2, person_id = token_data.person_id , db = db)
+        return {"msg": "Member has been created"}
+    except (management_service_facade.ProjectMemberAlreadyExistError, management_service_facade.EmployeeDoesNotExistError) as e:
+        raise HTTPException(status_code=400, detail=e.message)

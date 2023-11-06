@@ -164,3 +164,13 @@ class Profile(Base):
     category = Column(String(200))
     title = Column(String(200))
     project_id = Column(String(200))
+    
+    
+class ProjectMember(Base):
+    __tablename__ = "project_member"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    active = Column(Boolean, default=True)
+    description = Column(Text)
+    person_id = Column(String(30), ForeignKey('person.document'))
+    profile_id = Column(String(200))
+    project_id = Column(String(20))
