@@ -171,6 +171,6 @@ class ProjectMember(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     active = Column(Boolean, default=True)
     description = Column(Text)
-    person_id = Column(String(30), ForeignKey('person.document'))
+    person_id = Column(String(30))
     profile_id = Column(String(200))
     project_id = Column(String(20))
