@@ -4,7 +4,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from services.company import company_service
 from services.employee import employee_service
-from services.project.contracts import project_repository
+from services.project.contracts import project_repository, member_repository
 from services.test import test_service
 from services.user import user_service
 import enum
@@ -15,9 +15,9 @@ from services.technology import technology_service
 from services.ability import ability_service
 from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
 db_employee_repository, db_company_repository, db_project_repository, db_technology_repository,\
-db_ability_repository, db_profile_repository
+db_ability_repository, db_profile_repository, db_member_repository
 
-from services.project import project_service, profile_service
+from services.project import project_service, profile_service, member_service
 from pydantic import BaseModel
 from services.professional.model import professional_model
 from services.project.model import project_model, profile_model
@@ -79,8 +79,9 @@ AbilityAlreadyExistError = ability_service.AbilityAlreadyExistError
 
 ProfileNameAlreadyExistError = profile_service.ProfileNameAlreadyExistError
 
-
 ProfessionalSearchError = professional_service.ProfessionalSearchError
+
+ProjectMemberAlreadyExistError = member_service.ProjectMemberAlreadyExistError
 
 #LOGGER = user_service.LOGGER
 from services import logs
@@ -461,3 +462,26 @@ def get_profiles_by_project_id(project_id: str, person_id: str, db: Session)->Op
     else:
         LOGGER.info("Profiles Project List with data in facade")
         return profile_list
+
+######################################################################################################################################
+#                                                           MEMBER                                                                   #
+######################################################################################################################################
+
+class CreateMemberRequest(BaseModel):
+    active : bool
+    description : str
+    person_id : str
+    profile_id : str
+    project_id : str
+    
+def create_member(request: CreateMemberRequest, person_id: str, db: Session)->None:
+
+    LOGGER.info("Starting added member to project[%s]", str(request.project_id))
+   
+    member_repository = db_member_repository.DBMemberRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    
+    new_member = member_service.CreateMemberRequest.model_validate(request.model_dump())
+    
+    member_service.create_member(request=new_member, person_id= person_id, 
+                                       member_repository=member_repository, employee_repository = employee_repository)
