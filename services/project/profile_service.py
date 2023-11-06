@@ -54,7 +54,7 @@ def get_profiles_by_project_id(project_id: str, person_id: str, profile_reposito
     if employee_project is None:
         raise employee_service.EmployeeDoesNotExistError()
         
-    list = profile_repository.get_profiles_by_project_id(project_id)    
+    list = profile_repository.get_profiles_by_project_id(project_id=project_id)    
     if list is None:
         LOGGER.info("Empty List profiles in service")
         return None
