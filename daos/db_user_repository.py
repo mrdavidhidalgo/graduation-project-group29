@@ -31,8 +31,7 @@ class DBUserRepository(user_repository.UserRepository):
         self.db.add(new_user)
         self.db.commit()
 
-    """def delete_user(self, username: str)-> Optional[int]:
+    def delete_user(self, username: str)-> Optional[int]:
         user = self.db.query(models.User).filter(models.User.username == username).delete()
         self.db.commit()
         return user
-    """     

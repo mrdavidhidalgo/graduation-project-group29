@@ -18,3 +18,6 @@ class FakeUserRepository(user_repository.UserRepository):
         
     def save(self, user: user_model.User)-> None:
         ...
+    
+    def delete_user(self, username: str)-> Optional[int]:
+        ...
