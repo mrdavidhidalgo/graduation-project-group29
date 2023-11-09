@@ -54,12 +54,13 @@ def create_company(request : CreateCompanyRequest, person_repository: person_rep
 user_repository: user_repository.UserRepository, company_repository: company_repository.CompanyRepository, employee_repository = employee_repository.EmployeeRepository)-> None:
     
     LOGGER.info("Creating Comapny with taxPayerId [%s] and name [%s]", request.taxpayer_id, request.name)
-    
+    request.taxpayer_id = request.taxpayer_id.lstrip('0')
     persisted_company = company_repository.get_by_taxpayerId(taxpayer_id = request.taxpayer_id)
     
     if persisted_company is not None:
         raise CompanyTaxprayerAlreadyExistError()
     
+    request.document = request.document.lstrip('0')
     person_request = person_service.CreateEmployeeRequest
     person_request.document = request.document
     person_request.document_type = request.document_type

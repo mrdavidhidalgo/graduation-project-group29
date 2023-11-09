@@ -67,6 +67,7 @@ def create_person(request : CreatePersonRequest, person_repository: person_repos
     
     LOGGER.info("Creating person with document [%s] and documentType [%s]", request.document, request.document_type)
     
+    request.document = request.document.lstrip('0')
     persisted_person = person_repository.get_by_document(document = request.document)
     
     if persisted_person is not None:
@@ -86,6 +87,7 @@ user_repository: user_repository.UserRepository, professional_repository: profes
     
     LOGGER.info("Creating candidate with document [%s] and documentType [%s]", request.document, request.document_type)
     
+    request.document=request.document.lstrip('0')
     persisted_person = person_repository.get_by_document(document = request.document)
     
     if persisted_person is not None:
@@ -126,6 +128,7 @@ def create_employee(request : CreateEmployeeRequest, person_repository: person_r
     
     LOGGER.info("Creating Employee with document [%s] and document_type [%s]", request.document, request.document_type)
    
+    request.document = request.document.lstrip('0')
     persisted_person = person_repository.get_by_document(document = request.document)
     
     if persisted_person is not None:

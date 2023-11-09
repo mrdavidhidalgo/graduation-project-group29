@@ -153,16 +153,15 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
              where pr.id = pt.professional_id and pr.id='" + str(p.id) + "'" + filter_technology + " order by pt.name" ))
 
 
-            LOGGER.info("Profesional: [%d] - [%s] - [%s] - [%d]",p.id, p.first_name,p.last_name, p.age)
+            #LOGGER.info("Profesional: [%d] - [%s] - [%s] - [%d]",p.id, p.first_name,p.last_name, p.age)
 
             roles=""
             for r in rol:
                 LOGGER.info("Roles de : [%s] - [%s] - Experiencia [%d] ",p.first_name,r.role, r.experience_years)
                 roles=roles + r.role + "[" + str(r.experience_years) + "],"
             roles=roles[0:-1]
-                #roles.append({'role' : aux})
 
-            if (len(roles)==0) & (len(filter_role) > 0):
+            if (len(roles)==0) & (len(filter_role) > 1):
                 continue
 
             titles=""
@@ -171,13 +170,11 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                 LOGGER.info("Titulos de : [%s] - [%s] - Experiencia [%d] ",p.first_name,ac.title, years)
                 titles=titles + ac.title + "[" + str(years) + "],"
             titles=titles[0:-1]    
-                #titles.append({'title' : aux2 })
-                    #titles=titles + "," + ac.title
-
+                
             abilities="Ninguna"
-            #abilities.append({'name': 'Ninguna'})
+           
             
-            if (len(titles)==0) & (len(filter_title) > 0):
+            if (len(titles)==0) & (len(filter_title) > 1):
                 continue
 
             technologies=""
@@ -185,9 +182,8 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                 LOGGER.info("Tecnologias de : [%s] - [%s] - Nivel [%d] ",p.first_name,ti.name, ti.level)
                 technologies=technologies + ti.name + "[" + str(ti.level) + "],"
             technologies=technologies[0:-1]      
-                #technologies.append({'name': aux3})
 
-            if (len(technologies)==0) & (len(technologies_list) > 0):
+            if (len(technologies)==0) & (len(filter_technology) > 0):
                 continue
 
             new_record = professional_model.ProfessionalSearchResult(
@@ -202,7 +198,7 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                 score= ""
             )
             result_candidate_list.append(new_record)  
-            LOGGER.info("Profesional: valid")
+            LOGGER.info("Profesional: [%d] valid",p.id,)
         
         
         return result_candidate_list

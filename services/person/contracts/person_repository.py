@@ -16,6 +16,6 @@ class PersonRepository(abc.ABC):
     def get_all(self)->List[person_model.Person]:
         ...
     
-    #@abc.abstractmethod
-    #def delete_person(self, document: int):
-    #    ...
+    @abc.abstractmethod
+    def delete_person(self, document: int):
+        ...
