@@ -10,7 +10,7 @@ from services.user import user_service
 import enum
 from services.person import person_service
 from services.professional import professional_service
-
+from typing import List
 from services.technology import technology_service
 from services.ability import ability_service
 from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
@@ -151,6 +151,7 @@ class CreateProjectRequest(BaseModel):
 class Status(enum.Enum):
     ENABLED = "ENABLED"
     DISABLED = "DISABLED"
+
 class CreateTestRequest(BaseModel):
     name : str
     technology : str
@@ -159,6 +160,21 @@ class CreateTestRequest(BaseModel):
     start_date : date 
     end_date: date
     description : str 
+
+class CreateTestReponse(BaseModel):
+    name : str
+    technology : str
+    duration_minutes : int
+    status : str
+    start_date : date 
+    end_date: date
+    description : str 
+
+class RegisterTestResultRequest(BaseModel):
+    test_name : str 
+    candidate_document: str
+    observation :str|None
+    points : int 
 
 class CreateTechnologyRequest(BaseModel):
     technology_name : str
@@ -346,7 +362,22 @@ def create_test(request: CreateTestRequest, db: Session)->None:
     test_repository = db_test_repository.DBTestRepository(db = db)
     
     test_service.create_test(**request.copy(exclude={"status"}).dict(),status=request.status.name, test_repository=test_repository)
+
+def get_tests(db: Session)->List[CreateTestReponse]:
+
+    test_repository = db_test_repository.DBTestRepository(db = db)
     
+    result = test_service.get_tests(test_repository=test_repository)
+
+    return [] if result is None or len(result)==0 else [CreateTestReponse(**x.dict()) for x in result]
+    
+def register_result_tests(request: List[RegisterTestResultRequest], db: Session)->None:
+    
+    test_repository = db_test_repository.DBTestRepository(db = db)
+    
+    results = [(r.test_name,r.candidate_document, r.observation,r.points ) for r in request]
+    test_service.register_result_tests(results, test_repository=test_repository)
+            
         
         
 ######################################################################################################################################
