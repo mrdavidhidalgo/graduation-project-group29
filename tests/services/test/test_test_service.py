@@ -1,7 +1,6 @@
 
 from services.test.contracts import test_repository
-from typing import Optional
-
+from typing import Optional, List
 from services.test.model import test_model
 from datetime import datetime,timedelta,date
 import os
@@ -22,6 +21,11 @@ class MockTest(test_repository.TestRepository):
     def save(self, test: test_model.Test)-> None:
         return None
 
+    def get_tests(self)-> List[test_model.Test]:
+        return []
+
+    def save_results(self,results:List[test_model.TestResult])->None:
+        return None   
 
 def test_create_test_successfully():
     from services.test import test_service as subject
@@ -40,6 +44,12 @@ def test_create_test_already_exist():
                     start_date = date.fromisoformat('2019-12-04') ,end_date= date.fromisoformat('2019-12-04'),description ="description", 
                     test_repository= MockTest())
 
-
+def test_register_test_successfully():
+    from services.test import test_service as subject
     
+    result = [("Test 1","1234","observation",80)]
+
+    test = subject.register_result_tests(result,test_repository= MockTest())
+    
+    assert test is None
         
