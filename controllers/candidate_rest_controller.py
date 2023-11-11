@@ -8,7 +8,7 @@ import pydantic
 from controllers import commons
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-
+from typing import List
 from daos.db_model.database import SessionLocal
 from services.commons import base
 from controllers import mapper_exceptions
@@ -207,13 +207,19 @@ async def create_technology_info(request: CreateCandidateTechnologyInfoRequest,
     
         
 @router.get("/candidates")
-async def get_candidates(response: Response, db: Session = Depends(get_db)):
+async def get_candidates(documents: str = None, db: Session = Depends(get_db)):
     candidates_list = management_service_facade.get_candidates(db = db)
     
     if candidates_list is not None:
         data=[]
+        if documents:
+            document_list = documents.split(",")
+            candidates_list = list(filter(lambda x: str(x.document) in document_list ,candidates_list))
+
         for candidate in candidates_list:
-            data.append({'document': str(candidate.document),'documentType': str(candidate.document_type)})
+            data.append({'document': str(candidate.document),
+                         'fullName':str(candidate.first_name)+" "+candidate.last_name,
+                         'documentType': str(candidate.document_type)})
         return data
     else:
         _LOGGER.info("Return 404 error")
