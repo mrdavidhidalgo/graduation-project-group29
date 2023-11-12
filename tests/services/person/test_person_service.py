@@ -10,7 +10,7 @@ from services.professional.model import professional_model
 from datetime import datetime,timedelta,date
 import os
 
-
+@pytest.mark.unittests
 def test_create_candidate_successfully():
     from services.person import person_service as subject
     
@@ -22,6 +22,7 @@ def test_create_candidate_successfully():
     professional_repository=MockProfessional())
     assert candidate is None
 
+@pytest.mark.unittests
 def test_get_all_persons():
     from services.person import person_service as subject
 
@@ -73,6 +74,9 @@ class MockProfessional(professional_repository.ProfessionalRepository):
     
     def get_by_person_id(self, person_id: str)-> Optional[professional_model.ProfessionalReadModel]:
         return None
+    
+    def get_full_info(self, professional_id: int)-> List[professional_model.ProfessionalFullInfo]:
+        return []
     
     def save(self, professional: professional_model.ProfessionalCreateModel)-> None:
         return None
