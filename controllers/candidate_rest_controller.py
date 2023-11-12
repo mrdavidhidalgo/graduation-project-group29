@@ -88,7 +88,7 @@ def get_db() -> Session:
         yield db
     finally:
         db.close()
-
+        
 @router.post("/candidates")
 async def create_candidate(request: CreateCandidateRequest, db: Session = Depends(get_db)):
     
@@ -280,3 +280,8 @@ async def search_for_candidates(request: Request, db: Session = Depends(get_db))
     else:
         _LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No candidates found")    
+    
+@router.get("/candidates/myself")
+async def get_info(token_data: commons.TokenData = Depends(commons.get_token_data), db : Session = Depends(get_db))->None:
+    
+    return management_service_facade.get_full_info(person_id=str(token_data.person_id), db = db)

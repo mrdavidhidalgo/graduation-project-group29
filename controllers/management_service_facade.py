@@ -20,6 +20,7 @@ db_ability_repository, db_profile_repository, db_member_repository
 from services.project import project_service, profile_service, member_service
 from pydantic import BaseModel
 from services.professional.model import professional_model
+from services.person.model import person_model
 from services.project.model import project_model, profile_model
 
 from services.technology.model import technology_model
@@ -516,3 +517,23 @@ def create_member(request: CreateMemberRequest, person_id: str, db: Session)->No
     
     member_service.create_member(request=new_member, person_id= person_id, 
                                        member_repository=member_repository, employee_repository = employee_repository)
+    
+    
+######################################################################################################################################
+#                                                           CANDIDATES                                                               #
+######################################################################################################################################
+
+class ProfessionalInfo(BaseModel):
+    info: person_model.Person
+    professional_data :professional_model.ProfessionalFullInfo
+
+def get_full_info(person_id: str, db: Session)->ProfessionalInfo:
+
+    person_repository = db_person_repository.DBPersonRepository(db=db)
+    professional_repository = db_professional_repository.DBProfessionalRepository(db =db)
+    
+    person = person_service.find_by_person_id(person_id=person_id, person_repository=person_repository)
+    
+    professional_full_info = professional_service.get_full_info(person_id=person_id, professional_repository=professional_repository)
+    
+    return ProfessionalInfo(info=person, professional_data = professional_full_info)

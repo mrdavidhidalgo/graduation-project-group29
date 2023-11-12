@@ -32,6 +32,11 @@ class PersonDocumentAlreadyExistError(Exception):
         self.message = "Document number is already used"
         super().__init__(self.message)
         
+class PersonDoesNotExistError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = "Person with document number does not exist"
+        super().__init__(self.message)
+        
 class CreateCandidateRequest(BaseModel):
     document: str
     document_type: base.DocumentType
@@ -160,3 +165,12 @@ def get_all(person_repository: person_repository.PersonRepository)->List[person_
     else:
         LOGGER.info("List with data in service")
         return list
+    
+
+def find_by_person_id(person_id: str, person_repository: person_repository.PersonRepository)->person_model.Person:
+    
+    person = person_repository.get_by_document(document=person_id)
+    if person is None:
+        raise PersonDoesNotExistError()
+    
+    return person
