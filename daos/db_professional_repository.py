@@ -53,6 +53,53 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(academic_info)
         self.db.commit()
         
+    def get_full_info(self, professional_id: int)-> List[professional_model.ProfessionalFullInfo]:
+        
+        professional_db = self.db.query(models.Professional).filter(models.Professional.person_id == professional_id).first()
+       
+        professional = professional_model.ProfessionalReadModel(id = professional_db.id, 
+                                                                birth_date = professional_db.birth_date , 
+                                                                age=professional_db.age,
+                                                                origin_country= professional_db.origin_country,
+                                                                residence_country = professional_db.residence_country, 
+                                                                residence_city = professional_db.residence_city,
+                                                                address = professional_db.address, 
+                                                                person_id = professional_id )
+        
+        
+        academics = self.db.query(models.ProfessionalAcademicInfo).filter(models.ProfessionalAcademicInfo.professional_id == professional_id)
+        academic_info = [professional_model.ProfessionalAcademicInfo(person_id=professional_id, 
+                                                        title=academic_info.title, 
+                                                        institution=academic_info.title, 
+                                                        country = academic_info.country,
+                                                        start_date=academic_info.start_date,
+                                                        end_date=academic_info.end_date,
+                                                        description=academic_info.description) for academic_info in academics]
+        
+        laborals = self.db.query(models.ProfessionalLaboralInfo).filter(models.ProfessionalLaboralInfo.professional_id == professional_id)
+        laboral_info = [professional_model.ProfessionalLaboralInfo(person_id = professional_id,
+                                                                    position = laboral_info.position,
+                                                                    company_name= laboral_info.company_name,
+                                                                    company_country = laboral_info.company_country,
+                                                                    company_address =  laboral_info.company_address,
+                                                                    company_phone = laboral_info.company_phone,
+                                                                    start_date = laboral_info.start_date,
+                                                                    end_date = laboral_info.end_date,
+                                                                    description = laboral_info.description) for laboral_info in laborals]
+        
+        tecnologies = self.db.query(models.ProfessionalTechnologyInfo).filter(models.ProfessionalTechnologyInfo.professional_id == professional_id)
+        technology_info = [professional_model.ProfessionalTechnologyInfo(person_id = professional_id,
+                                                                         name = technology_info.name,
+                                                                         experience_years = technology_info.experience_years,
+                                                                         level = technology_info.level,
+                                                                         description = technology_info.description) for technology_info in tecnologies]
+        
+        return professional_model.ProfessionalFullInfo(basic_info=professional, 
+                                                       laboral_info=laboral_info,
+                                                       academic_info=academic_info,
+                                                       technology_info=technology_info)
+        
+    
     def add_laboral_info(self, professional_id: int, laboral_info: professional_model.ProfessionalLaboralInfo)-> None:
         laboral_info = models.ProfessionalLaboralInfo(
             professional_id = professional_id,
@@ -94,12 +141,6 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(technology_info)
         self.db.commit()
         
-    """def delete_professional(self, person_id: int)-> Optional[int]:
-        professional = self.db.query(models.Professional).filter(models.Professional.person_id == person_id).delete()
-        self.db.commit()
-        return professional 
-    """ 
-    
     def search_for_candidates(self, role_filter: str, role: str, role_experience: str,technologies_list: list,\
     abilities_list: list, title_filter: str, title: str, title_experience: str)->Optional[List[professional_model.ProfessionalSearchResult]]:
         LOGGER.info("Profesional search")
