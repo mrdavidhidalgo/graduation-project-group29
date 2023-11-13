@@ -66,8 +66,9 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                                                                 address = professional_db.address, 
                                                                 person_id = professional_id )
         
+        LOGGER.info("Finding academic info for %s", professional_id)
+        academics = self.db.query(models.ProfessionalAcademicInfo).filter(models.ProfessionalAcademicInfo.professional_id == professional.id)
         
-        academics = self.db.query(models.ProfessionalAcademicInfo).filter(models.ProfessionalAcademicInfo.professional_id == professional_id)
         academic_info = [professional_model.ProfessionalAcademicInfo(person_id=professional_id, 
                                                         title=academic_info.title, 
                                                         institution=academic_info.title, 
@@ -76,7 +77,8 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                                                         end_date=academic_info.end_date,
                                                         description=academic_info.description) for academic_info in academics]
         
-        laborals = self.db.query(models.ProfessionalLaboralInfo).filter(models.ProfessionalLaboralInfo.professional_id == professional_id)
+        LOGGER.info("Finding laboral info for %s", professional_id)
+        laborals = self.db.query(models.ProfessionalLaboralInfo).filter(models.ProfessionalLaboralInfo.professional_id == professional.id)
         laboral_info = [professional_model.ProfessionalLaboralInfo(person_id = professional_id,
                                                                     position = laboral_info.position,
                                                                     company_name= laboral_info.company_name,
@@ -87,7 +89,8 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                                                                     end_date = laboral_info.end_date,
                                                                     description = laboral_info.description) for laboral_info in laborals]
         
-        tecnologies = self.db.query(models.ProfessionalTechnologyInfo).filter(models.ProfessionalTechnologyInfo.professional_id == professional_id)
+        LOGGER.info("Finding technology info for %s", professional_id)
+        tecnologies = self.db.query(models.ProfessionalTechnologyInfo).filter(models.ProfessionalTechnologyInfo.professional_id == professional.id)
         technology_info = [professional_model.ProfessionalTechnologyInfo(person_id = professional_id,
                                                                          name = technology_info.name,
                                                                          experience_years = technology_info.experience_years,
