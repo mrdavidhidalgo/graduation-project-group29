@@ -43,7 +43,8 @@ class MockPerson(person_repository.PersonRepository):
     
     def get_all(self)-> Optional[List[person_model.Person]]:
         return self.person_with_params
-      
+    
+    
     #def delete_person(self, document: int)->int:
     #    return 1  
 
@@ -61,7 +62,10 @@ class MockUser(user_repository.UserRepository):
     
     def save(self, user: user_model.User)-> None:
         return None
-    
+        
+    def get_by_person_id(self, person_id: str)-> Optional[user_model.User]:
+        return self.person_with_params
+        
     def delete_user(self, username: str)-> Optional[int]:
         return 1
          

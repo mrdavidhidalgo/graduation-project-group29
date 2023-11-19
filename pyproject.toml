@@ -7,5 +7,6 @@ version = "0.1.0"
 
 [tool.coverage.run]
 omit = [
-    "daos/db_professional_repository.py"
+    "daos/db_professional_repository.py",
+    "daos/db_project_repository.py"
 ]

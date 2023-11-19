@@ -36,6 +36,19 @@ def test_get_company_by_id_with_value():
     company=subject.get_by_taxpayerId(company_repository = MockCompany(company_by_id = company_model.Company(taxpayer_id="111111",name="TECNISOFT",country="CO",city="CALI",
     years="3",address="Calle 1 No 2-35",phone_number="32899837")),taxpayer_id="111111")
     assert company.taxpayer_id == "111111"
+
+
+def test_get_company_by_person_id_with_value():
+    from services.company import company_service as subject 
+    company=subject.get_by_person_Id(person_id="12345",company_repository = MockCompany(company_by_id = company_model.Company(taxpayer_id="111111",name="TECNISOFT",country="CO",city="CALI",
+    years="3",address="Calle 1 No 2-35",phone_number="32899837")), employee_repository= MockEmployee(employee_with_params = 
+    employee_model.EmployeeReadModel(id=1, profile="ADMINISTRATIVO", position="JEFE DE SOPORTE", person_id="12345", company_id="111111")), 
+    person_repository=MockPerson(person_with_params = 
+    person_model.Person(document="12345", document_type="CC",first_name="PEDRO MARTIN", last_name="GOMEZ", phone_number="24234234")),
+    user_repository=MockUser(user_with_params = 
+    user_model.User(username="pgomez@gmail.co", password="34235HGS", created_at='2001-02-01 00:00:01',is_active='Y', role=user_model.UserRole.CLIENT ,person_id ="12345")))
+    assert company.taxpayer_id == "111111"
+
      
 class MockCompany(company_repository.CompanyRepository):
    
@@ -65,7 +78,7 @@ class MockPerson(person_repository.PersonRepository):
        self.person_with_params=person_with_params
    
     def get_by_document(self, document: int)->str:
-        return None
+        return self.person_with_params
     
     def save(self, person: person_model.Person)->str:
         return "1"
@@ -94,12 +107,15 @@ class MockUser(user_repository.UserRepository):
     def save(self, user: user_model.User)-> None:
         return None
     
+    def get_by_person_id(self, person_id: str)-> Optional[user_model.User]:
+        return self.user_with_params
+        
     def delete_user(self, username: str)-> Optional[int]:
         return 1
         
 class MockEmployee(employee_repository.EmployeeRepository):
    
-    def __init__(self,employee_by_id: employee_model.EmployeeCreateModel=None,employee_with_params:employee_model.EmployeeCreateModel=None)->None:
+    def __init__(self,employee_by_id: employee_model.EmployeeCreateModel=None, employee_with_params:employee_model.EmployeeReadModel=None)->None:
        self.by_id=employee_by_id
        self.employee_with_params=employee_with_params
    
@@ -107,7 +123,7 @@ class MockEmployee(employee_repository.EmployeeRepository):
         return "1"
     
     def get_by_person_id(self, person_id: str)-> Optional[employee_model.EmployeeReadModel]:
-        return None
+        return self.employee_with_params
     
     def save(self, employee: employee_model.EmployeeCreateModel)-> None:
         return None
