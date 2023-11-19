@@ -86,6 +86,3 @@ async def get_company_by_Id(token_data: commons.TokenData = Depends(commons.get_
          ,'name': str(company.name),'country': str(co[1]), 'city': str(company.city), 'years': str(company.years),
          'address': str(company.address), 'phone_number': str(company.phone_number), 'profile': str(company.profile), 'position': str(company.position)})
         return data
-    else:
-        LOGGER.info("Return 404 error")
-        raise HTTPException(status_code=404, detail="No companies found")
