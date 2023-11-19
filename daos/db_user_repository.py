@@ -31,6 +31,12 @@ class DBUserRepository(user_repository.UserRepository):
         self.db.add(new_user)
         self.db.commit()
 
+    def get_by_person_id(self, person_id: str)-> Optional[user_model.User]:
+        user = self.db.query(models.User).filter(models.User.person_id == person_id).first()
+        #return user_model.User(username="frank", password = "remb", name = "Franklin", is_active=True)
+        return None if user is None else user_model.User(username=user.username, password = user.password, name = user.username, 
+                                                         is_active=user.active, role=user.role, person_id=user.person_id)    
+    
     def delete_user(self, username: str)-> Optional[int]:
         user = self.db.query(models.User).filter(models.User.username == username).delete()
         self.db.commit()

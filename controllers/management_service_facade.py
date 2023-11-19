@@ -351,7 +351,22 @@ def get_companies(db: Session)->Optional[List[company_service.company_model.Comp
         return company_list
     
     
-
+def get_company_by_person_id(person_id: str, db: Session)->Optional[List[company_service.company_model.Company]]:
+    LOGGER.info("Listing all companies for person")
+    company_repository = db_company_repository.DBCompanyRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    person_repository = db_person_repository.DBPersonRepository(db = db)
+    user_repository = db_user_repository.DBUserRepository(db = db)
+    company = company_service.get_by_person_Id(person_id= person_id,\
+    company_repository=company_repository, employee_repository = employee_repository,\
+    person_repository = person_repository, user_repository=user_repository)
+    
+    if company is None:
+        LOGGER.info("Empty Company List in facade")
+        return None
+    else:
+        LOGGER.info("Company List with data in facade")
+        return company
     
 
 ######################################################################################################################################
