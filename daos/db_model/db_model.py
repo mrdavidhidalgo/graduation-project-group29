@@ -132,6 +132,13 @@ class Test(Base):
     status =  Column(Enum(base.TestStatus))
     description = Column(String(5000))
 
+class TestResult(Base):
+    __tablename__ = "test_result"
+    
+    test_name = Column(String(200), primary_key=True, index=True)
+    candidate_document = Column(String(200), primary_key=True, index=True)
+    observation = Column(String(200),nullable=True)
+    points = Column(Integer)
 
 
 class Technology(Base):

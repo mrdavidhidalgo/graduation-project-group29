@@ -15,6 +15,7 @@ class CompanyRepository(abc.ABC):
     @abc.abstractmethod
     def get_all(self)->List[company_model.Company]:
         ...
-    #@abc.abstractmethod    
-    #def delete_company(self, taxpayer_id: int)-> Optional[int]:
-    #    ...
+        
+    @abc.abstractmethod    
+    def delete_company(self, taxpayer_id: int)-> Optional[int]:
+        ...

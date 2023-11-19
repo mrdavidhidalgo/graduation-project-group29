@@ -10,7 +10,7 @@ from services.user import user_service
 import enum
 from services.person import person_service
 from services.professional import professional_service
-
+from typing import List
 from services.technology import technology_service
 from services.ability import ability_service
 from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
@@ -20,6 +20,7 @@ db_ability_repository, db_profile_repository, db_member_repository
 from services.project import project_service, profile_service, member_service
 from pydantic import BaseModel
 from services.professional.model import professional_model
+from services.person.model import person_model
 from services.project.model import project_model, profile_model
 
 from services.technology.model import technology_model
@@ -151,6 +152,7 @@ class CreateProjectRequest(BaseModel):
 class Status(enum.Enum):
     ENABLED = "ENABLED"
     DISABLED = "DISABLED"
+
 class CreateTestRequest(BaseModel):
     name : str
     technology : str
@@ -159,6 +161,21 @@ class CreateTestRequest(BaseModel):
     start_date : date 
     end_date: date
     description : str 
+
+class CreateTestReponse(BaseModel):
+    name : str
+    technology : str
+    duration_minutes : int
+    status : str
+    start_date : date 
+    end_date: date
+    description : str 
+
+class RegisterTestResultRequest(BaseModel):
+    test_name : str 
+    candidate_document: str
+    observation :str|None
+    points : int 
 
 class CreateTechnologyRequest(BaseModel):
     technology_name : str
@@ -361,7 +378,22 @@ def create_test(request: CreateTestRequest, db: Session)->None:
     test_repository = db_test_repository.DBTestRepository(db = db)
     
     test_service.create_test(**request.copy(exclude={"status"}).dict(),status=request.status.name, test_repository=test_repository)
+
+def get_tests(db: Session)->List[CreateTestReponse]:
+
+    test_repository = db_test_repository.DBTestRepository(db = db)
     
+    result = test_service.get_tests(test_repository=test_repository)
+
+    return [] if result is None or len(result)==0 else [CreateTestReponse(**x.dict()) for x in result]
+    
+def register_result_tests(request: List[RegisterTestResultRequest], db: Session)->None:
+    
+    test_repository = db_test_repository.DBTestRepository(db = db)
+    
+    results = [(r.test_name,r.candidate_document, r.observation,r.points ) for r in request]
+    test_service.register_result_tests(results, test_repository=test_repository)
+            
         
         
 ######################################################################################################################################
@@ -500,3 +532,23 @@ def create_member(request: CreateMemberRequest, person_id: str, db: Session)->No
     
     member_service.create_member(request=new_member, person_id= person_id, 
                                        member_repository=member_repository, employee_repository = employee_repository)
+    
+    
+######################################################################################################################################
+#                                                           CANDIDATES                                                               #
+######################################################################################################################################
+
+class ProfessionalInfo(BaseModel):
+    info: person_model.Person
+    professional_data :professional_model.ProfessionalFullInfo
+
+def get_full_info(person_id: str, db: Session)->ProfessionalInfo:
+
+    person_repository = db_person_repository.DBPersonRepository(db=db)
+    professional_repository = db_professional_repository.DBProfessionalRepository(db =db)
+    
+    person = person_service.find_by_person_id(person_id=person_id, person_repository=person_repository)
+    
+    professional_full_info = professional_service.get_full_info(person_id=person_id, professional_repository=professional_repository)
+    
+    return ProfessionalInfo(info=person, professional_data = professional_full_info)

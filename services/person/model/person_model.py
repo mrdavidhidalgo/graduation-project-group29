@@ -4,7 +4,7 @@ import datetime
 from services.commons import base
 
 class Person(BaseModel):
-    document: int
+    document: str
     document_type: base.DocumentType
     first_name: str
     last_name: str

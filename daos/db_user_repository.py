@@ -36,8 +36,8 @@ class DBUserRepository(user_repository.UserRepository):
         #return user_model.User(username="frank", password = "remb", name = "Franklin", is_active=True)
         return None if user is None else user_model.User(username=user.username, password = user.password, name = user.username, 
                                                          is_active=user.active, role=user.role, person_id=user.person_id)    
-    """def delete_user(self, username: str)-> Optional[int]:
+    
+    def delete_user(self, username: str)-> Optional[int]:
         user = self.db.query(models.User).filter(models.User.username == username).delete()
         self.db.commit()
         return user
-    """     

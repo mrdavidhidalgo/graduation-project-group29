@@ -139,3 +139,17 @@ def search_for_candidates(request: CandidateSearchRequest, professional_reposito
     else:
         LOGGER.info("Candidates list exists in service")
         return candidates
+    
+def get_by_person_id(person_id: str, professional_repository : professional_repository.ProfessionalRepository)->professional_model.ProfessionalReadModel:
+    
+    professional = professional_repository.get_by_person_id(person_id=person_id)
+    if professional is None:
+        raise ProfessionalDoesNotExistError(person_id=person_id)
+    
+    return professional 
+
+def get_full_info(person_id: str, professional_repository : professional_repository.ProfessionalRepository)->professional_model.ProfessionalFullInfo:
+    
+    return professional_repository.get_full_info(professional_id=person_id)
+    
+    

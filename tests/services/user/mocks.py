@@ -18,9 +18,14 @@ class FakeUserRepository(user_repository.UserRepository):
         
     def save(self, user: user_model.User)-> None:
         ...
+
         
     def get_by_person_id(self, person_id: str)-> Optional[user_model.User]:
         return None if self.person_id is None else user_model.User(username="cmas@aol.co", 
                                                              password=self.password, 
                                                              is_active=True,
                                                              role = user_model.UserRole.CLIENT,person_id=self.person_id)
+    
+    def delete_user(self, username: str)-> Optional[int]:
+        ...
+

@@ -35,6 +35,7 @@ class DBCompanyRepository(company_repository.CompanyRepository):
             for company in companies]
                 
     def save(self, company: company_model.Company)-> None:
+        company.taxpayer_id = company.taxpayer_id.lstrip('0')
         new_company = models.Company(
             taxpayer_id = company.taxpayer_id,
             name = company.name,
@@ -48,8 +49,8 @@ class DBCompanyRepository(company_repository.CompanyRepository):
         self.db.add(new_company)
         self.db.commit()
 
-"""def delete_company(self, taxpayer_id: int)-> Optional[int]:
+    def delete_company(self, taxpayer_id: int)-> Optional[int]:
         company = self.db.query(models.Company).filter(models.Company.taxpayer_id == taxpayer_id).delete()
         self.db.commit()
-        return company   """
+        return company
         

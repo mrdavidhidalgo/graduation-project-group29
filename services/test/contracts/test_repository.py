@@ -1,5 +1,5 @@
 import abc
-from typing import Optional
+from typing import Optional,List
 from services.test.model import test_model
 
 class TestRepository(abc.ABC):
@@ -9,3 +9,9 @@ class TestRepository(abc.ABC):
         
     def save(self, test: test_model.Test)-> None:
         ...
+
+    def get_tests(self)-> List[test_model.Test]:
+        ... 
+
+    def save_results(results:List[test_model.TestResult])->None:
+        ...    

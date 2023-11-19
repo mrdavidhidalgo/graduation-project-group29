@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 import datetime
 from services.commons import base
@@ -32,6 +32,8 @@ class ProfessionalAcademicInfo(BaseModel):
     description : str
     
 
+    
+
 class ProfessionalLaboralInfo(BaseModel):
     person_id : str
     position: str
@@ -49,6 +51,12 @@ class ProfessionalTechnologyInfo(BaseModel):
     experience_years: int
     level: int
     description : str
+    
+class ProfessionalFullInfo(BaseModel):
+    basic_info: ProfessionalReadModel
+    academic_info: List[ProfessionalAcademicInfo]
+    laboral_info: List[ProfessionalLaboralInfo]
+    technology_info: List[ProfessionalTechnologyInfo]
     
 class ProfessionalTechnicalRole(BaseModel):
     person_id : str

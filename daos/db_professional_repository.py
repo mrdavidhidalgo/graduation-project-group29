@@ -53,6 +53,56 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(academic_info)
         self.db.commit()
         
+    def get_full_info(self, professional_id: int)-> List[professional_model.ProfessionalFullInfo]:
+        
+        professional_db = self.db.query(models.Professional).filter(models.Professional.person_id == professional_id).first()
+       
+        professional = professional_model.ProfessionalReadModel(id = professional_db.id, 
+                                                                birth_date = professional_db.birth_date , 
+                                                                age=professional_db.age,
+                                                                origin_country= professional_db.origin_country,
+                                                                residence_country = professional_db.residence_country, 
+                                                                residence_city = professional_db.residence_city,
+                                                                address = professional_db.address, 
+                                                                person_id = professional_id )
+        
+        LOGGER.info("Finding academic info for %s", professional_id)
+        academics = self.db.query(models.ProfessionalAcademicInfo).filter(models.ProfessionalAcademicInfo.professional_id == professional.id)
+        
+        academic_info = [professional_model.ProfessionalAcademicInfo(person_id=professional_id, 
+                                                        title=academic_info.title, 
+                                                        institution=academic_info.title, 
+                                                        country = academic_info.country,
+                                                        start_date=academic_info.start_date,
+                                                        end_date=academic_info.end_date,
+                                                        description=academic_info.description) for academic_info in academics]
+        
+        LOGGER.info("Finding laboral info for %s", professional_id)
+        laborals = self.db.query(models.ProfessionalLaboralInfo).filter(models.ProfessionalLaboralInfo.professional_id == professional.id)
+        laboral_info = [professional_model.ProfessionalLaboralInfo(person_id = professional_id,
+                                                                    position = laboral_info.position,
+                                                                    company_name= laboral_info.company_name,
+                                                                    company_country = laboral_info.company_country,
+                                                                    company_address =  laboral_info.company_address,
+                                                                    company_phone = laboral_info.company_phone,
+                                                                    start_date = laboral_info.start_date,
+                                                                    end_date = laboral_info.end_date,
+                                                                    description = laboral_info.description) for laboral_info in laborals]
+        
+        LOGGER.info("Finding technology info for %s", professional_id)
+        tecnologies = self.db.query(models.ProfessionalTechnologyInfo).filter(models.ProfessionalTechnologyInfo.professional_id == professional.id)
+        technology_info = [professional_model.ProfessionalTechnologyInfo(person_id = professional_id,
+                                                                         name = technology_info.name,
+                                                                         experience_years = technology_info.experience_years,
+                                                                         level = technology_info.level,
+                                                                         description = technology_info.description) for technology_info in tecnologies]
+        
+        return professional_model.ProfessionalFullInfo(basic_info=professional, 
+                                                       laboral_info=laboral_info,
+                                                       academic_info=academic_info,
+                                                       technology_info=technology_info)
+        
+    
     def add_laboral_info(self, professional_id: int, laboral_info: professional_model.ProfessionalLaboralInfo)-> None:
         laboral_info = models.ProfessionalLaboralInfo(
             professional_id = professional_id,
@@ -94,12 +144,6 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         self.db.add(technology_info)
         self.db.commit()
         
-    """def delete_professional(self, person_id: int)-> Optional[int]:
-        professional = self.db.query(models.Professional).filter(models.Professional.person_id == person_id).delete()
-        self.db.commit()
-        return professional 
-    """ 
-    
     def search_for_candidates(self, role_filter: str, role: str, role_experience: str,technologies_list: list,\
     abilities_list: list, title_filter: str, title: str, title_experience: str)->Optional[List[professional_model.ProfessionalSearchResult]]:
         LOGGER.info("Profesional search")
@@ -153,16 +197,15 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
              where pr.id = pt.professional_id and pr.id='" + str(p.id) + "'" + filter_technology + " order by pt.name" ))
 
 
-            LOGGER.info("Profesional: [%d] - [%s] - [%s] - [%d]",p.id, p.first_name,p.last_name, p.age)
+            #LOGGER.info("Profesional: [%d] - [%s] - [%s] - [%d]",p.id, p.first_name,p.last_name, p.age)
 
             roles=""
             for r in rol:
                 LOGGER.info("Roles de : [%s] - [%s] - Experiencia [%d] ",p.first_name,r.role, r.experience_years)
                 roles=roles + r.role + "[" + str(r.experience_years) + "],"
             roles=roles[0:-1]
-                #roles.append({'role' : aux})
 
-            if (len(roles)==0) & (len(filter_role) > 0):
+            if (len(roles)==0) & (len(filter_role) > 1):
                 continue
 
             titles=""
@@ -171,13 +214,11 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                 LOGGER.info("Titulos de : [%s] - [%s] - Experiencia [%d] ",p.first_name,ac.title, years)
                 titles=titles + ac.title + "[" + str(years) + "],"
             titles=titles[0:-1]    
-                #titles.append({'title' : aux2 })
-                    #titles=titles + "," + ac.title
-
+                
             abilities="Ninguna"
-            #abilities.append({'name': 'Ninguna'})
+           
             
-            if (len(titles)==0) & (len(filter_title) > 0):
+            if (len(titles)==0) & (len(filter_title) > 1):
                 continue
 
             technologies=""
@@ -185,9 +226,8 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                 LOGGER.info("Tecnologias de : [%s] - [%s] - Nivel [%d] ",p.first_name,ti.name, ti.level)
                 technologies=technologies + ti.name + "[" + str(ti.level) + "],"
             technologies=technologies[0:-1]      
-                #technologies.append({'name': aux3})
 
-            if (len(technologies)==0) & (len(technologies_list) > 0):
+            if (len(technologies)==0) & (len(filter_technology) > 0):
                 continue
 
             new_record = professional_model.ProfessionalSearchResult(
@@ -202,7 +242,7 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                 score= ""
             )
             result_candidate_list.append(new_record)  
-            LOGGER.info("Profesional: valid")
+            LOGGER.info("Profesional: [%d] valid",p.id,)
         
         
         return result_candidate_list

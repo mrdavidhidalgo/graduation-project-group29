@@ -26,6 +26,9 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
     def save(self, professional: professional_model.ProfessionalCreateModel)-> None:
         ...
         
+    def get_full_info(self, professional_id: int)-> List[professional_model.ProfessionalFullInfo]:
+        ...
+        
     def add_academic_info(self, professional_id : int, academic_info: professional_model.ProfessionalAcademicInfo)-> None:
         ...
         
