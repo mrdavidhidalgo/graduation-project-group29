@@ -97,7 +97,9 @@ async def get_projects_by_company(token_data: commons.TokenData = Depends(common
     if project_list is not None:
         data=[]
         for project in project_list:
-            data.append({'id': str(project.id),'project_name': str(project.project_name)})
+            data.append({'id': str(project.id),'project_name': str(project.project_name), 
+            'start_date': str(project.start_date), 'active': str(project.active),
+            'creation_time': str(project.creation_time), 'details': str(project.details) })
         return data
     else:
         LOGGER.info("Return 404 error")

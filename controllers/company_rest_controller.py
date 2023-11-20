@@ -81,8 +81,8 @@ async def get_company_by_Id(token_data: commons.TokenData = Depends(commons.get_
         data=[]
         co=str(company.country).split(".")
         dt=str(company.document_type).split(".")
-        data.append({'document': str(company.document),'document_type': str(dt[1]),'first_name': str(company.first_name)
-        ,'last_name': str(company.last_name),'username': str(company.username), 'password': str(company.password),'taxpayerId': str(company.taxpayer_id)
+        data.append({'document': str(company.document),'documentType': str(dt[1]),'firstName': str(company.first_name)
+        ,'lastName': str(company.last_name),'username': str(company.username), 'password': str(company.password),'taxpayerId': str(company.taxpayer_id)
          ,'name': str(company.name),'country': str(co[1]), 'city': str(company.city), 'years': str(company.years),
-         'address': str(company.address), 'phone_number': str(company.phone_number), 'profile': str(company.profile), 'position': str(company.position)})
+         'address': str(company.address), 'phoneNumber': str(company.phone_number), 'profile': str(company.profile), 'position': str(company.position)})
         return data
