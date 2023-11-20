@@ -9,9 +9,12 @@ session = MagicMock()
 
 class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
     
-    def __init__(self, person_id: Optional[str]= None) -> None:
+    def __init__(self, person_id: Optional[str]= None, candidates_without_interview : List[professional_model.ProfessionalReadModel] = None) -> None:
+        if candidates_without_interview is None:
+            candidates_without_interview = []
         super().__init__()
         self.person_id = person_id
+        self.candidates_without_interview = candidates_without_interview
     
     def get_by_person_id(self, person_id: str)-> Optional[professional_model.ProfessionalReadModel]:
         return None if self.person_id is None else professional_model.ProfessionalReadModel(id=1, 
@@ -53,7 +56,7 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
         result_candidate_list = []
         
         if len(technologies_list) > 0:
-            filter_technology= self.build_filter(technologies_list, "pt.name")
+            filter_technology= self._build_filter(technologies_list, "pt.name")
         #LOGGER.info("Filtro de Tecnologia : [%s] y long [%d]",filter_technology, len(technologies_list))
         """"if len(abilities_list) > 0:
             filter_technology=" and pt.name in (" + tech_list + ")"""""
@@ -96,13 +99,7 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
                 score= "9"
         )]
         
-    def date_compare(self, date1, date2)->int:
-        date_aux1=datetime.strptime(date1, '%Y-%m-%d %H:%M')
-        date_aux2=datetime.strptime(date2, '%Y-%m-%d %H:%M')
-        years_diff = (date_aux1 - date_aux2) / timedelta(days=365)
-        return int(years_diff)
-
-    def build_filter(self, array_list: list, column:str)->str:
+    def _build_filter(self, array_list: list, column:str)->str:
         new_list=""
         filter=""
         for j in array_list:
@@ -112,3 +109,10 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
         if len(new_list) > 0:
             filter=" and " + column + " in (" + new_list + ")"
         return filter
+    
+    def get_candidates_without_interviews(self)->List[professional_model.ProfessionalReadModel]:
+        return self.candidates_without_interview
+        
+    
+    def load_interview(self, interview_info: professional_model.LoadInterviewInfo)->None:
+        ...

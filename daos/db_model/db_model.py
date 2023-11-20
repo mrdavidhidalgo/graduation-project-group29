@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, Date, Enum, ForeignKey, Text, func,Date
 import datetime
 from services.commons import base
@@ -150,13 +151,7 @@ class Technology(Base):
     category = Column(Enum(base.TechnologyCategory))
     
 
-class Ability(Base):
-    __tablename__ = "ability"
-    
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    ability_name = Column(String(100))
-    details = Column(Text)
-    category = Column(Enum(base.AbilityCategory))
+
 
     
 
@@ -181,3 +176,28 @@ class ProjectMember(Base):
     person_id = Column(String(30))
     profile_id = Column(String(200))
     project_id = Column(String(20))
+    
+    
+class Ability(Base):
+    __tablename__ = "ability"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    ability_name = Column(String(100))
+    details = Column(Text)
+    category = Column(Enum(base.AbilityCategory))
+    
+class CandidateAbility(Base):
+    __tablename__ = "candidate_ability"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    interview_id = Column(Integer, ForeignKey('candidate_interview.id'))
+    ability_id = Column(Integer, ForeignKey('ability.id'))
+    qualification= Column(Integer)
+    
+class CandidateInterview(Base):
+    __tablename__ = "candidate_interview"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    profesional_id = Column(Integer, ForeignKey('professional.id'))
+    date = Column(Date, default=datetime.datetime.utcnow)
+    recording_file = Column(String(60), nullable=True)
+    test_file = Column(String(60), nullable=True)
+    observation = Column(String(500))

@@ -80,6 +80,20 @@ class CandidateSearchRequest(BaseModel):
     titleFilter: Optional[str]
     title: Optional[str]
     titleExperience: Optional[str]
+    
+class AbilityInterviewRequest(BaseModel):
+    ability_id: int
+    qualification: int
+
+class LoadInterviewRequest(BaseModel):
+    professional_id : int
+    year : int
+    month : int
+    day : int
+    recording_file: Optional[str]
+    test_file : Optional[str]
+    observation: str
+    abilities: List[AbilityInterviewRequest]
 
 # Dependency
 def get_db() -> Session:
@@ -285,3 +299,28 @@ async def search_for_candidates(request: Request, db: Session = Depends(get_db))
 async def get_info(token_data: commons.TokenData = Depends(commons.get_token_data), db : Session = Depends(get_db))->None:
     
     return management_service_facade.get_full_info(person_id=str(token_data.person_id), db = db)
+
+@router.get("/candidates/to_interview")
+async def get_info(db : Session = Depends(get_db))->None:
+    
+    return management_service_facade.get_candidates_without_interviews(db = db)
+
+@router.post("/candidates/load_interview")
+async def load_interview(request: LoadInterviewRequest, db : Session = Depends(get_db))->None:
+    
+    date = datetime.datetime(request.year, request.month, request.day)
+    
+    abilities = list(map(lambda x: management_service_facade.AbilityInterviewRequest(
+                                    ability_id = x.ability_id,
+                                    qualification= x.qualification), request.abilities))
+    
+    
+    management_service_facade.load_interview(request = management_service_facade.LoadInterviewRequest(
+                                                    professional_id = request.professional_id,
+                                                    date  = date,
+                                                    recording_file = request.recording_file,
+                                                    test_file  = request.test_file,
+                                                    observation = request.observation,
+                                                    abilities=abilities), db=db)
+    
+    return {"msg": "Candidate interview info has been added"}

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8d273444-3eba-47c8-bace-5784b2edd072",
+		"_postman_id": "22d01525-63cd-4d12-9626-a595c96adfbe",
 		"name": "ABCJobs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "786244"
@@ -216,6 +216,55 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "to Interview",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/candidates/to_interview",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates",
+								"to_interview"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "load interview",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"professional_id\": 1,\n  \"year\": 2023,\n  \"month\": 12,\n  \"day\": 8,\n  \"recording_file\": \"string\",\n  \"test_file\": \"string\",\n  \"observation\": \"string\",\n  \"abilities\": [\n    {\n      \"ability_id\": 1,\n      \"qualification\": 5\n    },\n    {\n      \"ability_id\": 2,\n      \"qualification\": 1\n    },\n    {\n      \"ability_id\": 3,\n      \"qualification\": 2\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/candidates/load_interview",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates",
+								"load_interview"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -339,6 +388,25 @@
 							"port": "8000",
 							"path": [
 								"tests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "abilities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/abilities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"abilities"
 							]
 						}
 					},
