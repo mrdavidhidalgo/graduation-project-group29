@@ -32,6 +32,19 @@ class ProfessionalAcademicInfo(BaseModel):
     description : str
     
 
+class AbilityInterviewInfo(BaseModel):
+    ability_id: int
+    qualification: int
+
+class LoadInterviewInfo(BaseModel):
+    professional_id : int
+    date: datetime.datetime
+    recording_file: Optional[str]
+    test_file : Optional[str]
+    observation: str
+    abilities: List[AbilityInterviewInfo]
+    
+
     
 
 class ProfessionalLaboralInfo(BaseModel):

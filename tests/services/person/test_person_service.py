@@ -112,3 +112,9 @@ class MockProfessional(professional_repository.ProfessionalRepository):
                 abilities= {'name': 'Ninguna'},
                 score= "9"
         )]
+            
+    def get_candidates_without_interviews(self)->List[professional_model.ProfessionalReadModel]:
+        ...
+        
+    def load_interview(self, interview_info: professional_model.LoadInterviewInfo)->None:
+        ...

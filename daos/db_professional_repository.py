@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from typing import Optional, List
-from sqlalchemy import text 
+from sqlalchemy import text, select
 from .db_model import db_model as models
+from sqlalchemy.exc import SQLAlchemyError
 
 from services import logs
 LOGGER = logs.get_logger()
@@ -263,3 +264,54 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         if len(new_list) > 0:
             filter=" and " + column + " in (" + new_list + ")"
         return filter
+    
+    def get_candidates_without_interviews(self)->List[professional_model.ProfessionalReadModel]:
+        
+        query = select(models.Professional).outerjoin(models.CandidateInterview, models.Professional.id == models.CandidateInterview.profesional_id).filter(models.CandidateInterview.id.is_(None))
+        result = self.db.execute(query)
+        
+        return list(map(lambda row: professional_model.ProfessionalReadModel(id = row.id,
+                                                                             birth_date = row.birth_date,
+                                                                             age= row.age,
+                                                                             origin_country =row.origin_country,
+                                                                             residence_country = row.residence_country,
+                                                                             residence_city = row.residence_city,
+                                                                             address = row.residence_city,
+                                                                             person_id = row.person_id), result.scalars().all()))
+        
+        
+    def load_interview(self, interview_info: professional_model.LoadInterviewInfo)->None:
+        
+        candidate_interview_info = models.CandidateInterview(
+            profesional_id = interview_info.professional_id,
+            date = interview_info.date,
+            recording_file = interview_info.recording_file,
+            test_file = interview_info.test_file,
+            observation = interview_info.observation
+        )
+        
+        try:
+            with self.db.begin():
+                self.db.add(candidate_interview_info)
+                self.db.flush()
+                
+                abilities = list(map(lambda x: models.CandidateAbility(
+                                    interview_id = candidate_interview_info.id,
+                                    ability_id = x.ability_id,
+                                    qualification= x.qualification), interview_info.abilities))
+
+                
+                self.db.add_all(abilities)
+        
+            
+        except SQLAlchemyError as e:
+            # Si ocurre un error, haz rollback de la transacción
+            print(f"Error en la transacción: {e}")
+            self.db.rollback()
+
+        finally:
+            # Cierra la sesión
+            self.db.close() 
+                
+        
+    

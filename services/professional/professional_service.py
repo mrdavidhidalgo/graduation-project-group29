@@ -151,5 +151,12 @@ def get_by_person_id(person_id: str, professional_repository : professional_repo
 def get_full_info(person_id: str, professional_repository : professional_repository.ProfessionalRepository)->professional_model.ProfessionalFullInfo:
     
     return professional_repository.get_full_info(professional_id=person_id)
+
+def get_candidates_without_interviews(professional_repository: professional_repository.ProfessionalRepository)->List[professional_model.ProfessionalReadModel]:
     
+    return professional_repository.get_candidates_without_interviews()
+
+def load_interview(interview_info: professional_model.LoadInterviewInfo, professional_repository: professional_repository.ProfessionalRepository)->None:
+    
+    return professional_repository.load_interview(interview_info=interview_info)
     

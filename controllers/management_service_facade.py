@@ -187,6 +187,18 @@ class ReadTechnologyRequest(BaseModel):
     technology_name : str
     details : str
     category : base.TechnologyCategory
+    
+class AbilityInterviewRequest(BaseModel):
+    ability_id: int
+    qualification: int
+
+class LoadInterviewRequest(BaseModel):
+    professional_id : int
+    date : datetime.datetime
+    recording_file: Optional[str]
+    test_file : Optional[str]
+    observation: str
+    abilities: List[AbilityInterviewRequest]
   
 ######################################################################################################################################
 #                                                           USER                                                                     #
@@ -552,3 +564,15 @@ def get_full_info(person_id: str, db: Session)->ProfessionalInfo:
     professional_full_info = professional_service.get_full_info(person_id=person_id, professional_repository=professional_repository)
     
     return ProfessionalInfo(info=person, professional_data = professional_full_info)
+
+
+
+
+def get_candidates_without_interviews(db:Session)->List[professional_model.ProfessionalReadModel]:
+    return professional_service.get_candidates_without_interviews(db_professional_repository.DBProfessionalRepository(db=db))
+
+def load_interview(request: LoadInterviewRequest, db:Session)->None:
+    
+    interview_info = professional_model.LoadInterviewInfo.model_validate(request.model_dump())
+    
+    return professional_service.load_interview(interview_info=interview_info, professional_repository=db_professional_repository.DBProfessionalRepository(db=db))

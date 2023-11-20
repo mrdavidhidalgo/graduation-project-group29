@@ -4,6 +4,7 @@ from services.professional import professional_service as subject
 from services.professional.model import professional_model
 from tests.services.professional import mocks
 import pytest
+from unittest import mock
 
 
 ###########################################################################################
@@ -219,3 +220,19 @@ def test_should_get_candidates_not_found()->None:
         professional_repository= mocks.FakeProfesionalRepository()
     )
     assert search_result is None
+    
+@pytest.mark.unittests
+def test_should_get_candidates_where_there_are_candidates_wihout_loaded_interview()->None:
+    result = subject.get_candidates_without_interviews(professional_repository=mocks.FakeProfesionalRepository(
+        candidates_without_interview=[professional_model.ProfessionalReadModel(
+            id = 1,
+            birth_date =  "2023-04-01",
+            age = 28,
+            origin_country = base.Country.Colombia,
+            residence_country = base.Country.Argentina,
+            residence_city = "Buenos Aires",
+            address = "Calle 13 Avenida 34",
+            person_id = "1"
+        )]))
+    
+    assert len(result) == 1
