@@ -5,6 +5,7 @@ import datetime
 from typing import List, Optional
 
 from services.project.contracts import member_repository, project_repository, profile_repository
+from services.person.contracts import person_repository
 from services.employee.contracts import employee_repository
 from services.project import project_service
 from services.employee import employee_service
@@ -30,10 +31,20 @@ class ProjectMemberAlreadyExistError(Exception):
 class CreateMemberRequest(BaseModel):
     active : bool
     description : str
-    person_id : str
+    person_document : str
     profile_id : str
     project_id : str
 
+
+class ProjectMemberRequest(BaseModel):
+    id : int
+    active : str
+    description : str
+    person_id : str
+    profile : str
+    project_id : str
+    member_name: str
+    
 def create_member(request : CreateMemberRequest, person_id: str, member_repository: member_repository.MemberRepository,\
 employee_repository: employee_repository.EmployeeRepository)-> None:
     
@@ -43,7 +54,8 @@ employee_repository: employee_repository.EmployeeRepository)-> None:
     if employee_project is None:
         raise employee_service.EmployeeDoesNotExistError()
     
-    persisted_member = member_repository.get_by_member_id(person_id = person_id, project_id = request.project_id)
+    persisted_member = member_repository.get_by_member_id(person_id = request.person_document, project_id = request.project_id)
+    #LOGGER.info("Value of persisted_member [%s] in service", str(persisted_member))
     
     if persisted_member is not None:
         raise ProjectMemberAlreadyExistError()
@@ -53,8 +65,39 @@ employee_repository: employee_repository.EmployeeRepository)-> None:
         member=member_model.MemberCreate(
             active = request.active,
             description = request.description,
-            person_id = request.person_id,
+            person_id = request.person_document,
             profile_id = request.profile_id,
             project_id = request.project_id
             )
         )
+
+def get_members_by_project_id(project_id: str, person_id: str, member_repository: member_repository.MemberRepository,
+    employee_repository: employee_repository.EmployeeRepository, person_repository: person_repository.PersonRepository
+    )->Optional[List]:
+    LOGGER.info("Search for members by project [%s] in service", str(project_id))
+    
+    employee_project = employee_service.get_by_person_id(employee_repository, person_id = person_id)
+    if employee_project is None:
+        raise employee_service.EmployeeDoesNotExistError()
+    
+    LOGGER.info("sending  to member repo [%s]", project_id)    
+    
+    members = member_repository.get_by_project_id(project_id=project_id)    
+    
+    if (members is None) or len(members) < 1:
+        LOGGER.info("Empty List members in service")
+        return None
+    
+    members_project_list = []
+    member_create = ProjectMemberRequest
+    for member in members:
+        person = person_repository.get_by_document(member.person_id)
+        member_create = ProjectMemberRequest(id  = member.id, active = str(member.active),
+            description = member.description, person_id = member.person_id, 
+            profile = member.profile_id, project_id = project_id,
+            member_name = person.first_name + " " + person.last_name)
+            
+        members_project_list.append(member_create)
+    
+    LOGGER.info("Member List with data in service")
+    return members_project_list

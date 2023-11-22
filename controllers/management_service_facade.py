@@ -21,7 +21,7 @@ from services.project import project_service, profile_service, member_service
 from pydantic import BaseModel
 from services.professional.model import professional_model
 from services.person.model import person_model
-from services.project.model import project_model, profile_model
+from services.project.model import project_model, profile_model, member_model
 
 from services.technology.model import technology_model
 from services.commons import base
@@ -451,6 +451,15 @@ def get_projects_by_company_id(person_id: str, db: Session)->Optional[List[proje
         return project_list
 
 
+def get_project_by_id(project_id: str, person_id: str, db: Session)->Optional[project_service.project_model.ProjectRead]:
+    LOGGER.info("Serach project by ID")
+    project_repository = db_project_repository.DBProjectRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    project_info = project_service.get_by_project_id(project_id= project_id, person_id= person_id,\
+    project_repository=project_repository, employee_repository = employee_repository)
+    
+    return project_info
+
 ######################################################################################################################################
 #                                                      TECHNOLOGY                                                                    #
 ######################################################################################################################################
@@ -529,10 +538,19 @@ def get_profiles_by_project_id(project_id: str, person_id: str, db: Session)->Op
 class CreateMemberRequest(BaseModel):
     active : bool
     description : str
-    person_id : str
+    person_document : str
     profile_id : str
     project_id : str
-    
+ 
+class ProjectMemberRequest(BaseModel):
+    id : int
+    active : str
+    description : str
+    person_id : str
+    profile : str
+    project_id : str
+    member_name: str
+        
 def create_member(request: CreateMemberRequest, person_id: str, db: Session)->None:
 
     LOGGER.info("Starting added member to project[%s]", str(request.project_id))
@@ -545,7 +563,25 @@ def create_member(request: CreateMemberRequest, person_id: str, db: Session)->No
     member_service.create_member(request=new_member, person_id= person_id, 
                                        member_repository=member_repository, employee_repository = employee_repository)
     
+def get_members_by_project_id(project_id: str, person_id: str,db: Session)->Optional[List[ProjectMemberRequest]]:
+    LOGGER.info("Listing all members for project [%s]", str(project_id))
+
+    member_repository = db_member_repository.DBMemberRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    person_repository = db_person_repository.DBPersonRepository(db = db)
+    project_repository = db_project_repository.DBProjectRepository(db = db)
+    member_list = member_service.get_members_by_project_id(project_id=project_id, person_id= person_id,\
+     member_repository=member_repository, employee_repository = employee_repository, 
+     person_repository=person_repository)
     
+    if member_list is None:
+        LOGGER.info("Empty members Project List in facade")
+        return None
+    else:
+        LOGGER.info("Member Project List with data in facade")
+        return member_list
+        
+              
 ######################################################################################################################################
 #                                                           CANDIDATES                                                               #
 ######################################################################################################################################

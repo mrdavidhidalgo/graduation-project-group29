@@ -24,7 +24,7 @@ class DBProjectRepository(project_repository.ProjectRepository):
           company_id = str(company_id))
           
     def get_by_project_id(self, project_id: str)-> project_model.ProjectRead:
-        project = self.db.query(models.Project).filter(models.Project.project_id == project_id).first()
+        project = self.db.query(models.Project).filter(models.Project.id == project_id).first()
        
         return None if project is None else project_model.ProjectRead(id = project_id, project_name=project.project_name,\
          start_date = project.start_date, active= project.active, creation_time = project.creation_time, details = project.details,\

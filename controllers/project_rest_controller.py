@@ -169,10 +169,44 @@ async def get_profiles_by_project_id(project_id: str, token_data: commons.TokenD
 async def create_member(request: CreateMemberRequest, token_data: commons.TokenData = Depends(commons.get_token_data), db: Session = Depends(get_db)):
     #LOGGER.info("Peticion [%s] - [%s]", str(request.document), str(request.documentType))
     request2 = management_service_facade.CreateMemberRequest(active = bool(request.active), description= request.description,\
-    person_id=request.personId, profile_id = request.profileId, project_id= request.projectId)
+    person_document=request.personId, profile_id = request.profileId, project_id= request.projectId)
         
     try:
-        management_service_facade.create_member(request = request2, person_id = token_data.person_id , db = db)
+        management_service_facade.create_member(request = request2, person_id = token_data.person_id, db = db)
         return {"msg": "Member has been created"}
     except (management_service_facade.ProjectMemberAlreadyExistError, management_service_facade.EmployeeDoesNotExistError) as e:
+        LOGGER.info("No se pudo asignar [%s]", str(e.message))
         raise HTTPException(status_code=400, detail=e.message)
+
+
+@router.get("/projects/members/{project_id}")
+async def get_members_by_project_id(project_id: str, token_data: commons.TokenData = Depends(commons.get_token_data), 
+    db: Session = Depends(get_db)):
+    member_list = management_service_facade.get_members_by_project_id(project_id=project_id, person_id = token_data.person_id, db = db)
+        
+    if member_list is not None:
+        data=[]
+        for member in member_list:
+            data.append({'id': str(member.id), 'name': str(member.member_name), 'profile': str(member.profile),
+            'active': str(member.active), 'performance': "" ,'description': str(member.description), 'person_id': str(member.person_id), 'project_id': str(project_id)
+            })
+        return data
+    else:
+        LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No members found")
+
+@router.get("/projects/{project_id}")
+async def get_project_by_id(project_id: str, token_data: commons.TokenData = Depends(commons.get_token_data), 
+    db: Session = Depends(get_db)):
+    project = management_service_facade.get_project_by_id(project_id=project_id, person_id = token_data.person_id, db = db)
+    
+    if project is not None:
+        data=[]
+        data.append({'id': str(project.id), 'project_name': str(project.project_name), 'start_date': str(project.start_date),
+            'active': str(project.active), 'creation_time': str(project.creation_time) ,'details': str(project.details),
+             'company_id': str(project.company_id)
+            })
+        return data
+    else:
+        LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No projects found")
