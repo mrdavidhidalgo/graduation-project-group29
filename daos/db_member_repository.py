@@ -1,6 +1,6 @@
 from typing import Optional, List
 from .db_model import db_model as models
-
+from sqlalchemy import text, select
 from services.project.contracts import member_repository
 
 from sqlalchemy.orm import Session
@@ -16,13 +16,14 @@ class DBMemberRepository(member_repository.MemberRepository):
         self.db = db
     
     def get_by_member_id(self, person_id: str, project_id: str)->Optional[member_model.MemberRead]:
-        member = self.db.query(models.ProjectMember).filter(models.ProjectMember.person_id == person_id)\
-        .filter(models.ProjectMember.project_id == project_id).first()
+        #members = self.db.query(models.ProjectMember).filter(models.ProjectMember.person_id == person_id, models.ProjectMember.project_id == project_id).all()
+        members = self.db.execute(text("SELECT * from project_member where person_id='" + str(person_id) + "' and project_id='"+ project_id + "'" ))
+        print("SELECT * from project_member where person_id='" + str(person_id) + "' and project_id='"+ project_id + "'")
         LOGGER.info("Filter in repository: [%s]-[%s]", person_id, project_id)
-       
-        return None if member is None else member_model.MemberRead(id = member.id, active=member.active,\
+        count = len(members.all())
+        return None if count==0 else [member_model.MemberRead(id = member.id, active=member.active,\
             description = member.description, person_id = member.person_id, profile_id = member.profile_id,\
-            project_id = member.project_id)
+            project_id = member.project_id) for member in members]
     
     """def get_all(self)->Optional[List[member_model.MemberRead]]:
         
@@ -48,8 +49,9 @@ class DBMemberRepository(member_repository.MemberRepository):
         self.db.commit()
         
     def get_by_project_id(self, project_id: str)->Optional[List[member_model.MemberRead]]:
-        members = self.db.query(models.ProjectMember).filter(models.ProjectMember.project_id == project_id).first()
-       
+        members = self.db.query(models.ProjectMember).filter(models.ProjectMember.project_id == project_id).all()
+        LOGGER.info("Filter in repository: [%s]-[%s]", project_id, str(members))
+        
         return None if members is None else [member_model.MemberRead(id = member.id, active=member.active,\
             description = member.description, person_id = member.person_id, profile_id = member.profile_id,\
             project_id = member.project_id) for member in members]

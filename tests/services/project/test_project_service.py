@@ -51,6 +51,16 @@ def test_get_projects_by_company():
         person_id = "1", company_id = "4388827")))
     assert project.id == 1
 
+def test_get_projects_by_id():
+    from services.project import project_service as subject
+    project=subject.get_by_project_id("2","12345",  project_repository=MockProject(project_with_params = \
+    project_model.ProjectRead(id=1, project_name="BAC Jobs", start_date=data_test2 ,active=1, creation_time=data_test,\
+    details="Proyecto desarrollo web y python",company_id="323477234")), employee_repository=MockEmployee(employee_with_params = \
+    employee_model.EmployeeReadModel(id = 2, profile = "OPERATIVO" , position= "JEFE SOPORTE",\
+        person_id = "12345", company_id = "4388827")) )
+    
+    assert project.project_name == "BAC Jobs"
+
 class MockProject(project_repository.ProjectRepository):
    
     def __init__(self,project_by_id: project_model.ProjectRead=None,project_with_params:project_model.ProjectRead=None)->None:
@@ -60,8 +70,8 @@ class MockProject(project_repository.ProjectRepository):
     def create_project(self, project: project_model.ProjectCreate)-> str:
         return "1"
     
-    def get_by_project_id(self, project_id: str)-> str:
-        return self.by_id
+    def get_by_project_id(self, project_id: str)-> project_model.ProjectRead:
+        return self.project_with_params
         
     def get_by_project_name(self, project_name: str, company_id: int)-> project_model.ProjectRead:
         return self.project_with_params
