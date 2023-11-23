@@ -15,13 +15,13 @@ from services.technology import technology_service
 from services.ability import ability_service
 from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
 db_employee_repository, db_company_repository, db_project_repository, db_technology_repository,\
-db_ability_repository, db_profile_repository, db_member_repository
+db_ability_repository, db_profile_repository, db_member_repository, db_performance_evaluation_repository
 
-from services.project import project_service, profile_service, member_service
+from services.project import project_service, profile_service, member_service, performance_evaluation_service
 from pydantic import BaseModel
 from services.professional.model import professional_model
 from services.person.model import person_model
-from services.project.model import project_model, profile_model, member_model
+from services.project.model import project_model, profile_model, member_model, performance_evaluation_model
 
 from services.technology.model import technology_model
 from services.commons import base
@@ -83,6 +83,12 @@ ProfileNameAlreadyExistError = profile_service.ProfileNameAlreadyExistError
 ProfessionalSearchError = professional_service.ProfessionalSearchError
 
 ProjectMemberAlreadyExistError = member_service.ProjectMemberAlreadyExistError
+
+ProjectMemberNotExistsError = member_service.ProjectMemberNotExistsError
+
+ProjectMemberHasEvaluationError = performance_evaluation_service.ProjectMemberHasEvaluationError
+
+ProjectHasNotEvaluationsError = performance_evaluation_service.ProjectHasNotEvaluationsError
 
 #LOGGER = user_service.LOGGER
 from services import logs
@@ -612,3 +618,59 @@ def load_interview(request: LoadInterviewRequest, db:Session)->None:
     interview_info = professional_model.LoadInterviewInfo.model_validate(request.model_dump())
     
     return professional_service.load_interview(interview_info=interview_info, professional_repository=db_professional_repository.DBProfessionalRepository(db=db))
+
+
+######################################################################################################################################
+#                                                           PERFORMACE EVALUATION                                                    #
+######################################################################################################################################
+
+class CreateEvaluationRequest(BaseModel):
+    score : str
+    details : str
+    project_id : str
+    person_document : str
+    member_id : str
+
+class PerformanceEvaluationResponse(BaseModel):
+    id : int
+    creation_date: str
+    score : str
+    details : str
+    project_id : str
+    person_id : str
+    member_id : str
+    person_name : str
+    
+def create_evaluation(request: CreateEvaluationRequest, person_id: str, db: Session)->None:
+
+    LOGGER.info("Starting create evaluation to project[%s]", str(request.project_id))
+   
+    performance_evaluation_repository = db_performance_evaluation_repository.DBPerformanceEvaluationRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    person_repository = db_person_repository.DBPersonRepository(db = db)
+    member_repository = db_member_repository.DBMemberRepository(db = db)
+    
+    new_evaluation = performance_evaluation_service.CreateEvaluationRequest.model_validate(request.model_dump())
+    
+    performance_evaluation_service.create_evaluation(request=new_evaluation, person_id= person_id, 
+        performance_evaluation_repository=performance_evaluation_repository, employee_repository = employee_repository,
+        person_repository=person_repository, member_repository=member_repository)
+    
+def get_evaluations_by_project_id(project_id: str, person_id: str,db: Session)->Optional[List[PerformanceEvaluationResponse]]:
+    LOGGER.info("Listing all evaluations for project [%s]", str(project_id))
+
+    performance_evaluation_repository = db_performance_evaluation_repository.DBPerformanceEvaluationRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    person_repository = db_person_repository.DBPersonRepository(db = db)
+    
+  
+    evaluation_list = performance_evaluation_service.get_evaluations_by_project_id(project_id=project_id, person_id= person_id,
+    performance_evaluation_repository=performance_evaluation_repository, employee_repository = employee_repository,
+    person_repository=person_repository)
+    
+    if evaluation_list is None:
+        LOGGER.info("There are not evaluations List in facade")
+        return None
+    else:
+        LOGGER.info("Evaluations List with data in facade")
+        return evaluation_list
