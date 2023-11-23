@@ -13,5 +13,6 @@ omit = [
     "daos/db_person_repository.py",
     "daos/db_user_repository.py",
     "daos/db_employee_repository.py",
-    "daos/db_member_repository.py"
+    "daos/db_member_repository.py",
+    "daos/db_performance_evaluation_repository.py"
 ]

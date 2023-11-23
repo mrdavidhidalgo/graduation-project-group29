@@ -27,7 +27,13 @@ class ProjectMemberAlreadyExistError(Exception):
      def __init__(self, *args: object) -> None:
         self.message = "Project Member  exists in project"
         super().__init__(self.message)
-        
+
+class ProjectMemberNotExistsError(Exception):
+     def __init__(self, *args: object) -> None:
+        self.message = "Project Member does not exist in project"
+        super().__init__(self.message)
+
+   
 class CreateMemberRequest(BaseModel):
     active : bool
     description : str

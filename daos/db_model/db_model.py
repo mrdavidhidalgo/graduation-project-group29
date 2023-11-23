@@ -201,3 +201,15 @@ class CandidateInterview(Base):
     recording_file = Column(String(60), nullable=True)
     test_file = Column(String(60), nullable=True)
     observation = Column(String(500))
+    
+    
+class PerformaceEvaluation(Base):
+    __tablename__ = "performance_evaluation"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    score = Column(Integer)
+    details = Column(Text)
+    creation_date = Column(Date, default=datetime.datetime.utcnow)
+    project_id = Column(String(20))
+    person_id = Column(Integer)
+    member_id = Column(Integer)

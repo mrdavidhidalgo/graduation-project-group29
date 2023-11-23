@@ -51,6 +51,13 @@ class CreateMemberRequest(BaseModel):
     personId : str
     profileId : str
     projectId : str
+
+class CreatePerformanceEvaluationRequest(BaseModel):
+    score : str
+    details : str
+    project_id : str
+    person_id : str
+    member_id : str
     
 # Dependency
 def get_db() -> Session:
@@ -210,3 +217,37 @@ async def get_project_by_id(project_id: str, token_data: commons.TokenData = Dep
     else:
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No projects found")
+        
+
+@router.post("/evaluations")
+async def create_evaluation(request: CreatePerformanceEvaluationRequest, token_data: commons.TokenData = Depends(commons.get_token_data),
+ db: Session = Depends(get_db)):
+    #LOGGER.info("Peticion [%s] - [%s]", str(request.document), str(request.documentType))
+    request2 = management_service_facade.CreateEvaluationRequest(score = request.score, details= request.details,\
+    project_id= request.project_id, person_document=request.person_id, member_id = request.member_id )
+        
+    try:
+        management_service_facade.create_evaluation(request = request2, person_id = token_data.person_id, db = db)
+        return {"msg": "Performance evaluation has been created"}
+    except (management_service_facade.ProjectMemberHasEvaluationError, management_service_facade.EmployeeDoesNotExistError,
+    management_service_facade.ProjectMemberNotExistsError ) as e:
+        LOGGER.info("No se pudo crear [%s]", str(e.message))
+        raise HTTPException(status_code=400, detail=e.message)
+
+
+@router.get("/evaluations/{project_id}")
+async def get_evaluations_by_project_id(project_id: str, token_data: commons.TokenData = Depends(commons.get_token_data), 
+    db: Session = Depends(get_db)):
+    evaluations_list = management_service_facade.get_evaluations_by_project_id(project_id=project_id, person_id = token_data.person_id, db = db)
+        
+    if evaluations_list is not None:
+        data=[]
+        for evaluation in evaluations_list:
+            data.append({'id': str(evaluation.id), 'creation_date': str(evaluation.creation_date), 'score': str(evaluation.score),
+            'details': str(evaluation.details), 'project_id': str(project_id), 'person_id': str(evaluation.person_id), 
+            'member_id': str(evaluation.member_id),'person_name': str(evaluation.person_name)
+            })
+        return data
+    else:
+        LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No evaluations found")
