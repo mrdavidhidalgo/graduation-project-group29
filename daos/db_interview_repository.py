@@ -12,13 +12,13 @@ class DBInterviewRepository(interview_repository.InterviewRepository):
     def __init__(self, db: Session) -> None:
         super().__init__()
         self.db = db
-    def get_by_project_and_candidate(self, project_name: str,candidate_document: str)-> Optional[interview_model.Interview]:
+    def get_by_project_and_candidate(self, project_id: str,candidate_document: str)-> Optional[interview_model.Interview]:
         ... 
-        interv = self.db.query(models.Interview).filter(models.Interview.candidate_document == candidate_document and models.Interview.project_name == project_name ).first() 
+        interv = self.db.query(models.Interview).filter(models.Interview.candidate_document == candidate_document).filter(models.Interview.project_id == project_id ).first() 
         
         return None if interv is None else interview_model.Interview(    
                                                          candidate_document = interv.candidate_document,
-                                                         project_name = interv.project_name,
+                                                         project_id = interv.project_id,
                                                          status = interv.status,
                                                          meet_url = interv.meet_url,
                                                          start_timestamp = interv.start_timestamp,

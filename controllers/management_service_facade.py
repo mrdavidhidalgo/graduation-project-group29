@@ -179,7 +179,7 @@ class Status(enum.Enum):
 
 class CreateInterviewRequest(BaseModel):
     candidate_document : str 
-    project_name : str
+    project_id : str
     meet_url : str
     status : Status
     start_timestamp : datetime.datetime 
