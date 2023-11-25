@@ -4,6 +4,8 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from services.company import company_service
 from services.employee import employee_service
+from services.interview import interview_service
+from services.interview.contracts import interview_repository
 from services.project.contracts import project_repository, member_repository
 from services.test import test_service
 from services.user import user_service
@@ -15,7 +17,7 @@ from services.technology import technology_service
 from services.ability import ability_service
 from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
 db_employee_repository, db_company_repository, db_project_repository, db_technology_repository,\
-db_ability_repository, db_profile_repository, db_member_repository, db_performance_evaluation_repository
+db_ability_repository, db_profile_repository, db_member_repository, db_performance_evaluation_repository,db_interview_repository
 
 from services.project import project_service, profile_service, member_service, performance_evaluation_service
 from pydantic import BaseModel
@@ -89,6 +91,7 @@ ProjectMemberNotExistsError = member_service.ProjectMemberNotExistsError
 ProjectMemberHasEvaluationError = performance_evaluation_service.ProjectMemberHasEvaluationError
 
 ProjectHasNotEvaluationsError = performance_evaluation_service.ProjectHasNotEvaluationsError
+InterviewAlreadyExistError = interview_service.InterviewAlreadyExistError
 
 #LOGGER = user_service.LOGGER
 from services import logs
@@ -167,6 +170,20 @@ class CreateTestRequest(BaseModel):
     start_date : date 
     end_date: date
     description : str 
+
+
+class Status(enum.Enum):
+    SCHEDULED = "SCHEDULED"
+    DONE = "DONE"
+    CANCELLED ="CANCELLED"
+
+class CreateInterviewRequest(BaseModel):
+    candidate_document : str 
+    project_name : str
+    meet_url : str
+    status : Status
+    start_timestamp : datetime.datetime 
+    duration_minutes: int
 
 class CreateTestReponse(BaseModel):
     name : str
@@ -674,3 +691,13 @@ def get_evaluations_by_project_id(project_id: str, person_id: str,db: Session)->
     else:
         LOGGER.info("Evaluations List with data in facade")
         return evaluation_list
+######################################################################################################################################
+#                                                         TEST                                                                       #
+######################################################################################################################################
+
+def create_inverview(request: CreateInterviewRequest, db: Session)->None:
+    
+    interview_repo = db_interview_repository.DBInterviewRepository(db = db)
+    
+    interview_service.create_interview(**request.copy(exclude={"status"}).dict(),status=request.status.name, 
+                                       interview_repository=interview_repo)

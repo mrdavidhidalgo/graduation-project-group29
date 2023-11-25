@@ -213,3 +213,14 @@ class PerformaceEvaluation(Base):
     project_id = Column(String(20))
     person_id = Column(Integer)
     member_id = Column(Integer)
+
+
+class Interview(Base):
+    __tablename__ = "interviews"
+    candidate_document = Column(String(200), primary_key=True, index=True)
+    project_name = Column(String(200), primary_key=True, index=True)
+    status = Column(String(200))
+    meet_url =  Column(String(200))
+    start_timestamp =Column(DateTime)  
+    duration_minutes= Column(Integer)  
+    
