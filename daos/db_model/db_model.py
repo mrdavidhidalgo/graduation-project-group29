@@ -219,6 +219,7 @@ class Interview(Base):
     __tablename__ = "interviews"
     candidate_document = Column(String(200), primary_key=True, index=True)
     project_id = Column(String(200), primary_key=True, index=True)
+    profile_id= Column(String(200), primary_key=True, index=True)
     status = Column(String(200))
     meet_url =  Column(String(200))
     start_timestamp =Column(DateTime)  

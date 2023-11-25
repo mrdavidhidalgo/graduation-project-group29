@@ -182,6 +182,7 @@ class CreateInterviewRequest(BaseModel):
     project_id : str
     meet_url : str
     status : Status
+    profile_id : str
     start_timestamp : datetime.datetime 
     duration_minutes: int
 

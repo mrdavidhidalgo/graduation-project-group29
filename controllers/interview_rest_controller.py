@@ -29,6 +29,7 @@ class Status(enum.Enum):
 class CreateInterviewRequest(BaseModel):
     candidate_document : str = Field(min_length=1,max_length=200)
     project_id : str = Field(min_length=1,max_length=200)
+    profile_id: str = Field(min_length=1,max_length=200)
     status : Status
     meet_url : str = Field(min_length=4,max_length=500)
     start_timestamp : datetime 

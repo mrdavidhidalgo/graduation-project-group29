@@ -16,3 +16,4 @@ class Interview(BaseModel):
     meet_url : str
     start_timestamp : datetime 
     duration_minutes: int
+    profile_id: str
