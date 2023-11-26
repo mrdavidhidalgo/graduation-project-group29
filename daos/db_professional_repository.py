@@ -197,6 +197,8 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
             technology = self.db.execute(text("SELECT pt.name, pt.level from professional_technology_info as pt, professional as pr\
              where pr.id = pt.professional_id and pr.id='" + str(p.id) + "'" + filter_technology + " order by pt.name" ))
 
+            test = self.db.execute(text("SELECT t.technology,r.points from test as t, test_result as r where t.name=r.test_name\
+                and r.candidate_document='" + str(p.document) + "' order by t.technology"))
 
             #LOGGER.info("Profesional: [%d] - [%s] - [%s] - [%d]",p.id, p.first_name,p.last_name, p.age)
 
@@ -231,6 +233,13 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
             if (len(technologies)==0) & (len(filter_technology) > 0):
                 continue
 
+            tests=""
+            for t in test:
+                LOGGER.info("Tests de : [%s] - [%s] - Experiencia [%d] ",p.first_name,t.technology, t.points)
+                tests=tests + t.technology + "[" + str(t.points) + "],"
+            tests=tests[0:-1]
+
+
             new_record = professional_model.ProfessionalSearchResult(
                 person_id = p.document,
                 first_name= p.first_name,
@@ -240,7 +249,7 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
                 titles = titles,
                 technologies= technologies,
                 abilities= abilities,
-                score= ""
+                score= tests
             )
             result_candidate_list.append(new_record)  
             LOGGER.info("Profesional: [%d] valid",p.id,)
