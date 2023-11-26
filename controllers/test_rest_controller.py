@@ -114,7 +114,7 @@ async def get_abilities(response: Response, db: Session = Depends(get_db)):
         data=[]
         for ability in abilities_list:
             data.append({'abilityId': str(ability.id),'name': str(ability.ability_name),\
-             "category": str(ability.category)})
+             "category": str(ability.category), "details":ability.details})
         return data
     else:
         _LOGGER.info("Return 404 error")
