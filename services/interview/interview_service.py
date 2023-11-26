@@ -1,8 +1,11 @@
+from cgitb import reset
 from services import logs
 from services.interview.contracts import interview_repository
 from services.interview.model import interview_model
 from datetime import date
 from typing import List, Tuple
+from pydantic import BaseModel
+from datetime import datetime
 LOGGER = logs.get_logger()
 
 class InterviewAlreadyExistError(Exception):
@@ -37,3 +40,21 @@ def create_interview(candidate_document: str, project_id: str,meet_url:int, stat
             duration_minutes=duration_minutes,
             )
         )
+
+class Interview(BaseModel):
+    candidate_document : str 
+    project_id : str
+    profile_id: str 
+    status : str
+    meet_url : str 
+    start_timestamp : datetime 
+    duration_minutes: int
+
+def get_interviews(candidate_document: str|None, 
+                    interview_repository: interview_repository.InterviewRepository)-> List[Interview]:
+    
+    result = interview_repository.get_interviews(candidate_document)
+    
+    return result if result is None else [Interview(**i.dict()) for i in result ]
+
+
