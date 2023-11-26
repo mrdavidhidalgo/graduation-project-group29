@@ -112,7 +112,4 @@ class FakeProfesionalRepository(professional_repository.ProfessionalRepository):
     
     def get_candidates_without_interviews(self)->List[professional_model.ProfessionalReadModel]:
         return self.candidates_without_interview
-        
     
-    def load_interview(self, interview_info: professional_model.LoadInterviewInfo)->None:
-        ...

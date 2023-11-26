@@ -156,7 +156,4 @@ def get_candidates_without_interviews(professional_repository: professional_repo
     
     return professional_repository.get_candidates_without_interviews()
 
-def load_interview(interview_info: professional_model.LoadInterviewInfo, professional_repository: professional_repository.ProfessionalRepository)->None:
-    
-    return professional_repository.load_interview(interview_info=interview_info)
     

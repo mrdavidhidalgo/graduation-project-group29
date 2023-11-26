@@ -58,3 +58,6 @@ def get_interviews(candidate_document: str|None,
     return result if result is None else [Interview(**i.dict()) for i in result ]
 
 
+def load_interview(interview_info: interview_model.LoadInterviewInfo, interview_repository: interview_repository.InterviewRepository)->None:
+    
+    return interview_repository.load_interview(interview_info=interview_info)

@@ -1,11 +1,13 @@
 
 import datetime
+import string
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from services.company import company_service
 from services.employee import employee_service
 from services.interview import interview_service
 from services.interview.contracts import interview_repository
+from services.interview.model import interview_model
 from services.project.contracts import project_repository, member_repository
 from services.test import test_service
 from services.user import user_service
@@ -217,8 +219,10 @@ class AbilityInterviewRequest(BaseModel):
     qualification: int
 
 class LoadInterviewRequest(BaseModel):
-    professional_id : int
-    date : datetime.datetime
+    candidate_document : str
+    project_id : str
+    profile_id : str
+    date : datetime.date
     recording_file: Optional[str]
     test_file : Optional[str]
     observation: str
@@ -644,11 +648,12 @@ def get_full_info(person_id: str, db: Session)->ProfessionalInfo:
 def get_candidates_without_interviews(db:Session)->List[professional_model.ProfessionalReadModel]:
     return professional_service.get_candidates_without_interviews(db_professional_repository.DBProfessionalRepository(db=db))
 
+
 def load_interview(request: LoadInterviewRequest, db:Session)->None:
     
-    interview_info = professional_model.LoadInterviewInfo.model_validate(request.model_dump())
+    interview_info = interview_model.LoadInterviewInfo.model_validate(request.model_dump())
     
-    return professional_service.load_interview(interview_info=interview_info, professional_repository=db_professional_repository.DBProfessionalRepository(db=db))
+    return interview_service.load_interview(interview_info=interview_info, interview_repository=db_interview_repository.DBInterviewRepository(db=db))
 
 
 ######################################################################################################################################

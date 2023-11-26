@@ -305,22 +305,3 @@ async def get_info(db : Session = Depends(get_db))->None:
     
     return management_service_facade.get_candidates_without_interviews(db = db)
 
-@router.post("/candidates/load_interview")
-async def load_interview(request: LoadInterviewRequest, db : Session = Depends(get_db))->None:
-    
-    date = datetime.datetime(request.year, request.month, request.day)
-    
-    abilities = list(map(lambda x: management_service_facade.AbilityInterviewRequest(
-                                    ability_id = x.ability_id,
-                                    qualification= x.qualification), request.abilities))
-    
-    
-    management_service_facade.load_interview(request = management_service_facade.LoadInterviewRequest(
-                                                    professional_id = request.professional_id,
-                                                    date  = date,
-                                                    recording_file = request.recording_file,
-                                                    test_file  = request.test_file,
-                                                    observation = request.observation,
-                                                    abilities=abilities), db=db)
-    
-    return {"msg": "Candidate interview info has been added"}

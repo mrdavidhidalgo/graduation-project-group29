@@ -1,6 +1,6 @@
 from typing import Optional
 from .db_model import db_model as models
-
+from sqlalchemy.exc import SQLAlchemyError
 from services.interview.contracts import interview_model
 from typing import List
 from sqlalchemy.orm import Session
@@ -50,3 +50,41 @@ class DBInterviewRepository(interview_repository.InterviewRepository):
                                                          profile_id=interv.profile_id,
                                                          duration_minutes = interv.duration_minutes) for interv in interviews]
         
+    def load_interview(self, interview_info: interview_model.LoadInterviewInfo)->None:
+        
+
+        candidate_interview_info = models.CandidateInterview(
+            candidate_document = interview_info.candidate_document,
+            project_id = interview_info.project_id,
+            profile_id = interview_info.profile_id,
+            date = interview_info.date,
+            recording_file = interview_info.recording_file,
+            test_file = interview_info.test_file,
+            observation = interview_info.observation
+        )
+        
+        try:
+            with self.db.begin():
+                self.db.add(candidate_interview_info)
+                self.db.flush()
+                interv = self.db.query(models.Interview).filter(models.Interview.candidate_document == interview_info.candidate_document).filter(models.Interview.project_id == interview_info.project_id ).filter(models.Interview.profile_id == interview_info.profile_id ).first() 
+                if interv:
+                    interv.status="DONE"
+                self.db.add(interv)
+                abilities = list(map(lambda x: models.CandidateAbility(
+                                    interview_id = candidate_interview_info.id,
+                                    ability_id = x.ability_id,
+                                    qualification= x.qualification), interview_info.abilities))
+
+                self.db.add_all(abilities)
+            
+        except SQLAlchemyError as e:
+
+            # Si ocurre un error, haz rollback de la transacción
+            print(f"Error en la transacción: {e}")
+            self.db.rollback()
+
+        finally:
+            # Cierra la sesión
+            self.db.close() 
+                
