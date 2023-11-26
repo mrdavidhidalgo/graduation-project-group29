@@ -691,6 +691,27 @@ def get_evaluations_by_project_id(project_id: str, person_id: str,db: Session)->
     else:
         LOGGER.info("Evaluations List with data in facade")
         return evaluation_list
+        
+
+def get_evaluations_by_person_id(project_id: str, person_id: str, member_id: str, db: Session)->Optional[List[PerformanceEvaluationResponse]]:
+    LOGGER.info("Listing all evaluations for Mimembro [%s]", str(member_id))
+
+    performance_evaluation_repository = db_performance_evaluation_repository.DBPerformanceEvaluationRepository(db = db)
+    employee_repository = db_employee_repository.DBEmployeeRepository(db = db)
+    person_repository = db_person_repository.DBPersonRepository(db = db)
+    
+  
+    evaluation_list = performance_evaluation_service.get_evaluations_by_member_id(project_id=project_id, person_id= person_id, 
+    member_id = member_id, performance_evaluation_repository=performance_evaluation_repository, employee_repository = employee_repository,
+    person_repository=person_repository)
+    
+    if evaluation_list is None:
+        LOGGER.info("There are not evaluations for memeber in facade")
+        return None
+    else:
+        LOGGER.info("Evaluation data in facade")
+        return evaluation_list
+
 ######################################################################################################################################
 #                                                         TEST                                                                       #
 ######################################################################################################################################

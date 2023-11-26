@@ -251,3 +251,21 @@ async def get_evaluations_by_project_id(project_id: str, token_data: commons.Tok
     else:
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No evaluations found")
+        
+@router.get("/evaluations/{project_id}/{member_id}")
+async def get_evaluations_by_person_id(project_id: str, member_id: str, token_data: commons.TokenData = Depends(commons.get_token_data), 
+    db: Session = Depends(get_db)):
+    evaluations_list = management_service_facade.get_evaluations_by_person_id(project_id=project_id, person_id = token_data.person_id, 
+    member_id=member_id ,db = db)
+        
+    if evaluations_list is not None:
+        data=[]
+        for evaluation in evaluations_list:
+            data.append({'id': str(evaluation.id), 'creation_date': str(evaluation.creation_date), 'score': str(evaluation.score),
+            'details': str(evaluation.details), 'project_id': str(project_id), 'person_id': str(evaluation.person_id), 
+            'member_id': str(evaluation.member_id),'person_name': str(evaluation.person_name)
+            })
+        return data
+    else:
+        LOGGER.info("Return 404 error")
+        raise HTTPException(status_code=404, detail="No evaluations found for member")
