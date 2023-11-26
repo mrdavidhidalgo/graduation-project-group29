@@ -63,3 +63,11 @@ def get_profiles_by_project_id(project_id: str, person_id: str, profile_reposito
     else:
         LOGGER.info("Profile List with data in service")
         return list
+    
+
+def get_profiles_given_project_id(project_id: str,  profile_repository: profile_repository.ProfileRepository)->List[profile_model.Profile]:
+    LOGGER.info("Search for profiles by project [%s] in service", str(project_id))
+     
+    list = profile_repository.get_profiles_by_project_id(project_id=project_id)    
+    
+    return list if list else []

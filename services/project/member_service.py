@@ -2,9 +2,9 @@
 
 from datetime import timedelta
 import datetime
-from typing import List, Optional
+from typing import List, Optional,Set
 
-from services.project.contracts import member_repository, project_repository, profile_repository
+from services.project.contracts import member_repository, project_repository
 from services.person.contracts import person_repository
 from services.employee.contracts import employee_repository
 from services.project import project_service
@@ -107,3 +107,22 @@ def get_members_by_project_id(project_id: str, person_id: str, member_repository
     
     LOGGER.info("Member List with data in service")
     return members_project_list
+
+
+class ProfileAndProject(BaseModel):
+    project_id : str
+    project_name : str
+    profile_names : List[str]
+
+def get_profile_and_projects(member_repository: member_repository.MemberRepository,project_repository: project_repository.ProjectRepository) -> List[ProfileAndProject]:
+    members=member_repository.get_all()
+    projects=project_repository.get_all()
+    result: Set[ProfileAndProject]= []
+    projects_in_member = {p.id for p in projects}
+    projects = [p for p in projects if p.id in projects_in_member]
+    for project in projects:
+        project_profiles = {m.profile_id for m in members if m.project_id == str(project.id)}
+        if project_profiles:
+            result.append(ProfileAndProject(project_id=str(project.id),project_name=project.project_name,profile_names=project_profiles))
+    return result
+

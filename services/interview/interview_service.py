@@ -12,13 +12,14 @@ class InterviewAlreadyExistError(Exception):
         
         
         
-def create_interview(candidate_document: str, project_name: str,meet_url:int, status : str, 
-                start_timestamp : date ,duration_minutes: int,
+def create_interview(candidate_document: str, project_id: str,meet_url:int, status : str, 
+                start_timestamp : date ,duration_minutes: int,profile_id : str,
                 interview_repository: interview_repository.InterviewRepository)-> None:
     
-    LOGGER.info("Creating interview for project name [%s]", project_name)
+    LOGGER.info("Creating interview for project id [%s]", project_id)
     
-    persisted_interview = interview_repository.get_by_project_and_candidate(project_name=project_name,
+    persisted_interview = interview_repository.get_by_project_and_candidate(project_id=project_id,
+                                                                            profile_id=profile_id,
                                                                             candidate_document=candidate_document)
     
     if persisted_interview is not None:
@@ -28,7 +29,8 @@ def create_interview(candidate_document: str, project_name: str,meet_url:int, st
     interview_repository.save(
         interview = interview_model.Interview(
             candidate_document = candidate_document,
-            project_name = project_name,
+            profile_id=profile_id,
+            project_id = project_id,
             status = status,
             meet_url = meet_url,
             start_timestamp = start_timestamp,

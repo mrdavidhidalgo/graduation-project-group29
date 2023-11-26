@@ -146,6 +146,18 @@ def get_db() -> Session:
     finally:
         db.close()
 
+
+@router.get("/projects/enabled_profiles")
+async def get_profiles_and_projects(db: Session = Depends(get_db)):
+    profiles=management_service_facade.get_profiles_and_projects( db)
+ 
+    data=[]
+    for profile in profiles:
+        data.append({'projectId': str(profile.project_id), 'name': str(profile.project_name),'profiles': profile.profile_names})
+    return data
+ 
+
+
 @router.post("/projects/profiles")
 async def create_test(request: CreateProfileRequest,token_data: commons.TokenData = Depends(commons.get_token_data),
                       db: Session = Depends(get_db)):
@@ -251,6 +263,7 @@ async def get_evaluations_by_project_id(project_id: str, token_data: commons.Tok
     else:
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No evaluations found")
+
         
 @router.get("/evaluations/{project_id}/{member_id}")
 async def get_evaluations_by_person_id(project_id: str, member_id: str, token_data: commons.TokenData = Depends(commons.get_token_data), 
@@ -269,3 +282,4 @@ async def get_evaluations_by_person_id(project_id: str, member_id: str, token_da
     else:
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No evaluations found for member")
+
