@@ -12,7 +12,7 @@ from services.user import user_service
 import enum
 from services.person import person_service
 from services.professional import professional_service
-from typing import List
+from typing import List,Set
 from services.technology import technology_service
 from services.ability import ability_service
 from daos import db_user_repository,db_test_repository, db_person_repository, db_professional_repository,\
@@ -449,8 +449,8 @@ def create_project(request: CreateProjectRequest, person_id: str, db: Session)->
 
 def get_projects(db: Session)->Optional[List[project_service.project_model.ProjectRead]]:
     LOGGER.info("Listing all projects")
-    project_repository = db_project_repository.DBProjectRepository(db = db)
-    project_list = project_service.get_all(project_repository=project_repository)
+
+    project_list = project_service.get_all(project_repository=db_project_repository.DBProjectRepository(db = db))
     
     if project_list is None:
         LOGGER.info("Empty Project List in facade")
@@ -554,6 +554,19 @@ def get_profiles_by_project_id(project_id: str, person_id: str, db: Session)->Op
     else:
         LOGGER.info("Profiles Project List with data in facade")
         return profile_list
+    
+class ProfileAndProject(BaseModel):
+    project_id : str
+    project_name : str
+    profile_names : Set[str]
+    
+def get_profiles_and_projects( db: Session)->List[ProfileAndProject]:
+
+
+    project_repo = db_project_repository.DBProjectRepository(db = db)
+    member_repo= db_member_repository.DBMemberRepository(db = db)
+    return member_service.get_profile_and_projects(member_repository=member_repo,project_repository=project_repo)
+
 
 ######################################################################################################################################
 #                                                           MEMBER                                                                   #

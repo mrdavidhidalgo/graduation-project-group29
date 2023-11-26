@@ -57,7 +57,15 @@ class DBMemberRepository(member_repository.MemberRepository):
         return None if members is None else [member_model.MemberRead(id = member.id, active=member.active,\
             description = member.description, person_id = member.person_id, profile_id = member.profile_id,\
             project_id = member.project_id) for member in members]
+    
 
+    def get_all(self)->List[member_model.MemberRead]:
+        members = self.db.query(models.ProjectMember).all()
+        return None if members is None else [member_model.MemberRead(id = member.id, active=member.active,\
+            description = member.description, person_id = member.person_id, profile_id = member.profile_id,\
+            project_id = member.project_id) for member in members]
+    
+        
     """def delete_technology(self, technology_id: int)-> Optional[int]:
         technology = self.db.query(models.Technology).filter(models.Technology.id == technology_id).delete()
         self.db.commit()
