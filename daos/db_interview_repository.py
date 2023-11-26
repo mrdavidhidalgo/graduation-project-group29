@@ -87,4 +87,38 @@ class DBInterviewRepository(interview_repository.InterviewRepository):
         finally:
             # Cierra la sesión
             self.db.close() 
-                
+
+
+
+    def find_interview_results(self)->List[interview_model.LoadInterviewInfo]:
+
+        interview_results = self.db.query(models.CandidateInterview).all() 
+
+        return [interview_model.LoadInterviewInfo(
+                id=interview_info.id,
+                candidate_document = interview_info.candidate_document,
+                project_id = interview_info.project_id,
+                profile_id = interview_info.profile_id,
+                date = interview_info.date,
+                recording_file = interview_info.recording_file,
+                test_file = interview_info.test_file,
+                observation = interview_info.observation,
+                abilities=[])
+                for interview_info in interview_results]       
+    
+
+    def find_interview_result(self,  id:int)-> interview_model.LoadInterviewInfo | None:
+        interview_info = self.db.query(models.CandidateInterview).filter(models.CandidateInterview.id == id).first() 
+        interview_result_ability = self.db.query(models.CandidateAbility).all()
+
+        return interview_model.LoadInterviewInfo(
+            id=interview_info.id,
+            candidate_document = interview_info.candidate_document,
+            project_id = interview_info.project_id,
+            profile_id = interview_info.profile_id,
+            date = interview_info.date,
+            recording_file = interview_info.recording_file,
+            test_file = interview_info.test_file,
+            observation = interview_info.observation,
+            abilities=[interview_model.AbilityInterviewInfo(ability_id=a.ability_id, qualification=a.qualification) for a in interview_result_ability] 
+            )

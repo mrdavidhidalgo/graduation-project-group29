@@ -15,8 +15,6 @@ from services import logs
 import datetime
 import enum
 
-
-
 _LOGGER = logs.get_logger()
 
 router = APIRouter()
@@ -98,3 +96,18 @@ async def load_interview(request: RegisterResultInterviewRequest, db : Session =
                                                     abilities=abilities), db=db)
     
     return {"msg": "Candidate interview info has been added"}
+
+@router.get("/interviews/result")
+async def find_interview_results( db : Session = Depends(get_db))->None:
+
+    result = management_service_facade.find_interview_results(db)
+    return [r.dict() for r in result]
+
+
+@router.get("/interviews/result/{id}")
+async def find_interview_result(id:int, db : Session = Depends(get_db))->None:
+    result = management_service_facade.find_interview_result(id,db)
+    d = result.dict()
+    d.update({"qualification":result.qualification})
+    return d
+

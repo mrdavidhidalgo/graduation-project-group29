@@ -57,8 +57,7 @@ def get_db() -> Session:
 
 @router.post("/tests/results")
 async def register_test(request: List[RegisterTestResultRequest],db: Session = Depends(get_db)):
-    
-    print("12312312321")
+
     result = [management_service_facade.RegisterTestResultRequest(**r.dict()) for r in request ]
     try:
         management_service_facade.register_result_tests(request = request, db = db)

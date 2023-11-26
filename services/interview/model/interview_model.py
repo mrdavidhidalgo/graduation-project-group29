@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 
 class Interview(BaseModel):
+    
     candidate_document : str 
     project_id : str
     profile_id: str
@@ -25,6 +26,7 @@ class AbilityInterviewInfo(BaseModel):
     qualification: int
 
 class LoadInterviewInfo(BaseModel):
+    id:int|None=None 
     candidate_document : str 
     project_id : str
     profile_id: str
