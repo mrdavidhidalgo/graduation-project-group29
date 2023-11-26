@@ -1,6 +1,6 @@
 import abc
 from services.project.model import member_model
-from typing import List, Optional
+from typing import List
 
 class MemberRepository(abc.ABC):
     
@@ -16,6 +16,6 @@ class MemberRepository(abc.ABC):
     def save(self, member: member_model.MemberCreate)-> None:
         ...
         
-    #@abc.abstractmethod
-    #def get_all(self)->List[member_model.MemberRead]:
-    #    ...
+    @abc.abstractmethod
+    def get_all(self)->List[member_model.MemberRead]:
+        ...
