@@ -58,3 +58,7 @@ async def create_interview(request: CreateInterviewRequest,db: Session = Depends
     except management_service_facade.InterviewAlreadyExistError:
         raise HTTPException(status_code=400, detail="Interview duplicated")
 
+@router.get("/interviews")
+async def get_interviews(candidate: str|None = None,db: Session = Depends(get_db)):
+    
+    return [i.dict() for i in  management_service_facade.get_intervies(candidate, db = db)]

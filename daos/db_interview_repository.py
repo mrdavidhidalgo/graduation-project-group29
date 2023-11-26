@@ -30,3 +30,23 @@ class DBInterviewRepository(interview_repository.InterviewRepository):
         
         self.db.add(new_interview)
         self.db.commit()
+
+
+    def get_interviews(self,candidate_document: str|None)-> List[interview_model.Interview]:
+
+        interv_query = self.db.query(models.Interview)
+
+        if candidate_document:
+            interv_query = interv_query.filter(models.Interview.candidate_document == candidate_document)
+        
+        interviews=interv_query.order_by(models.Interview.start_timestamp.desc()).all()
+        
+        return [] if interviews is None else [interview_model.Interview(    
+                                                         candidate_document = interv.candidate_document,
+                                                         project_id = interv.project_id,
+                                                         status = interv.status,
+                                                         meet_url = interv.meet_url,
+                                                         start_timestamp = interv.start_timestamp,
+                                                         profile_id=interv.profile_id,
+                                                         duration_minutes = interv.duration_minutes) for interv in interviews]
+        

@@ -706,7 +706,7 @@ def get_evaluations_by_project_id(project_id: str, person_id: str,db: Session)->
         LOGGER.info("Evaluations List with data in facade")
         return evaluation_list
 ######################################################################################################################################
-#                                                         TEST                                                                       #
+#                                                      Interviews                                                                    #
 ######################################################################################################################################
 
 def create_inverview(request: CreateInterviewRequest, db: Session)->None:
@@ -714,4 +714,12 @@ def create_inverview(request: CreateInterviewRequest, db: Session)->None:
     interview_repo = db_interview_repository.DBInterviewRepository(db = db)
     
     interview_service.create_interview(**request.copy(exclude={"status"}).dict(),status=request.status.name, 
+                                       interview_repository=interview_repo)
+
+
+def get_intervies(candidate_document: str|None, db: Session)->None:
+    
+    interview_repo = db_interview_repository.DBInterviewRepository(db = db)
+    
+    return interview_service.get_interviews(candidate_document, 
                                        interview_repository=interview_repo)
