@@ -4,7 +4,7 @@ from datetime import timedelta
 import datetime
 from typing import List, Optional,Set
 
-from services.project.contracts import member_repository, project_repository, profile_repository
+from services.project.contracts import member_repository, project_repository
 from services.person.contracts import person_repository
 from services.employee.contracts import employee_repository
 from services.project import project_service

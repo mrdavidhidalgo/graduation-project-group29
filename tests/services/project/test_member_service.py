@@ -1,4 +1,4 @@
-from services.project.contracts import project_repository, member_repository
+from services.project.contracts import member_repository
 from services.person.contracts import person_repository
 from services.employee.contracts import employee_repository
 import pytest
@@ -60,7 +60,9 @@ class MockMember(member_repository.MemberRepository):
         
     def delete_employee(self, person_id: int)-> Optional[int]:
         return 1
-        
+    
+    def get_all(self)->List[member_model.MemberRead]:
+        return []
 class MockEmployee(employee_repository.EmployeeRepository):
    
     def __init__(self, person_id: Optional[str]=None, employee_by_id: employee_model.EmployeeCreateModel=None,employee_with_params:employee_model.EmployeeCreateModel=None)->None:

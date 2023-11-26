@@ -1,6 +1,6 @@
 import abc
 from services.project.model import member_model
-from typing import List, Optional
+from typing import List
 
 class MemberRepository(abc.ABC):
     
