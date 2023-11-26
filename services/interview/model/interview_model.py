@@ -1,19 +1,38 @@
 from typing import Optional
 from pydantic import BaseModel
-from  datetime import date
+import  datetime
 import enum
 
 
-from typing import Optional
+from typing import Optional,List
 from pydantic import BaseModel
-from  datetime import datetime
+ 
 
 
 class Interview(BaseModel):
+    
     candidate_document : str 
     project_id : str
+    profile_id: str
     status : str
     meet_url : str
-    start_timestamp : datetime 
+    start_timestamp : datetime.datetime
     duration_minutes: int
+
+
+
+class AbilityInterviewInfo(BaseModel):
+    ability_id: int
+    qualification: int
+
+class LoadInterviewInfo(BaseModel):
+    id:int|None=None 
+    candidate_document : str 
+    project_id : str
     profile_id: str
+    date: datetime.date
+    recording_file: Optional[str]
+    test_file : Optional[str]
+    observation: str
+    abilities: List[AbilityInterviewInfo]
+    

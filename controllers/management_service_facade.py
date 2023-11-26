@@ -1,11 +1,14 @@
 
 import datetime
+import decimal
+import string
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from services.company import company_service
 from services.employee import employee_service
 from services.interview import interview_service
 from services.interview.contracts import interview_repository
+from services.interview.model import interview_model
 from services.project.contracts import project_repository, member_repository
 from services.test import test_service
 from services.user import user_service
@@ -27,7 +30,6 @@ from services.project.model import project_model, profile_model, member_model, p
 
 from services.technology.model import technology_model
 from services.commons import base
-from datetime import date
 
 class DateRangeInvalidError(Exception):
      def __init__(self, *args: object) -> None:
@@ -167,8 +169,8 @@ class CreateTestRequest(BaseModel):
     technology : str
     duration_minutes : int
     status : Status
-    start_date : date 
-    end_date: date
+    start_date : datetime.date 
+    end_date: datetime.date
     description : str 
 
 
@@ -191,8 +193,8 @@ class CreateTestReponse(BaseModel):
     technology : str
     duration_minutes : int
     status : str
-    start_date : date 
-    end_date: date
+    start_date : datetime.date 
+    end_date: datetime.date
     description : str 
 
 class RegisterTestResultRequest(BaseModel):
@@ -217,8 +219,10 @@ class AbilityInterviewRequest(BaseModel):
     qualification: int
 
 class LoadInterviewRequest(BaseModel):
-    professional_id : int
-    date : datetime.datetime
+    candidate_document : str
+    project_id : str
+    profile_id : str
+    date : datetime.date
     recording_file: Optional[str]
     test_file : Optional[str]
     observation: str
@@ -644,11 +648,12 @@ def get_full_info(person_id: str, db: Session)->ProfessionalInfo:
 def get_candidates_without_interviews(db:Session)->List[professional_model.ProfessionalReadModel]:
     return professional_service.get_candidates_without_interviews(db_professional_repository.DBProfessionalRepository(db=db))
 
+
 def load_interview(request: LoadInterviewRequest, db:Session)->None:
     
-    interview_info = professional_model.LoadInterviewInfo.model_validate(request.model_dump())
+    interview_info = interview_model.LoadInterviewInfo.model_validate(request.model_dump())
     
-    return professional_service.load_interview(interview_info=interview_info, professional_repository=db_professional_repository.DBProfessionalRepository(db=db))
+    return interview_service.load_interview(interview_info=interview_info, interview_repository=db_interview_repository.DBInterviewRepository(db=db))
 
 
 ######################################################################################################################################
@@ -744,3 +749,37 @@ def get_intervies(candidate_document: str|None, db: Session)->None:
     
     return interview_service.get_interviews(candidate_document, 
                                        interview_repository=interview_repo)
+
+class AbilityInterviewInfo(BaseModel):
+    ability_id: int
+    qualification: int
+
+class LoadInterviewInfo(BaseModel):
+    id:int|None=None 
+    candidate_document : str 
+    project_id : str
+    profile_id: str
+    date: datetime.date
+    recording_file: str | None
+    test_file : str | None
+    observation: str
+    abilities: List[AbilityInterviewInfo]
+    
+    @property
+    def qualification(self) -> decimal.Decimal | None:
+        l=[a.qualification for a in self.abilities]
+        r= decimal.Decimal(sum(l)/len(l)).quantize(decimal.Decimal('0.00'))
+        return r
+
+def find_interview_results(db: Session)->List[LoadInterviewInfo]:
+    
+    result =  interview_service.find_interview_results(db_interview_repository.DBInterviewRepository(db)) 
+
+    return [LoadInterviewInfo(**i.dict()) for i in result]
+
+
+def find_interview_result(id:int,db: Session)-> LoadInterviewInfo | None:
+    
+    result =  interview_service.find_interview_result(id,db_interview_repository.DBInterviewRepository(db)) 
+    print(result)
+    return LoadInterviewInfo(**result.dict())

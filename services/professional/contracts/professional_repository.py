@@ -48,6 +48,3 @@ class ProfessionalRepository(abc.ABC):
     def get_candidates_without_interviews(self)->List[professional_model.ProfessionalReadModel]:
         ...
         
-    @abc.abstractmethod
-    def load_interview(self, interview_info: professional_model.LoadInterviewInfo)->None:
-        ...

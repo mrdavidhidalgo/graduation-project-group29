@@ -6,7 +6,7 @@ from services.commons import base
 from .database import Base
 from sqlalchemy.orm import relationship
 from services.user.model import user_model
-
+from sqlalchemy import UniqueConstraint
 
 class Person(Base):
     __tablename__ = "person"
@@ -187,22 +187,26 @@ class Ability(Base):
     category = Column(Enum(base.AbilityCategory))
     
 class CandidateAbility(Base):
-    __tablename__ = "candidate_ability"
+    __tablename__ = "interviews_result_ability"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    interview_id = Column(Integer, ForeignKey('candidate_interview.id'))
+    interview_id = Column(Integer, ForeignKey('interviews_result.id'))
     ability_id = Column(Integer, ForeignKey('ability.id'))
     qualification= Column(Integer)
     
 class CandidateInterview(Base):
-    __tablename__ = "candidate_interview"
+    __tablename__ = "interviews_result"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    profesional_id = Column(Integer, ForeignKey('professional.id'))
+    candidate_document = Column(String(200), index=True)
+    project_id = Column(String(60), index=True)
+    profile_id = Column(String(200), index=True)
     date = Column(Date, default=datetime.datetime.utcnow)
     recording_file = Column(String(60), nullable=True)
     test_file = Column(String(60), nullable=True)
     observation = Column(String(500))
-    
-    
+
+    __table_args__ = (UniqueConstraint("candidate_document", "project_id","profile_id"), )
+
+
 class PerformaceEvaluation(Base):
     __tablename__ = "performance_evaluation"
     

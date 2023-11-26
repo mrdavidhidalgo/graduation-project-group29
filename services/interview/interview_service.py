@@ -58,3 +58,31 @@ def get_interviews(candidate_document: str|None,
     return result if result is None else [Interview(**i.dict()) for i in result ]
 
 
+def load_interview(interview_info: interview_model.LoadInterviewInfo, interview_repository: interview_repository.InterviewRepository)->None:
+    
+    return interview_repository.load_interview(interview_info=interview_info)
+
+
+
+class AbilityInterviewInfo(BaseModel):
+    ability_id: int
+    qualification: int
+
+class LoadInterviewInfo(BaseModel):
+    id:int|None=None 
+    candidate_document : str 
+    project_id : str
+    profile_id: str
+    date: date
+    recording_file: str | None
+    test_file : str | None
+    observation: str
+    abilities: List[AbilityInterviewInfo]
+    
+
+def find_interview_results(interview_repository: interview_repository.InterviewRepository)->List[interview_model.LoadInterviewInfo]:
+    return interview_repository.find_interview_results()
+
+
+def find_interview_result(id:int,interview_repository: interview_repository.InterviewRepository)-> interview_model.LoadInterviewInfo | None:
+    return interview_repository.find_interview_result(id)
