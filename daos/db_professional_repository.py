@@ -155,8 +155,11 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
         if len(technologies_list) > 0:
             filter_technology= self.build_filter(technologies_list, "pt.name")
         LOGGER.info("Filtro de Tecnologia : [%s] y long [%d]",filter_technology, len(technologies_list))
-        """"if len(abilities_list) > 0:
-            filter_technology=" and pt.name in (" + tech_list + ")"""""
+        
+        if len(abilities_list) > 0:
+            filter_ability= self.build_filter(abilities_list, "a.ability_name")
+        LOGGER.info("Filtro de Habilidades : [%s] y long [%d]",filter_ability, len(abilities_list))   
+
         filter_role=""
         if len(role) > 0:
             if role_filter == "contains":
@@ -200,8 +203,13 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
             test = self.db.execute(text("SELECT t.technology,r.points from test as t, test_result as r where t.name=r.test_name\
                 and r.candidate_document='" + str(p.document) + "' order by t.technology"))
 
+            ability = self.db.execute(text("SELECT a.ability_name, ir.qualification from interviews_result_ability as ir, interviews_result as i,\
+             ability as a where ir.interview_id=i.id and ir.ability_id=a.id and i.candidate_document='" + str(p.document) + "'" + filter_ability + " order by a.ability_name" ))
+             
             #LOGGER.info("Profesional: [%d] - [%s] - [%s] - [%d]",p.id, p.first_name,p.last_name, p.age)
-
+            LOGGER.info("SELECT a.ability_name, ir.qualification from interviews_result_ability as ir, interviews_result as i,\
+             ability as a where ir.interview_id=i.id and ir.ability_id=a.id and i.candidate_document='" + str(p.document) + "'" + filter_ability + " order by a.ability_name")
+            
             roles=""
             for r in rol:
                 LOGGER.info("Roles de : [%s] - [%s] - Experiencia [%d] ",p.first_name,r.role, r.experience_years)
@@ -232,6 +240,16 @@ class DBProfessionalRepository(professional_repository.ProfessionalRepository):
 
             if (len(technologies)==0) & (len(filter_technology) > 0):
                 continue
+
+            abilities=""
+            for ab in ability:
+                LOGGER.info("Habilidades de : [%s] - [%s] - Nivel [%d] ",p.first_name,ab.ability_name, ab.qualification)
+                abilities=abilities + ab.ability_name + "[" + str(ab.qualification) + "],"
+            abilities=abilities[0:-1]      
+
+            if (len(abilities)==0) & (len(filter_ability) > 0):
+                continue
+
 
             tests=""
             for t in test:
