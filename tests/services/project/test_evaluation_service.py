@@ -48,6 +48,21 @@ def test_get_evaluations_by_project_id():
     assert evaluations[0].id == 1
 
 
+"""
+def test_get_evaluations_by_member_id():
+    from services.project import performance_evaluation_service as subject
+    
+    evaluations=subject.get_evaluations_by_member_id("1","98765", "12345",  performance_evaluation_repository=
+    MockPerformanceEvaluation(evaluation_with_params=performance_evaluation_model.PerformanceEvaluationRead(id="1", score="8", 
+    details="Buen desempeño",creation_date="2023-11-01", project_id="3", person_id="12345",
+    member_id="5")),employee_repository=MockEmployee(employee_with_params = \
+    employee_model.EmployeeReadModel(id = 2, profile = "OPERATIVO" , position= "JEFE SOPORTE",\
+    person_id = "98765", company_id = "4388827")), person_repository = MockPerson(person_with_params = \
+    person_model.Person(document="12345", document_type="CC",first_name="PEDRO MARTIN", last_name="GOMEZ", phone_number="24234234"
+    )))
+    assert evaluations[0].id == 1
+
+"""
 
 class MockMember(member_repository.MemberRepository):
     def __init__(self, person_id: Optional[str]=None, member_by_id:member_model.MemberRead=None,member_with_params:member_model.MemberRead=None)->None:

@@ -110,3 +110,36 @@ def get_evaluations_by_project_id(project_id: str, person_id: str, performance_e
     
     LOGGER.info("Evaluation List with data in service")
     return evaluations_project_list
+    
+    
+    
+def get_evaluations_by_member_id(project_id: str, person_id: str, member_id: str, performance_evaluation_repository: performance_evaluation_repository.PerformanceEvaluationRepository,
+    employee_repository: employee_repository.EmployeeRepository, person_repository: person_repository.PersonRepository)->Optional[List]:
+    LOGGER.info("Search for members by project [%s] in service", str(project_id))
+    
+    employee_project = employee_service.get_by_person_id(employee_repository, person_id = person_id)
+    if employee_project is None:
+        raise employee_service.EmployeeDoesNotExistError()
+    
+    LOGGER.info("sending  to evaluation repo [%s]", project_id)    
+    
+    evaluations = performance_evaluation_repository.get_by_person_id(person_id=member_id, project_id=project_id)    
+  
+    if (evaluations is None):
+        LOGGER.info("Empty evaluation in service")
+        return None
+    
+    evaluations_project_list = []
+    evaluation_response = PerformanceEvaluationResponse
+    for evaluation in evaluations:
+        person = person_repository.get_by_document(member_id)
+        evaluation_response = PerformanceEvaluationResponse(id  = str(evaluation.id), 
+            creation_date= str(evaluation.creation_date), score =str(evaluation.score),
+            details= str(evaluation.details), project_id = str(project_id),
+            person_id = str(evaluation.person_id), member_id = str(evaluation.member_id), 
+            person_name = person.first_name + " " + person.last_name)
+            
+        evaluations_project_list.append(evaluation_response)
+    
+    LOGGER.info("Evaluation with data in service")
+    return evaluations_project_list
