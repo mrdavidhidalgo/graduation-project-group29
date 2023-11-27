@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException ,Response, status
 
 from fastapi import Depends
-from typing import Annotated, Any, Optional, Tuple,cast,List
+from typing import Annotated, Any, Dict, Optional, Tuple,cast,List
  
 from controllers import commons
 from pydantic import BaseModel,Field,model_validator
@@ -103,6 +103,38 @@ async def find_interview_results( db : Session = Depends(get_db))->None:
     result = management_service_facade.find_interview_results(db)
     return [r.dict() for r in result]
 
+@router.get("/interviews/result-detail")
+async def find_interview_results(project_id: str, db : Session = Depends(get_db))->None:
+    
+    data = []
+
+    result = management_service_facade.find_interview_results(db)
+    _LOGGER.info("Longitud: %s", len(result))
+    
+    for r in result:
+        if r.project_id == project_id:
+            
+            d = get_candidate(r.candidate_document, db)
+            
+            d.update(find_result(r.id, db))
+            #d.update(get_candidate(r.candidate_document, db))
+            data.append(d)
+    
+    _LOGGER.info("Return %s", data)
+    return data
+
+def get_candidate(document: str,  db : Session):
+    candidates_list = management_service_facade.get_candidates(db = db)
+    
+    candidates_list = list(filter(lambda x: str(x.document) == document ,candidates_list))
+    
+    return {"full_name": candidates_list[0].first_name + " " + candidates_list[0].last_name}
+
+def find_result(result_id: int, db : Session):
+    result = management_service_facade.find_interview_result(result_id,db)
+    d = result.dict()
+    d.update({"qualification":result.qualification})
+    return d
 
 @router.get("/interviews/result/{id}")
 async def find_interview_result(id:int, db : Session = Depends(get_db))->None:
