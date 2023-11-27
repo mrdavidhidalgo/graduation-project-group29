@@ -54,12 +54,13 @@ def create_company(request : CreateCompanyRequest, person_repository: person_rep
 user_repository: user_repository.UserRepository, company_repository: company_repository.CompanyRepository, employee_repository = employee_repository.EmployeeRepository)-> None:
     
     LOGGER.info("Creating Comapny with taxPayerId [%s] and name [%s]", request.taxpayer_id, request.name)
-    
+    request.taxpayer_id = request.taxpayer_id.lstrip('0')
     persisted_company = company_repository.get_by_taxpayerId(taxpayer_id = request.taxpayer_id)
     
     if persisted_company is not None:
         raise CompanyTaxprayerAlreadyExistError()
     
+    request.document = request.document.lstrip('0')
     person_request = person_service.CreateEmployeeRequest
     person_request.document = request.document
     person_request.document_type = request.document_type
@@ -106,7 +107,52 @@ def get_by_taxpayerId(company_repository: company_repository.CompanyRepository, 
     else:
         LOGGER.info("Company exists in service")
         return company
+
+def get_by_person_Id(person_id: str, company_repository: company_repository.CompanyRepository, employee_repository: employee_repository.EmployeeRepository,
+ person_repository: person_repository.PersonRepository,user_repository=user_repository.UserRepository )-> Optional[CreateCompanyRequest]:   
+    LOGGER.info("Search for company by person id")
+    employee = employee_repository.get_by_person_id(person_id)
+    
+    if employee is None:
+        LOGGER.info("No employee service")
+        return None
+    
+    LOGGER.info("Employee exists in service")
+    
+    person = person_repository.get_by_document(person_id)
+    if person is None:
+        LOGGER.info("No person in service")
+        return None
+    
+    user = user_repository.get_by_person_id(person_id)
+    if user is None:
+        LOGGER.info("No user in service")
+        return None
         
+    company =  company_repository.get_by_taxpayerId(str(employee.company_id))
+    if company is None:
+        LOGGER.info("No company in service")
+        return None
+    
+    company_info = CreateCompanyRequest
+    company_info.document= person.document
+    company_info.document_type=person.document_type
+    company_info.first_name=person.first_name
+    company_info.last_name=person.last_name
+    company_info.username=user.username
+    company_info.password=user.password
+    company_info.taxpayer_id=company.taxpayer_id
+    company_info.name=company.name
+    company_info.country=company.country
+    company_info.city=company.city
+    company_info.years=company.years
+    company_info.address=company.address
+    company_info.phone_number=company.phone_number
+    company_info.profile=employee.profile
+    company_info.position=employee.position
+    
+    return company_info
+            
 def get_all(company_repository: company_repository.CompanyRepository)->List[company_model.Company]:
     LOGGER.info("Search for companies in service")
     list =  company_repository.get_all()

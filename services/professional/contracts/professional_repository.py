@@ -9,13 +9,17 @@ class ProfessionalRepository(abc.ABC):
         ...
         
     @abc.abstractmethod
+    def get_full_info(self, professional_id: int)-> List[professional_model.ProfessionalFullInfo]:
+        ...
+        
+    @abc.abstractmethod
     def save(self, professional: professional_model.ProfessionalCreateModel)-> None:
         ...
         
     @abc.abstractmethod
     def add_academic_info(self, professional_id : int, academic_info: professional_model.ProfessionalAcademicInfo)-> None:
         ...
-        
+    
     @abc.abstractmethod
     def add_laboral_info(self, professional_id : int, laboral_info: professional_model.ProfessionalLaboralInfo)-> None:
         ...
@@ -28,12 +32,19 @@ class ProfessionalRepository(abc.ABC):
     def add_technical_role_info(self, professional_id : int, technical_role_info: professional_model.ProfessionalTechnicalRole)-> None:
         ...
     
-    #@abc.abstractmethod
-    #def delete_professional(self, person_id: int)-> Optional[int]:
-    #    ...
+    @abc.abstractmethod
+    def search_for_candidates(self, 
+                              role_filter: str, 
+                              role: str, 
+                              role_experience: str, 
+                              technologies: list, 
+                              abilities: list , 
+                              title_filter: str, 
+                              title: str, 
+                              title_experience: str)->Optional[List[professional_model.ProfessionalSearchResult]]:
+        ...
         
     @abc.abstractmethod
-    def search_for_candidates(self, role_filter: str, role: str, role_experience: str,\
-     technologies: list, abilities: list , title_filter: str, title: str, title_experience: str)->Optional[List[professional_model.ProfessionalSearchResult]]:
+    def get_candidates_without_interviews(self)->List[professional_model.ProfessionalReadModel]:
         ...
         

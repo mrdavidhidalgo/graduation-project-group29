@@ -12,3 +12,9 @@ class Test(BaseModel):
     start_date : date 
     end_date: date
     description : str
+
+class TestResult(BaseModel):
+    test_name : str 
+    candidate_document: str
+    observation :str|None
+    points : int 

@@ -96,3 +96,19 @@ def get_projects_by_company_id(person_id: str, project_repository: project_repos
     else:
         LOGGER.info("Project List with data in service")
         return list
+        
+def get_by_project_id(project_id: str, person_id: str, project_repository: project_repository.ProjectRepository,
+ employee_repository: employee_repository.EmployeeRepository)-> Optional[project_model.ProjectRead]:
+    LOGGER.info("Search for project by id")
+    
+    #employee_project = employee_service.get_by_person_id(employee_repository, person_id = person_id)
+    #if employee_project is None:
+    #    raise employee_service.EmployeeDoesNotExistError()
+    
+    project = project_repository.get_by_project_id(project_id = project_id)
+    if project is None:
+        LOGGER.info("Project not exists")
+        return None
+    else:
+        LOGGER.info("Project exists in service")
+        return project

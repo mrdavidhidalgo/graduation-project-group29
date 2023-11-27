@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, Date, Enum, ForeignKey, Text, func,Date
 import datetime
 from services.commons import base
@@ -5,7 +6,7 @@ from services.commons import base
 from .database import Base
 from sqlalchemy.orm import relationship
 from services.user.model import user_model
-
+from sqlalchemy import UniqueConstraint
 
 class Person(Base):
     __tablename__ = "person"
@@ -132,6 +133,13 @@ class Test(Base):
     status =  Column(Enum(base.TestStatus))
     description = Column(String(5000))
 
+class TestResult(Base):
+    __tablename__ = "test_result"
+    
+    test_name = Column(String(200), primary_key=True, index=True)
+    candidate_document = Column(String(200), primary_key=True, index=True)
+    observation = Column(String(200),nullable=True)
+    points = Column(Integer)
 
 
 class Technology(Base):
@@ -143,13 +151,7 @@ class Technology(Base):
     category = Column(Enum(base.TechnologyCategory))
     
 
-class Ability(Base):
-    __tablename__ = "ability"
-    
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    ability_name = Column(String(100))
-    details = Column(Text)
-    category = Column(Enum(base.AbilityCategory))
+
 
     
 
@@ -174,3 +176,56 @@ class ProjectMember(Base):
     person_id = Column(String(30))
     profile_id = Column(String(200))
     project_id = Column(String(20))
+    
+    
+class Ability(Base):
+    __tablename__ = "ability"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    ability_name = Column(String(100))
+    details = Column(Text)
+    category = Column(Enum(base.AbilityCategory))
+    
+class CandidateAbility(Base):
+    __tablename__ = "interviews_result_ability"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    interview_id = Column(Integer, ForeignKey('interviews_result.id'))
+    ability_id = Column(Integer, ForeignKey('ability.id'))
+    qualification= Column(Integer)
+    
+class CandidateInterview(Base):
+    __tablename__ = "interviews_result"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    candidate_document = Column(String(200), index=True)
+    project_id = Column(String(60), index=True)
+    profile_id = Column(String(200), index=True)
+    date = Column(Date, default=datetime.datetime.utcnow)
+    recording_file = Column(String(60), nullable=True)
+    test_file = Column(String(60), nullable=True)
+    observation = Column(String(500))
+
+    __table_args__ = (UniqueConstraint("candidate_document", "project_id","profile_id"), )
+
+
+class PerformaceEvaluation(Base):
+    __tablename__ = "performance_evaluation"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    score = Column(Integer)
+    details = Column(Text)
+    creation_date = Column(Date, default=datetime.datetime.utcnow)
+    project_id = Column(String(20))
+    person_id = Column(Integer)
+    member_id = Column(Integer)
+
+
+class Interview(Base):
+    __tablename__ = "interviews"
+    candidate_document = Column(String(200), primary_key=True, index=True)
+    project_id = Column(String(200), primary_key=True, index=True)
+    profile_id= Column(String(200), primary_key=True, index=True)
+    status = Column(String(200))
+    meet_url =  Column(String(200))
+    start_timestamp =Column(DateTime)  
+    duration_minutes= Column(Integer)  
+    

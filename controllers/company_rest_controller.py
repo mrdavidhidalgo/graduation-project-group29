@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from daos.db_model.database import SessionLocal
 
-from controllers import management_service_facade
+from controllers import management_service_facade, commons
 from services import logs
 LOGGER = logs.get_logger()
 
@@ -71,3 +71,18 @@ async def get_companies(response: Response, db: Session = Depends(get_db)):
     else:
         LOGGER.info("Return 404 error")
         raise HTTPException(status_code=404, detail="No companies found")
+        
+
+@router.get("/companies/myself")
+async def get_company_by_Id(token_data: commons.TokenData = Depends(commons.get_token_data), db: Session = Depends(get_db)):
+    company = management_service_facade.get_company_by_person_id(person_id = token_data.person_id, db = db)
+    
+    if company is not None:
+        data=[]
+        co=str(company.country).split(".")
+        dt=str(company.document_type).split(".")
+        data.append({'document': str(company.document),'documentType': str(dt[1]),'firstName': str(company.first_name)
+        ,'lastName': str(company.last_name),'username': str(company.username), 'password': str(company.password),'taxpayerId': str(company.taxpayer_id)
+         ,'name': str(company.name),'country': str(co[1]), 'city': str(company.city), 'years': str(company.years),
+         'address': str(company.address), 'phoneNumber': str(company.phone_number), 'profile': str(company.profile), 'position': str(company.position)})
+        return data

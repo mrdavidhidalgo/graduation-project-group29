@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9b58b1a5-7457-49e5-a067-add7d342c65e",
+		"_postman_id": "22d01525-63cd-4d12-9626-a595c96adfbe",
 		"name": "ABCJobs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23987562",
-		"_collection_link": "https://planetary-sunset-429103.postman.co/workspace/Team-Workspace~2e1b003d-278c-4414-8efb-6ec55e77c630/collection/23987562-9b58b1a5-7457-49e5-a067-add7d342c65e?action=share&source=collection_link&creator=23987562"
+		"_exporter_id": "786244"
 	},
 	"item": [
 		{
@@ -187,20 +186,65 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Companies",
-			"item": [
+				},
 				{
-					"name": "Create company",
+					"name": "Get full info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": " ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/candidates/myself",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates",
+								"myself"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "to Interview",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/candidates/to_interview",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"candidates",
+								"to_interview"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "load interview",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"document\": \"9876532\",\n  \"documentType\": \"NI\",\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Saenz\",\n  \"username\": \"csaenz@aol.com\",\n     \"password\": \"Cnts&23..\",\n  \"taxpayerId\": \"900172234\",\n  \"name\": \"TECNOSOFT\",\n  \"country\": \"PE\",\n  \"city\": \"LIMA\",\n  \"years\": \"12\",\n     \"address\": \"Av Miraflores 45\",\n   \"phoneNumber\": \"5593487347\",\n  \"profile\": \"OPERATIVO\",\n  \"position\": \"JEFE DE SOPORTE\"\n}",
+							"raw": "{\n  \"professional_id\": 1,\n  \"year\": 2023,\n  \"month\": 12,\n  \"day\": 8,\n  \"recording_file\": \"string\",\n  \"test_file\": \"string\",\n  \"observation\": \"string\",\n  \"abilities\": [\n    {\n      \"ability_id\": 1,\n      \"qualification\": 5\n    },\n    {\n      \"ability_id\": 2,\n      \"qualification\": 1\n    },\n    {\n      \"ability_id\": 3,\n      \"qualification\": 2\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -208,89 +252,90 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8000/companies",
+							"raw": "http://localhost:8000/candidates/load_interview",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8000",
 							"path": [
-								"companies"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get companies",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8000/companies",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8000",
-							"path": [
-								"companies"
+								"candidates",
+								"load_interview"
 							]
 						}
 					},
 					"response": []
 				}
-			],
-                        "item": [
-                            {
-                                    "name": "create project",
-                                    "request": {
-                                            "url": "http://localhost:8000/projects",
-                                            "method": "POST",
-                                            "header": [
-                                                    {
-                                                            "key": "Authorization",
-                                                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY3BlcmV6QGFvbC5jbyIsInJvbGUiOiJDTElFTlQiLCJwZXJzb25faWQiOiIzNDY0MzYzNCIsImV4cCI6MTY5ODMxMzE3M30.0lQarWJzrxm4mXP35k9nq6x5kgrYe9LlEM1Ws2Ju9HY",
-                                                            "description": ""
-                                                    },
-                                                    {
-                                                            "key": "Content-Type",
-                                                            "value": "application/json",
-                                                            "description": ""
-                                                    }
-                                            ],
-                                            "body": {
-                                                    "mode": "raw",
-                                                    "raw": "{\n    \"projectName\" : \"Desarrollo Python\",\n    \"startDate\" : \"2023-12-01\",\n    \"active\" : 1,\n    \"details\" : \"Este proyecto desarrolla una API en Python\"\n}"
-                                            },
-                                            "description": "Permite crear un nuevo proyecto"
-                                    },
-                                    "response": []
-                            },
-                            {
-                                    "name": "Get a company Projects ",
-                                    "request": {
-                                            "url": "http://localhost:8000/projects/myself",
-                                            "method": "GET",
-                                            "header": [
-                                                    {
-                                                            "key": "Content-Type",
-                                                            "value": "application/json",
-                                                            "description": "",
-                                                            "disabled": true
-                                                    },
-                                                    {
-                                                            "key": "Authorization",
-                                                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY3BlcmV6QGFvbC5jbyIsInJvbGUiOiJDTElFTlQiLCJwZXJzb25faWQiOiIzNDY0MzYzNCIsImV4cCI6MTY5OTA3NzcwM30.uHKWrwLaXU8w5Vc-dfrET3jYOrr0pkSo_RAAbaS4cgw",
-                                                            "description": ""
-                                                    }
-                                            ],
-                                            "description": "Get projects from a company"
-                                    },
-                                    "response": []
-                            }
-                    ]
-                        
+			]
+		},
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "create project",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY3BlcmV6QGFvbC5jbyIsInJvbGUiOiJDTElFTlQiLCJwZXJzb25faWQiOiIzNDY0MzYzNCIsImV4cCI6MTY5ODMxMzE3M30.0lQarWJzrxm4mXP35k9nq6x5kgrYe9LlEM1Ws2Ju9HY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"projectName\" : \"Desarrollo Python\",\n    \"startDate\" : \"2023-12-01\",\n    \"active\" : 1,\n    \"details\" : \"Este proyecto desarrolla una API en Python\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"projects"
+							]
+						},
+						"description": "Permite crear un nuevo proyecto"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a company Projects ",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY3BlcmV6QGFvbC5jbyIsInJvbGUiOiJDTElFTlQiLCJwZXJzb25faWQiOiIzNDY0MzYzNCIsImV4cCI6MTY5OTA3NzcwM30.uHKWrwLaXU8w5Vc-dfrET3jYOrr0pkSo_RAAbaS4cgw"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/projects/myself",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"projects",
+								"myself"
+							]
+						},
+						"description": "Get projects from a company"
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "User",
@@ -308,7 +353,6 @@
 				}
 			]
 		},
-                
 		{
 			"name": "Test",
 			"item": [
@@ -344,6 +388,25 @@
 							"port": "8000",
 							"path": [
 								"tests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "abilities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/abilities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"abilities"
 							]
 						}
 					},
