@@ -101,9 +101,9 @@ def get_by_project_id(project_id: str, person_id: str, project_repository: proje
  employee_repository: employee_repository.EmployeeRepository)-> Optional[project_model.ProjectRead]:
     LOGGER.info("Search for project by id")
     
-    employee_project = employee_service.get_by_person_id(employee_repository, person_id = person_id)
-    if employee_project is None:
-        raise employee_service.EmployeeDoesNotExistError()
+    #employee_project = employee_service.get_by_person_id(employee_repository, person_id = person_id)
+    #if employee_project is None:
+    #    raise employee_service.EmployeeDoesNotExistError()
     
     project = project_repository.get_by_project_id(project_id = project_id)
     if project is None:
