@@ -1,6 +1,9 @@
 from cgitb import reset
 from services import logs
 from services.interview.contracts import interview_repository
+from services.person.contracts import person_repository
+from services.project.contracts import project_repository
+
 from services.interview.model import interview_model
 from datetime import date
 from typing import List, Tuple
@@ -53,7 +56,7 @@ class Interview(BaseModel):
 def get_interviews(candidate_document: str|None, 
                     interview_repository: interview_repository.InterviewRepository)-> List[Interview]:
     
-    result = interview_repository.get_interviews(candidate_document)
+    result = interview_repository.get_interviews(candidate_document,None)
     
     return result if result is None else [Interview(**i.dict()) for i in result ]
 
@@ -86,3 +89,38 @@ def find_interview_results(interview_repository: interview_repository.InterviewR
 
 def find_interview_result(id:int,interview_repository: interview_repository.InterviewRepository)-> interview_model.LoadInterviewInfo | None:
     return interview_repository.find_interview_result(id)
+
+
+class PendingInterviewInfo(BaseModel):
+    candidate_document : str 
+    candidate_name:str|None
+    project_id : str
+    project_name: str
+    profile_id: str
+    date: datetime
+
+def get_pending_interviews(interview_repository: interview_repository.InterviewRepository, 
+                           person_repository=person_repository.PersonRepository,
+                           project_repository=project_repository.ProjectRepository
+                           )-> List[PendingInterviewInfo]:
+    
+    result = interview_repository.get_interviews(None,"SCHEDULED")
+    
+    interviews=  [] if result is None else [Interview(**i.dict()) for i in result ]
+    print(interviews)
+    pending_interviews = [] 
+    for i in interviews:
+        candidate = person_repository.get_by_document(i.candidate_document)
+        project = project_repository.get_by_project_id(i.project_id)
+        candidate_name:str|None = None
+        project_name=project.project_name
+        if candidate:
+            candidate_name = candidate.first_name+ " "+candidate.last_name
+        pending_interviews.append(PendingInterviewInfo(candidate_document=i.candidate_document,
+                                                       candidate_name=candidate_name,
+                                                       project_id=i.project_id,
+                                                       project_name=project_name,
+                                                       profile_id=i.profile_id,
+                                                       date=i.start_timestamp
+                                                       ))
+    return pending_interviews

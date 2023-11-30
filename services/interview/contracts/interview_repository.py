@@ -12,7 +12,7 @@ class InterviewRepository(abc.ABC):
         ... 
 
     @abc.abstractmethod
-    def get_interviews(candidate_document: str|None)-> List[interview_model.Interview]:
+    def get_interviews(candidate_document: str|None,status:str|None)-> List[interview_model.Interview]:
         ...
 
     @abc.abstractmethod
@@ -26,3 +26,4 @@ class InterviewRepository(abc.ABC):
     @abc.abstractmethod
     def find_interview_result(id:int)-> interview_model.LoadInterviewInfo | None:
         ...
+

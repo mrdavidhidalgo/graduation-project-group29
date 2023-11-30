@@ -32,15 +32,18 @@ class DBInterviewRepository(interview_repository.InterviewRepository):
         self.db.commit()
 
 
-    def get_interviews(self,candidate_document: str|None)-> List[interview_model.Interview]:
+    def get_interviews(self,candidate_document: str|None,status:str|None)-> List[interview_model.Interview]:
 
         interv_query = self.db.query(models.Interview)
 
         if candidate_document:
             interv_query = interv_query.filter(models.Interview.candidate_document == candidate_document)
         
-        interviews=interv_query.order_by(models.Interview.start_timestamp.desc()).all()
+        if status:
+            interv_query = interv_query.filter(models.Interview.status == status)
         
+        interviews=interv_query.order_by(models.Interview.start_timestamp.desc()).all()
+
         return [] if interviews is None else [interview_model.Interview(    
                                                          candidate_document = interv.candidate_document,
                                                          project_id = interv.project_id,
@@ -120,5 +123,5 @@ class DBInterviewRepository(interview_repository.InterviewRepository):
             recording_file = interview_info.recording_file,
             test_file = interview_info.test_file,
             observation = interview_info.observation,
-            abilities=[interview_model.AbilityInterviewInfo(ability_id=a.ability_id, qualification=a.qualification) for a in interview_result_ability] 
+            abilities=[interview_model.AbilityInterviewInfo(ability_id=a.ability_id, qualification=a.qualification) for a in interview_result_ability if a.interview_id ==id ] 
             )
