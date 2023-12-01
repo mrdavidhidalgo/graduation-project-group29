@@ -104,7 +104,7 @@ async def find_interview_results( db : Session = Depends(get_db))->None:
     return [r.dict() for r in result]
 
 @router.get("/interviews/result-detail")
-async def find_interview_results(project_id: str, db : Session = Depends(get_db))->None:
+async def find_interview_results2(project_id: str, db : Session = Depends(get_db))->None:
     
     data = []
 
@@ -143,3 +143,9 @@ async def find_interview_result(id:int, db : Session = Depends(get_db))->None:
     d.update({"qualification":result.qualification})
     return d
 
+
+
+@router.get("/pending-interviews")
+async def get_pending_inteviews(db: Session = Depends(get_db)):
+    
+    return [i.dict() for i in  management_service_facade.get_pending_interviews(db = db)]

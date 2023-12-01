@@ -750,6 +750,8 @@ def get_intervies(candidate_document: str|None, db: Session)->None:
     return interview_service.get_interviews(candidate_document, 
                                        interview_repository=interview_repo)
 
+
+
 class AbilityInterviewInfo(BaseModel):
     ability_id: int
     qualification: int
@@ -781,5 +783,25 @@ def find_interview_results(db: Session)->List[LoadInterviewInfo]:
 def find_interview_result(id:int,db: Session)-> LoadInterviewInfo | None:
     
     result =  interview_service.find_interview_result(id,db_interview_repository.DBInterviewRepository(db)) 
-    print(result)
     return LoadInterviewInfo(**result.dict())
+
+
+
+class PendingInterviewInfo(BaseModel):
+    candidate_document : str 
+    project_id : str
+    project_name: str
+    profile_id: str
+    date: datetime.datetime
+
+def get_pending_interviews(db: Session)->None:
+    
+    interview_repo = db_interview_repository.DBInterviewRepository(db = db)
+    person_repo = db_person_repository.DBPersonRepository(db = db)
+    project_repo=db_project_repository.DBProjectRepository(db = db)
+
+    return interview_service.get_pending_interviews(interview_repository=interview_repo, 
+                                                    person_repository=person_repo,
+                                                    project_repository=project_repo
+                                                    )
+                            
